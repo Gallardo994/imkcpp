@@ -84,6 +84,8 @@ int imkcpp::peek_size() const {
     return length;
 }
 
+// Parse ack
+
 void imkcpp::update_ack(const int32_t rtt) {
     if (this->rx_srtt == 0) {
         this->rx_srtt = rtt;
@@ -104,3 +106,11 @@ void imkcpp::update_ack(const int32_t rtt) {
     const uint32_t rto = this->rx_srtt + std::max(this->interval, 4 * this->rx_rttval);
     this->rx_rto = std::clamp(rto, this->rx_minrto, IKCP_RTO_MAX);
 }
+
+// TODO: ikcp_shrink_buf
+
+// TODO: ikcp_parse_ack
+
+// TODO: ikcp_parse_una
+
+// TODO: ikcp_parse_fastack
