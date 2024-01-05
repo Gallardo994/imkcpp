@@ -3,15 +3,15 @@
 #include <cstring>
 #include <cassert>
 
-void imkcpp::set_output(const std::function<int(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)>&) {
+void imkcpp::set_output(const std::function<i32(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)>&) {
     this->output = output;
 }
 
-void imkcpp::set_interval(const uint32_t interval) {
+void imkcpp::set_interval(const u32 interval) {
     this->interval = interval;
 }
 
-void imkcpp::set_nodelay(const int32_t nodelay, uint32_t interval, const int32_t resend, const int32_t nc) {
+void imkcpp::set_nodelay(const i32 nodelay, u32 interval, const i32 resend, const i32 nc) {
     if (nodelay >= 0) {
         this->nodelay = nodelay;
         if (nodelay) {
@@ -39,7 +39,7 @@ void imkcpp::set_nodelay(const int32_t nodelay, uint32_t interval, const int32_t
     }
 }
 
-void imkcpp::set_mtu(const uint32_t mtu) {
+void imkcpp::set_mtu(const u32 mtu) {
     if (mtu <= IKCP_OVERHEAD) {
         return;
     }
@@ -49,7 +49,7 @@ void imkcpp::set_mtu(const uint32_t mtu) {
     this->mss = this->mtu - IKCP_OVERHEAD;
 }
 
-void imkcpp::set_wndsize(const uint32_t sndwnd, const uint32_t rcvwnd) {
+void imkcpp::set_wndsize(const u32 sndwnd, const u32 rcvwnd) {
     if (sndwnd > 0) {
         this->snd_wnd = sndwnd;
     }
@@ -59,7 +59,7 @@ void imkcpp::set_wndsize(const uint32_t sndwnd, const uint32_t rcvwnd) {
     }
 }
 
-int imkcpp::peek_size() const {
+i32 imkcpp::peek_size() const {
     if (this->rcv_queue.empty()) {
         return -1;
     }
@@ -86,9 +86,40 @@ int imkcpp::peek_size() const {
     return length;
 }
 
+// Parse ack
+
+void imkcpp::update_ack(const i32 rtt) {
+    if (this->rx_srtt == 0) {
+        this->rx_srtt = rtt;
+        this->rx_rttval = rtt / 2;
+    }
+    else {
+        i32 delta = rtt - static_cast<i32>(this->rx_srtt);
+        delta = delta >= 0 ? delta : -delta;
+
+        this->rx_rttval = (3 * this->rx_rttval + delta) / 4;
+        this->rx_srtt = (7 * this->rx_srtt + rtt) / 8;
+
+        if (this->rx_srtt < 1) {
+            this->rx_srtt = 1;
+        }
+    }
+
+    const u32 rto = this->rx_srtt + std::max(this->interval, 4 * this->rx_rttval);
+    this->rx_rto = std::clamp(rto, this->rx_minrto, IKCP_RTO_MAX);
+}
+
+// TODO: ikcp_shrink_buf
+
+// TODO: ikcp_parse_ack
+
+// TODO: ikcp_parse_una
+
+// TODO: ikcp_parse_fastack
+
 // receive
 
-int32_t imkcpp::recv(std::span<std::byte>& buffer) {
+i32 imkcpp::recv(std::span<std::byte>& buffer) {
     if (this->rcv_queue.empty()) {
         return -1;
     }
@@ -142,37 +173,74 @@ int32_t imkcpp::recv(std::span<std::byte>& buffer) {
         this->probe |= IKCP_ASK_TELL;
     }
 
-    return static_cast<int32_t>(len);
+    return static_cast<i32>(len);
 }
 
+// send
 
-// Parse ack
-
-void imkcpp::update_ack(const int32_t rtt) {
-    if (this->rx_srtt == 0) {
-        this->rx_srtt = rtt;
-        this->rx_rttval = rtt / 2;
+i32 imkcpp::send(const std::span<const std::byte>& buffer) {
+    assert(mss > 0);
+    if (buffer.empty()) {
+        return -1;
     }
-    else {
-        int32_t delta = rtt - static_cast<int32_t>(this->rx_srtt);
-        delta = delta >= 0 ? delta : -delta;
 
-        this->rx_rttval = (3 * this->rx_rttval + delta) / 4;
-        this->rx_srtt = (7 * this->rx_srtt + rtt) / 8;
+    int len = buffer.size();
+    int sent = 0;
+    auto buf_ptr = buffer.begin();
 
-        if (this->rx_srtt < 1) {
-            this->rx_srtt = 1;
+    if (stream != 0 && !snd_queue.empty()) {
+        segment& old = snd_queue.back();
+        if (old.data.size() < static_cast<size_t>(mss)) {
+            int capacity = mss - old.data.size();
+            int extend = std::min(len, capacity);
+
+            segment seg(old.data.size() + extend);
+            std::copy(old.data.begin(), old.data.end(), seg.data.begin());
+            std::copy(buf_ptr, buf_ptr + extend, seg.data.begin() + old.data.size());
+
+            seg.len = old.data.size() + extend;
+            seg.frg = 0;
+
+            len -= extend;
+            buf_ptr += extend;
+            sent = extend;
+
+            snd_queue.pop_back();
+            snd_queue.push_back(seg);
         }
     }
 
-    const uint32_t rto = this->rx_srtt + std::max(this->interval, 4 * this->rx_rttval);
-    this->rx_rto = std::clamp(rto, this->rx_minrto, IKCP_RTO_MAX);
+    if (len <= 0) {
+        return sent;
+    }
+
+    int count = (len <= mss) ? 1 : (len + mss - 1) / mss;
+
+    if (count >= IKCP_WND_RCV) {
+        if (stream != 0 && sent > 0) {
+            return sent;
+        }
+
+        return -2;
+    }
+
+    count = std::max(count, 1);
+
+    for (int i = 0; i < count; i++) {
+        int size = std::min(len, static_cast<int32_t>(mss));
+        segment seg(size);
+        std::copy(buf_ptr, buf_ptr + size, seg.data.begin());
+
+        seg.len = size;
+        seg.frg = (stream == 0) ? (count - i - 1) : 0;
+
+        snd_queue.push_back(seg);
+        nsnd_que++;
+
+        buf_ptr += size;
+        len -= size;
+        sent += size;
+    }
+
+    return sent;
 }
-
-// TODO: ikcp_shrink_buf
-
-// TODO: ikcp_parse_ack
-
-// TODO: ikcp_parse_una
-
-// TODO: ikcp_parse_fastack

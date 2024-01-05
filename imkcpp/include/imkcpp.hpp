@@ -7,48 +7,50 @@
 #include <optional>
 #include <cstddef>
 
+#include "types.hpp"
 #include "segment.hpp"
 
 class imkcpp final {
 private:
-    uint32_t conv, mtu, mss, state;
-    uint32_t snd_una, snd_nxt, rcv_nxt;
-    uint32_t ts_recent, ts_lastack, ssthresh;
-    uint32_t rx_rttval, rx_srtt, rx_rto, rx_minrto;
-    uint32_t snd_wnd, rcv_wnd, rmt_wnd, cwnd, probe;
-    uint32_t current, interval, ts_flush, xmit;
-    uint32_t nrcv_buf, nsnd_buf;
-    uint32_t nrcv_que, nsnd_que;
-    uint32_t nodelay, updated;
-    uint32_t ts_probe, probe_wait;
-    uint32_t dead_link, incr;
+    u32 conv, mtu, mss, state;
+    u32 snd_una, snd_nxt, rcv_nxt;
+    u32 ts_recent, ts_lastack, ssthresh;
+    u32 rx_rttval, rx_srtt, rx_rto, rx_minrto;
+    u32 snd_wnd, rcv_wnd, rmt_wnd, cwnd, probe;
+    u32 current, interval, ts_flush, xmit;
+    u32 nrcv_buf, nsnd_buf;
+    u32 nrcv_que, nsnd_que;
+    u32 nodelay, updated;
+    u32 ts_probe, probe_wait;
+    u32 dead_link, incr;
 
     std::deque<segment> snd_queue;
     std::deque<segment> rcv_queue;
     std::deque<segment> snd_buf;
     std::deque<segment> rcv_buf;
 
-    uint32_t* acklist;
-    uint32_t ackcount;
-    uint32_t ackblock;
+    u32* acklist;
+    u32 ackcount;
+    u32 ackblock;
 
     std::optional<void*> user;
     std::vector<std::byte> buffer;
 
-    int fastresend;
-    int fastlimit;
-    int nocwnd, stream;
+    i32 fastresend;
+    i32 fastlimit;
+    i32 nocwnd, stream;
 
-    std::function<int(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)> output;
+    std::function<i32(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)> output;
 
 public:
     void set_output(const std::function<int(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)>& output);
-    void set_interval(uint32_t interval);
-    void set_nodelay(int32_t nodelay, uint32_t interval, int32_t resend, int32_t nc);
-    void set_mtu(uint32_t mtu);
-    void set_wndsize(uint32_t sndwnd, uint32_t rcvwnd);
+    void set_interval(u32 interval);
+    void set_nodelay(i32 nodelay, u32 interval, i32 resend, i32 nc);
+    void set_mtu(u32 mtu);
+    void set_wndsize(u32 sndwnd, u32 rcvwnd);
 
-    [[nodiscard]] int peek_size() const;
-    void update_ack(int32_t rtt);
-    int32_t recv(std::span<std::byte>& buffer);
+    [[nodiscard]] i32 peek_size() const;
+    void update_ack(i32 rtt);
+    i32 recv(std::span<std::byte>& buffer);
+    i32 send(const std::span<const std::byte>& buffer);
 };
