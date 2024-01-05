@@ -1,5 +1,7 @@
 #include "imkcpp.hpp"
 #include "constants.hpp"
+#include <cstring>
+#include <cassert>
 
 void imkcpp::set_output(const std::function<int(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)>&) {
     this->output = output;
@@ -83,6 +85,66 @@ int imkcpp::peek_size() const {
 
     return length;
 }
+
+// receive
+
+int32_t imkcpp::recv(std::span<std::byte>& buffer) {
+    if (this->rcv_queue.empty()) {
+        return -1;
+    }
+
+    const int peeksize = this->peek_size();
+
+    if (peeksize < 0) {
+        return -2;
+    }
+
+    if (peeksize > buffer.size()) {
+        return -3;
+    }
+
+    const bool recover = nrcv_que >= rcv_wnd;
+
+    size_t len = 0;
+    for (auto it = rcv_queue.begin(); it != rcv_queue.end();) {
+        const segment& segment = *it;
+        const size_t copy_len = std::min(segment.data.size(), buffer.size() - len);
+        std::memcpy(buffer.data() + len, segment.data.data(), copy_len);
+        len += copy_len;
+
+        it = rcv_queue.erase(it);
+        nrcv_que--;
+
+        if (segment.frg == 0) {
+            break;
+        }
+
+        if (len >= peeksize) {
+            break;
+        }
+    }
+
+    assert(len == peeksize);
+
+    while (!rcv_buf.empty()) {
+        auto& seg = rcv_buf.front();
+        if (seg.sn != rcv_nxt || nrcv_que >= rcv_wnd) {
+            break;
+        }
+
+        rcv_queue.push_back(std::move(seg));
+        rcv_buf.pop_front();
+        nrcv_que++;
+        rcv_nxt++;
+    }
+
+    if (nrcv_que < rcv_wnd && recover) {
+        this->probe |= IKCP_ASK_TELL;
+    }
+
+    return static_cast<int32_t>(len);
+}
+
 
 // Parse ack
 

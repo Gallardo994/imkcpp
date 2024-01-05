@@ -23,10 +23,10 @@ private:
     uint32_t ts_probe, probe_wait;
     uint32_t dead_link, incr;
 
-    std::queue<segment> snd_queue;
-    std::queue<segment> rcv_queue;
-    std::queue<segment> snd_buf;
-    std::queue<segment> rcv_buf;
+    std::deque<segment> snd_queue;
+    std::deque<segment> rcv_queue;
+    std::deque<segment> snd_buf;
+    std::deque<segment> rcv_buf;
 
     uint32_t* acklist;
     uint32_t ackcount;
@@ -50,4 +50,5 @@ public:
 
     [[nodiscard]] int peek_size() const;
     void update_ack(int32_t rtt);
+    int32_t recv(std::span<std::byte>& buffer);
 };
