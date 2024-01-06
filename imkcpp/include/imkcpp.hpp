@@ -11,16 +11,21 @@
 #include "segment.hpp"
 #include "ack.hpp"
 
+enum class imkcpp_state : i32 {
+    Alive = 0,
+    Dead = 1,
+};
+
 class imkcpp final {
 private:
-    u32 conv, mtu, mss, state;
+    u32 conv, mtu, mss;
+    imkcpp_state state;
     u32 snd_una, snd_nxt, rcv_nxt;
     u32 ts_recent, ts_lastack, ssthresh;
     u32 rx_rttval, rx_srtt, rx_rto, rx_minrto;
     u32 snd_wnd, rcv_wnd, rmt_wnd, cwnd, probe;
     u32 current, interval, ts_flush, xmit;
-    u32 nrcv_buf, nsnd_buf;
-    u32 nrcv_que, nsnd_que;
+    u32 nsnd_buf;
     u32 nodelay, updated;
     u32 ts_probe, probe_wait;
     u32 dead_link, incr;
@@ -31,8 +36,6 @@ private:
     std::deque<segment> rcv_buf;
 
     std::vector<Ack> acklist;
-    u32 ackcount;
-    u32 ackblock;
 
     std::optional<void*> user;
     std::vector<std::byte> buffer;
@@ -42,6 +45,8 @@ private:
     i32 nocwnd, stream;
 
     std::function<i32(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)> output;
+
+    void call_output(const std::span<const std::byte>& data) const;
 
 public:
     void set_output(const std::function<int(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)>& output);
@@ -61,7 +66,7 @@ public:
     i32 recv(std::span<std::byte>& buffer);
     i32 send(const std::span<const std::byte>& buffer);
     void parse_data(const segment& newseg);
-    std::byte* encode_seg(std::byte* ptr, const segment& seg);
+    void encode_seg(const segment& seg, std::vector<std::byte>& vector);
     i32 input(const std::span<const std::byte>& data);
     void update(u32 current);
     void flush();
