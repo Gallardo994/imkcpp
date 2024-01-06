@@ -285,7 +285,7 @@ i32 imkcpp::send(const std::span<const std::byte>& buffer) {
 
     int count = (len <= mss) ? 1 : (len + mss - 1) / mss;
 
-    if (count >= IKCP_WND_RCV) {
+    if (count >= this->rcv_wnd) {
         if (stream != 0 && sent > 0) {
             return sent;
         }
