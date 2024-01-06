@@ -313,3 +313,39 @@ i32 imkcpp::send(const std::span<const std::byte>& buffer) {
 
     return sent;
 }
+
+void imkcpp::parse_data(const segment& newseg) {
+    u32 sn = newseg.sn;
+    bool repeat = false;
+
+    if (_itimediff(sn, rcv_nxt + rcv_wnd) >= 0 || _itimediff(sn, rcv_nxt) < 0) {
+        return;
+    }
+
+    const auto it = std::find_if(rcv_buf.rbegin(), rcv_buf.rend(), [sn](const segment& seg) {
+        return _itimediff(sn, seg.sn) <= 0;
+    });
+
+    if (it != rcv_buf.rend() && it->sn == sn) {
+        repeat = true;
+    }
+
+    if (!repeat) {
+        rcv_buf.insert(it.base(), newseg);
+        nrcv_buf++;
+    }
+
+    // Move available data from rcv_buf to rcv_queue
+    while (!rcv_buf.empty()) {
+        segment &seg = rcv_buf.front();
+        if (seg.sn == rcv_nxt && nrcv_que < static_cast<size_t>(rcv_wnd)) {
+            rcv_buf.pop_front();
+            rcv_queue.push_back(seg);
+            nrcv_que++;
+            rcv_nxt++;
+            nrcv_buf--;
+        } else {
+            break;
+        }
+    }
+}

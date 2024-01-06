@@ -60,4 +60,5 @@ public:
     [[nodiscard]] std::optional<Ack> ack_get(int p) const;
     i32 recv(std::span<std::byte>& buffer);
     i32 send(const std::span<const std::byte>& buffer);
+    void parse_data(const segment& newseg);
 };
