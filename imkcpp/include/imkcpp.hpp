@@ -53,6 +53,8 @@ public:
     void update_ack(i32 rtt);
     void shrink_buf();
     void parse_ack(u32 sn);
+    void parse_una(u32 una);
+    void parse_fastack(u32 sn);
     i32 recv(std::span<std::byte>& buffer);
     i32 send(const std::span<const std::byte>& buffer);
 };

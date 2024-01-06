@@ -138,9 +138,39 @@ void imkcpp::parse_ack(const u32 sn) {
     }
 }
 
-// TODO: ikcp_parse_una
+void imkcpp::parse_una(const u32 una) {
+    for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
+        if (_itimediff(una, it->sn) > 0) {
+            it = this->snd_buf.erase(it);
+            this->nsnd_buf--;
+        }
+        else {
+            break;
+        }
+    }
+}
 
-// TODO: ikcp_parse_fastack
+void imkcpp::parse_fastack(const u32 sn) {
+    if (_itimediff(sn, this->snd_una) < 0 || _itimediff(sn, this->snd_nxt) >= 0) {
+        return;
+    }
+
+    for (auto& seg : this->snd_buf) {
+        if (_itimediff(sn, seg.sn) < 0) {
+            break;
+        }
+
+        if (sn != seg.sn) {
+#ifndef IKCP_FASTACK_CONSERVE
+            seg.fastack++;
+#else
+            if (_itimediff(ts, seg.ts) >= 0) {
+                seg.fastack++;
+            }
+#endif
+        }
+    }
+}
 
 // receive
 
