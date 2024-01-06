@@ -29,7 +29,6 @@ imkcpp::imkcpp(const u32 conv, std::optional<void*> user) : conv(conv), user(use
 
     this->buffer.reserve((this->mtu + IKCP_OVERHEAD) * 3);
 
-    this->nsnd_buf = 0;
     this->state = imkcpp_state::Alive;
     this->rx_srtt = 0;
     this->rx_rttval = 0;
@@ -173,7 +172,6 @@ void imkcpp::parse_ack(const u32 sn) {
     for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
         if (sn == it->sn) {
             snd_buf.erase(it);
-            this->nsnd_buf--;
             break;
         }
 
@@ -189,7 +187,6 @@ void imkcpp::parse_una(const u32 una) {
     for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
         if (_itimediff(una, it->sn) > 0) {
             it = this->snd_buf.erase(it);
-            this->nsnd_buf--;
         }
         else {
             break;
@@ -653,8 +650,6 @@ void imkcpp::flush() {
 	    }
 
 	    segment& newseg = snd_queue.front();
-
-		this->nsnd_buf++;
 
 		newseg.conv = this->conv;
 		newseg.cmd = IKCP_CMD_PUSH;
