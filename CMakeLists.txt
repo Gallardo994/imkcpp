@@ -4,4 +4,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(imkcpp_root)
 
+option(BUILD_TESTS "Build tests" OFF)
+
 add_subdirectory(imkcpp)
+
+if(BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
