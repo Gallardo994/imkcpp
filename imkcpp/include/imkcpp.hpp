@@ -64,5 +64,7 @@ public:
     std::byte* encode_seg(std::byte* ptr, const segment& seg);
     i32 input(const std::span<const std::byte>& data);
     void update(u32 current);
+    void flush();
     u32 check(u32 current);
+    [[nodiscard]] i32 wnd_unused() const;
 };

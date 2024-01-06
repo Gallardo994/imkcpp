@@ -520,6 +520,215 @@ void imkcpp::update(u32 current) {
     }
 }
 
+void imkcpp::flush() {
+    IUINT32 current = this->current;
+	char *buffer = this->buffer;
+	char *ptr = buffer;
+	int count, size, i;
+	IUINT32 resent, cwnd;
+	IUINT32 rtomin;
+	struct IQUEUEHEAD *p;
+	int change = 0;
+	int lost = 0;
+	IKCPSEG seg;
+
+	// 'ikcp_update' haven't been called.
+	if (this->updated == 0) return;
+
+	seg.conv = this->conv;
+	seg.cmd = IKCP_CMD_ACK;
+	seg.frg = 0;
+	seg.wnd = this->wnd_unused();
+	seg.una = this->rcv_nxt;
+	seg.len = 0;
+	seg.sn = 0;
+	seg.ts = 0;
+
+	// flush acknowledges
+	count = this->ackcount;
+	for (i = 0; i < count; i++) {
+		size = (int)(ptr - buffer);
+		if (size + (int)IKCP_OVERHEAD > (int)this->mtu) {
+			ikcp_output(kcp, buffer, size);
+			ptr = buffer;
+		}
+		this->ack_get(i, &seg.sn, &seg.ts);
+		ptr = this->encode_seg(ptr, &seg);
+	}
+
+	this->ackcount = 0;
+
+	// probe window size (if remote window size equals zero)
+	if (this->rmt_wnd == 0) {
+		if (this->probe_wait == 0) {
+			this->probe_wait = IKCP_PROBE_INIT;
+			this->ts_probe = this->current + this->probe_wait;
+		}
+		else {
+			if (_itimediff(this->current, this->ts_probe) >= 0) {
+				if (this->probe_wait < IKCP_PROBE_INIT)
+					this->probe_wait = IKCP_PROBE_INIT;
+				this->probe_wait += this->probe_wait / 2;
+				if (this->probe_wait > IKCP_PROBE_LIMIT)
+					this->probe_wait = IKCP_PROBE_LIMIT;
+				this->ts_probe = this->current + this->probe_wait;
+				this->probe |= IKCP_ASK_SEND;
+			}
+		}
+	} else {
+		this->ts_probe = 0;
+		this->probe_wait = 0;
+	}
+
+	// flush window probing commands
+	if (this->probe & IKCP_ASK_SEND) {
+		seg.cmd = IKCP_CMD_WASK;
+		size = (int)(ptr - buffer);
+		if (size + (int)IKCP_OVERHEAD > (int)this->mtu) {
+			ikcp_output(kcp, buffer, size);
+			ptr = buffer;
+		}
+		ptr = this->encode_seg(ptr, &seg);
+	}
+
+	// flush window probing commands
+	if (this->probe & IKCP_ASK_TELL) {
+		seg.cmd = IKCP_CMD_WINS;
+		size = (int)(ptr - buffer);
+		if (size + (int)IKCP_OVERHEAD > (int)this->mtu) {
+			ikcp_output(kcp, buffer, size);
+			ptr = buffer;
+		}
+		ptr = this->encode_seg(ptr, &seg);
+	}
+
+	this->probe = 0;
+
+	// calculate window size
+	cwnd = std::min(this->snd_wnd, this->rmt_wnd);
+	if (this->nocwnd == 0) cwnd = std::min(this->cwnd, cwnd);
+
+	// move data from snd_queue to snd_buf
+	while (_itimediff(this->snd_nxt, this->snd_una + cwnd) < 0) {
+		IKCPSEG *newseg;
+		if (iqueue_is_empty(&kcp->snd_queue)) break;
+
+		newseg = iqueue_entry(kcp->snd_queue.next, IKCPSEG, node);
+
+		iqueue_del(&newseg->node);
+		iqueue_add_tail(&newseg->node, &kcp->snd_buf);
+		kcp->nsnd_que--;
+		kcp->nsnd_buf++;
+
+		newseg->conv = kcp->conv;
+		newseg->cmd = IKCP_CMD_PUSH;
+		newseg->wnd = seg.wnd;
+		newseg->ts = current;
+		newseg->sn = kcp->snd_nxt++;
+		newseg->una = kcp->rcv_nxt;
+		newseg->resendts = current;
+		newseg->rto = kcp->rx_rto;
+		newseg->fastack = 0;
+		newseg->xmit = 0;
+	}
+
+	// calculate resent
+	resent = (this->fastresend > 0)? this->fastresend : 0xffffffff;
+	rtomin = (this->nodelay == 0)? (this->rx_rto >> 3) : 0;
+
+	// flush data segments
+	for (p = kcp->snd_buf.next; p != &kcp->snd_buf; p = p->next) {
+		IKCPSEG *segment = iqueue_entry(p, IKCPSEG, node);
+		int needsend = 0;
+		if (segment->xmit == 0) {
+			needsend = 1;
+			segment->xmit++;
+			segment->rto = this->rx_rto;
+			segment->resendts = current + segment->rto + rtomin;
+		}
+		else if (_itimediff(current, segment->resendts) >= 0) {
+			needsend = 1;
+			segment->xmit++;
+			this->xmit++;
+			if (this->nodelay == 0) {
+				segment->rto += std::max(segment->rto, this->rx_rto);
+			} else {
+				i32 step = (this->nodelay < 2)? static_cast<i32>(segment->rto) : this->rx_rto;
+				segment->rto += step / 2;
+			}
+			segment->resendts = current + segment->rto;
+			lost = 1;
+		}
+		else if (segment->fastack >= resent) {
+			if ((int)segment->xmit <= this->fastlimit ||
+				this->fastlimit <= 0) {
+				needsend = 1;
+				segment->xmit++;
+				segment->fastack = 0;
+				segment->resendts = current + segment->rto;
+				change++;
+			}
+		}
+
+		if (needsend) {
+			int need;
+			segment->ts = current;
+			segment->wnd = seg.wnd;
+			segment->una = this->rcv_nxt;
+
+			size = (int)(ptr - buffer);
+			need = IKCP_OVERHEAD + segment->len;
+
+			if (size + need > (int)this->mtu) {
+				ikcp_output(kcp, buffer, size);
+				ptr = buffer;
+			}
+
+			ptr = this->encode_seg(ptr, segment);
+
+			if (segment->len > 0) {
+				memcpy(ptr, segment->data, segment->len);
+				ptr += segment->len;
+			}
+
+			if (segment->xmit >= this->dead_link) {
+				this->state = (IUINT32)-1;
+			}
+		}
+	}
+
+	// flash remain segments
+	size = (int)(ptr - buffer);
+	if (size > 0) {
+		ikcp_output(kcp, buffer, size);
+	}
+
+	// update ssthresh
+	if (change) {
+		i32 inflight = this->snd_nxt - this->snd_una;
+		this->ssthresh = inflight / 2;
+		if (this->ssthresh < IKCP_THRESH_MIN) {
+		    this->ssthresh = IKCP_THRESH_MIN;
+		}
+		this->cwnd = this->ssthresh + resent;
+		this->incr = this->cwnd * this->mss;
+	}
+
+	if (lost) {
+		this->ssthresh = cwnd / 2;
+		if (this->ssthresh < IKCP_THRESH_MIN)
+			this->ssthresh = IKCP_THRESH_MIN;
+		this->cwnd = 1;
+		this->incr = this->mss;
+	}
+
+	if (this->cwnd < 1) {
+		this->cwnd = 1;
+		this->incr = this->mss;
+	}
+}
+
+
 u32 imkcpp::check(u32 current) {
     i32 tm_flush = 0x7fffffff;
     i32 tm_packet = 0x7fffffff;
@@ -558,4 +767,12 @@ u32 imkcpp::check(u32 current) {
     }
 
     return current + minimal;
+}
+
+i32 imkcpp::wnd_unused() const {
+    if (this->nrcv_que < this->rcv_wnd) {
+        return static_cast<i32>(this->rcv_wnd - this->nrcv_que);
+    }
+
+    return 0;
 }
