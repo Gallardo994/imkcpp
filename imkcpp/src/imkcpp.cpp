@@ -29,7 +29,7 @@ void imkcpp::set_nodelay(const i32 nodelay, u32 interval, const i32 resend, cons
         }
     }
 
-    this->interval = std::clamp(interval, 10U, 5000U);
+    this->interval = std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000));
 
     if (resend >= 0) {
         this->fastresend = resend;

@@ -11,6 +11,13 @@ struct segment {
     u32 fastack, xmit;
     std::vector<std::byte> data;
 
+    explicit segment() : conv(0), cmd(0), frg(0),
+                         wnd(0), ts(0), sn(0), una(0),
+                         len(0),
+                         resendts(0), rto(0),
+                         fastack(0), xmit(0) {
+    }
+
     explicit segment(const size_t size) : conv(0), cmd(0), frg(0),
                                           wnd(0), ts(0), sn(0), una(0),
                                           len(0),
