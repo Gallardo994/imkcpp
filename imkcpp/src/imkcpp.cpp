@@ -9,6 +9,45 @@ static i32 _itimediff(u32 later, u32 earlier) {
     return static_cast<i32>(later - earlier);
 }
 
+imkcpp::imkcpp(const u32 conv, std::optional<void*> user) : conv(conv), user(user) {
+    this->snd_una = 0;
+    this->snd_nxt = 0;
+    this->rcv_nxt = 0;
+    this->ts_recent = 0;
+    this->ts_lastack = 0;
+    this->ts_probe = 0;
+    this->probe_wait = 0;
+    this->snd_wnd = IKCP_WND_SND;
+    this->rcv_wnd = IKCP_WND_RCV;
+    this->rmt_wnd = IKCP_WND_RCV;
+    this->cwnd = 0;
+    this->incr = 0;
+    this->probe = 0;
+    this->mtu = IKCP_MTU_DEF;
+    this->mss = this->mtu - IKCP_OVERHEAD;
+    this->stream = 0;
+
+    this->buffer.reserve((this->mtu + IKCP_OVERHEAD) * 3);
+
+    this->nsnd_buf = 0;
+    this->state = imkcpp_state::Alive;
+    this->rx_srtt = 0;
+    this->rx_rttval = 0;
+    this->rx_rto = IKCP_RTO_DEF;
+    this->rx_minrto = IKCP_RTO_MIN;
+    this->current = 0;
+    this->interval = IKCP_INTERVAL;
+    this->ts_flush = IKCP_INTERVAL;
+    this->nodelay = 0;
+    this->updated = 0;
+    this->ssthresh = IKCP_THRESH_INIT;
+    this->fastresend = 0;
+    this->fastlimit = IKCP_FASTACK_LIMIT;
+    this->nocwnd = 0;
+    this->xmit = 0;
+    this->dead_link = IKCP_DEADLINK;
+}
+
 void imkcpp::set_output(const std::function<i32(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)>&) {
     this->output = output;
 }

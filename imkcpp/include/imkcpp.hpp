@@ -49,6 +49,8 @@ private:
     void call_output(const std::span<const std::byte>& data) const;
 
 public:
+    explicit imkcpp(u32 conv, std::optional<void*> user = std::nullopt);
+
     void set_output(const std::function<int(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)>& output);
     void set_interval(u32 interval);
     void set_nodelay(i32 nodelay, u32 interval, i32 resend, i32 nc);
