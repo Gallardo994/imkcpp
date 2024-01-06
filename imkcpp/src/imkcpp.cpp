@@ -14,6 +14,7 @@ void imkcpp::set_interval(const u32 interval) {
 void imkcpp::set_nodelay(const i32 nodelay, u32 interval, const i32 resend, const i32 nc) {
     if (nodelay >= 0) {
         this->nodelay = nodelay;
+
         if (nodelay) {
             this->rx_minrto = IKCP_RTO_NDL;
         }
@@ -22,13 +23,7 @@ void imkcpp::set_nodelay(const i32 nodelay, u32 interval, const i32 resend, cons
         }
     }
 
-    if (interval > 5000) {
-        interval = 5000;
-    } else if (interval < 10) {
-        interval = 10;
-    }
-
-    this->interval = interval;
+    this->interval = std::clamp(interval, 10U, 5000U);
 
     if (resend >= 0) {
         this->fastresend = resend;
@@ -44,7 +39,7 @@ void imkcpp::set_mtu(const u32 mtu) {
         return;
     }
 
-    this->buffer.reserve(static_cast<size_t>(mtu + IKCP_OVERHEAD) * 3);
+    this->buffer.resize(static_cast<size_t>(mtu + IKCP_OVERHEAD) * 3);
     this->mtu = mtu;
     this->mss = this->mtu - IKCP_OVERHEAD;
 }
