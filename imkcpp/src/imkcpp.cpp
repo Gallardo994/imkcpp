@@ -1,7 +1,9 @@
-#include "imkcpp.hpp"
-#include "constants.hpp"
 #include <cstring>
 #include <cassert>
+
+#include "imkcpp.hpp"
+#include "constants.hpp"
+#include "encoder.hpp"
 
 static int _itimediff(unsigned long later, unsigned long earlier) {
     return static_cast<int>(later - earlier);
