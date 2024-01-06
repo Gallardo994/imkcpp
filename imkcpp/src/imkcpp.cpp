@@ -172,6 +172,20 @@ void imkcpp::parse_fastack(const u32 sn) {
     }
 }
 
+// ack append
+
+void imkcpp::ack_push(const u32 sn, const u32 ts) {
+    this->acklist.emplace_back(sn, ts);
+}
+
+std::optional<Ack> imkcpp::ack_get(int p) const {
+    if (p < 0 || static_cast<size_t>(p) >= this->acklist.size()) {
+        return std::nullopt;
+    }
+
+    return this->acklist[p];
+}
+
 // receive
 
 i32 imkcpp::recv(std::span<std::byte>& buffer) {

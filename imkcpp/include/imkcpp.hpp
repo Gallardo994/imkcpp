@@ -9,6 +9,7 @@
 
 #include "types.hpp"
 #include "segment.hpp"
+#include "ack.hpp"
 
 class imkcpp final {
 private:
@@ -29,7 +30,7 @@ private:
     std::deque<segment> snd_buf;
     std::deque<segment> rcv_buf;
 
-    u32* acklist;
+    std::vector<Ack> acklist;
     u32 ackcount;
     u32 ackblock;
 
@@ -55,6 +56,8 @@ public:
     void parse_ack(u32 sn);
     void parse_una(u32 una);
     void parse_fastack(u32 sn);
+    void ack_push(u32 sn, u32 ts);
+    [[nodiscard]] std::optional<Ack> ack_get(int p) const;
     i32 recv(std::span<std::byte>& buffer);
     i32 send(const std::span<const std::byte>& buffer);
 };
