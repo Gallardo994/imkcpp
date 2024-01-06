@@ -606,30 +606,34 @@ void imkcpp::flush() {
 
 	// calculate window size
 	cwnd = std::min(this->snd_wnd, this->rmt_wnd);
-	if (this->nocwnd == 0) cwnd = std::min(this->cwnd, cwnd);
+	if (this->nocwnd == 0) {
+	    cwnd = std::min(this->cwnd, cwnd);
+	}
 
 	// move data from snd_queue to snd_buf
 	while (_itimediff(this->snd_nxt, this->snd_una + cwnd) < 0) {
-		IKCPSEG *newseg;
-		if (iqueue_is_empty(&kcp->snd_queue)) break;
+	    if (snd_queue.empty()) {
+	        break;
+	    }
 
-		newseg = iqueue_entry(kcp->snd_queue.next, IKCPSEG, node);
+	    segment& newseg = snd_queue.front();
 
-		iqueue_del(&newseg->node);
-		iqueue_add_tail(&newseg->node, &kcp->snd_buf);
-		kcp->nsnd_que--;
-		kcp->nsnd_buf++;
+		this->nsnd_que--;
+		this->nsnd_buf++;
 
-		newseg->conv = kcp->conv;
-		newseg->cmd = IKCP_CMD_PUSH;
-		newseg->wnd = seg.wnd;
-		newseg->ts = current;
-		newseg->sn = kcp->snd_nxt++;
-		newseg->una = kcp->rcv_nxt;
-		newseg->resendts = current;
-		newseg->rto = kcp->rx_rto;
-		newseg->fastack = 0;
-		newseg->xmit = 0;
+		newseg.conv = this->conv;
+		newseg.cmd = IKCP_CMD_PUSH;
+		newseg.wnd = seg.wnd;
+		newseg.ts = current;
+		newseg.sn = this->snd_nxt++;
+		newseg.una = this->rcv_nxt;
+		newseg.resendts = current;
+		newseg.rto = this->rx_rto;
+		newseg.fastack = 0;
+		newseg.xmit = 0;
+
+	    snd_buf.push_back(std::move(newseg));
+	    snd_queue.pop_front();
 	}
 
 	// calculate resent
