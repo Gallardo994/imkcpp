@@ -477,7 +477,7 @@ i32 imkcpp::input(const std::span<const std::byte>& data) {
                         seg.len = len;
 
                         if (len > 0) {
-                            std::memcpy(seg.data.data(), data.data(), len);
+                            seg.data.insert(seg.data.end(), ptr, ptr + len);
                         }
 
                         this->parse_data(seg);
