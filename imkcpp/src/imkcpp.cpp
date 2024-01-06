@@ -288,7 +288,6 @@ i32 imkcpp::recv(std::span<std::byte>& buffer) {
 // send
 
 i32 imkcpp::send(const std::span<const std::byte>& buffer) {
-    assert(mss > 0);
     if (buffer.empty()) {
         return -1;
     }
