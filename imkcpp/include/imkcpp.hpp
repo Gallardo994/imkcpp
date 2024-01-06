@@ -51,6 +51,8 @@ public:
 
     [[nodiscard]] i32 peek_size() const;
     void update_ack(i32 rtt);
+    void shrink_buf();
+    void parse_ack(u32 sn);
     i32 recv(std::span<std::byte>& buffer);
     i32 send(const std::span<const std::byte>& buffer);
 };

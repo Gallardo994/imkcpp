@@ -3,6 +3,10 @@
 #include <cstring>
 #include <cassert>
 
+static int _itimediff(unsigned long later, unsigned long earlier) {
+    return static_cast<int>(later - earlier);
+}
+
 void imkcpp::set_output(const std::function<i32(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)>&) {
     this->output = output;
 }
@@ -104,9 +108,35 @@ void imkcpp::update_ack(const i32 rtt) {
     this->rx_rto = std::clamp(rto, this->rx_minrto, IKCP_RTO_MAX);
 }
 
-// TODO: ikcp_shrink_buf
+void imkcpp::shrink_buf() {
+    if (!this->snd_buf.empty()) {
+        const auto& seg = this->snd_buf.front();
+        this->snd_una = seg.sn;
+    }
+    else {
+        this->snd_una = this->snd_nxt;
+    }
+}
 
-// TODO: ikcp_parse_ack
+void imkcpp::parse_ack(const u32 sn) {
+    if (_itimediff(sn, this->snd_una) < 0 || _itimediff(sn, this->snd_nxt) >= 0) {
+        return;
+    }
+
+    for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
+        if (sn == it->sn) {
+            snd_buf.erase(it);
+            this->nsnd_buf--;
+            break;
+        }
+
+        if (_itimediff(sn, it->sn) < 0) {
+            break;
+        }
+
+        ++it;
+    }
+}
 
 // TODO: ikcp_parse_una
 
