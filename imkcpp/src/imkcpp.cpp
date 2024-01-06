@@ -152,17 +152,15 @@ void imkcpp::parse_una(const u32 una) {
     }
 }
 
-void imkcpp::parse_fastack(const u32 sn) {
-    if (_itimediff(sn, this->snd_una) < 0 || _itimediff(sn, this->snd_nxt) >= 0) {
+void imkcpp::parse_fastack(const u32 sn, const u32 ts) {
+    if (_itimediff(sn, snd_una) < 0 || _itimediff(sn, snd_nxt) >= 0) {
         return;
     }
 
-    for (auto& seg : this->snd_buf) {
+    for (auto& seg : snd_buf) {
         if (_itimediff(sn, seg.sn) < 0) {
             break;
-        }
-
-        if (sn != seg.sn) {
+        } else if (sn != seg.sn) {
 #ifndef IKCP_FASTACK_CONSERVE
             seg.fastack++;
 #else
@@ -350,4 +348,150 @@ void imkcpp::parse_data(const segment& newseg) {
             break;
         }
     }
+}
+
+std::byte* imkcpp::encode_seg(std::byte* ptr, const segment& seg) {
+    using namespace encoder;
+
+    ptr = encode32u(ptr, seg.conv);
+    ptr = encode8u(ptr, seg.cmd);
+    ptr = encode8u(ptr, seg.frg);
+    ptr = encode16u(ptr, seg.wnd);
+    ptr = encode32u(ptr, seg.ts);
+    ptr = encode32u(ptr, seg.sn);
+    ptr = encode32u(ptr, seg.una);
+    ptr = encode32u(ptr, seg.len);
+
+    return ptr;
+}
+
+i32 imkcpp::input(const std::span<const std::byte>& data) {
+    if (data.size() < IKCP_OVERHEAD) {
+        return -1;
+    }
+
+    i32 prev_una = this->snd_una;
+    i32 maxack = 0, latest_ts = 0;
+    int flag = 0;
+
+    const std::byte* ptr = data.data();
+    const std::byte* end = ptr + data.size();
+
+    while (ptr < end) {
+        uint32_t ts, sn, una, len, segment_conv;
+        uint16_t wnd;
+        uint8_t cmd, frg;
+
+        if (std::distance(ptr, end) < IKCP_OVERHEAD) {
+            break;
+        }
+
+        ptr = encoder::decode32u(ptr, segment_conv);
+        ptr = encoder::decode8u(ptr, cmd);
+        ptr = encoder::decode8u(ptr, frg);
+        ptr = encoder::decode16u(ptr, wnd);
+        ptr = encoder::decode32u(ptr, ts);
+        ptr = encoder::decode32u(ptr, sn);
+        ptr = encoder::decode32u(ptr, una);
+        ptr = encoder::decode32u(ptr, len);
+
+        if (segment_conv != conv) {
+            return -1;
+        }
+
+        if (std::distance(ptr, end) < static_cast<long>(len)) {
+            return -2;
+        }
+
+        switch (cmd) {
+            case IKCP_CMD_ACK: {
+                this->parse_ack(sn);
+                this->shrink_buf();
+
+                if (flag == 0) {
+                    flag = 1;
+                    maxack = sn;
+                    latest_ts = ts;
+                }
+                else {
+                    if (_itimediff(sn, maxack) > 0) {
+    #ifndef IKCP_FASTACK_CONSERVE
+                        maxack = sn;
+                        latest_ts = ts;
+    #else
+                        if (_itimediff(ts, latest_ts) > 0) {
+                            maxack = sn;
+                            latest_ts = ts;
+                        }
+    #endif
+                    }
+                }
+
+                break;
+            }
+            case IKCP_CMD_PUSH: {
+                if (_itimediff(sn, this->rcv_nxt + this->rcv_wnd) < 0) {
+                    this->ack_push(sn, ts);
+                    if (_itimediff(sn, this->rcv_nxt) >= 0) {
+                        segment seg = segment(len);
+                        seg.conv = conv;
+                        seg.cmd = cmd;
+                        seg.frg = frg;
+                        seg.wnd = wnd;
+                        seg.ts = ts;
+                        seg.sn = sn;
+                        seg.una = una;
+                        seg.len = len;
+
+                        if (len > 0) {
+                            std::memcpy(seg.data.data(), data.data(), len);
+                        }
+
+                        this->parse_data(seg);
+                    }
+                }
+                break;
+            }
+            case IKCP_CMD_WASK: {
+                this->probe |= IKCP_ASK_TELL;
+                break;
+            }
+            case IKCP_CMD_WINS: {
+                // Do nothing
+                break;
+            }
+            default: {
+                return -3;
+            }
+        }
+
+        ptr += len;
+    }
+
+    if (flag != 0) {
+        this->parse_fastack(maxack, latest_ts);
+    }
+
+    if (_itimediff(this->snd_una, prev_una) > 0) {
+        if (this->cwnd < this->rmt_wnd) {
+            i32 mss = this->mss;
+            if (this->cwnd < this->ssthresh) {
+                this->cwnd++;
+                this->incr += mss;
+            }
+            else {
+                if (this->incr < mss) this->incr = mss;
+                this->incr += (mss * mss) / this->incr + (mss / 16);
+                if ((this->cwnd + 1) * mss <= this->incr) {
+                    this->cwnd = (this->incr + mss - 1) / ((mss > 0) ? mss : 1);
+                }
+            }
+            if (this->cwnd > this->rmt_wnd) {
+                this->cwnd = this->rmt_wnd;
+                this->incr = this->rmt_wnd * mss;
+            }
+        }
+    }
+
+    return 0; // Success
 }

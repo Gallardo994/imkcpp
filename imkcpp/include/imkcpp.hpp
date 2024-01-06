@@ -55,10 +55,12 @@ public:
     void shrink_buf();
     void parse_ack(u32 sn);
     void parse_una(u32 una);
-    void parse_fastack(u32 sn);
+    void parse_fastack(u32 sn, u32 ts);
     void ack_push(u32 sn, u32 ts);
     [[nodiscard]] std::optional<Ack> ack_get(int p) const;
     i32 recv(std::span<std::byte>& buffer);
     i32 send(const std::span<const std::byte>& buffer);
     void parse_data(const segment& newseg);
+    std::byte* encode_seg(std::byte* ptr, const segment& seg);
+    i32 input(const std::span<const std::byte>& data);
 };
