@@ -178,7 +178,7 @@ void imkcpp::ack_push(const u32 sn, const u32 ts) {
     this->acklist.emplace_back(sn, ts);
 }
 
-std::optional<Ack> imkcpp::ack_get(int p) const {
+std::optional<Ack> imkcpp::ack_get(const int p) const {
     if (p < 0 || static_cast<size_t>(p) >= this->acklist.size()) {
         return std::nullopt;
     }
