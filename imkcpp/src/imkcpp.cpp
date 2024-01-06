@@ -495,3 +495,67 @@ i32 imkcpp::input(const std::span<const std::byte>& data) {
 
     return 0; // Success
 }
+
+void imkcpp::update(u32 current) {
+    this->current = current;
+
+    if (this->updated == 0) {
+        this->updated = 1;
+        this->ts_flush = this->current;
+    }
+
+    i32 slap = _itimediff(this->current, this->ts_flush);
+
+    if (slap >= 10000 || slap < -10000) {
+        this->ts_flush = this->current;
+        slap = 0;
+    }
+
+    if (slap >= 0) {
+        this->ts_flush += this->interval;
+        if (_itimediff(this->current, this->ts_flush) >= 0) {
+            this->ts_flush = this->current + this->interval;
+        }
+        this->flush();
+    }
+}
+
+u32 imkcpp::check(u32 current) {
+    i32 tm_flush = 0x7fffffff;
+    i32 tm_packet = 0x7fffffff;
+    u32 minimal = 0;
+
+    if (updated == 0) {
+        return current;
+    }
+
+    if (_itimediff(current, ts_flush) >= 10000 || _itimediff(current, ts_flush) < -10000) {
+        ts_flush = current;
+    }
+
+    if (_itimediff(current, ts_flush) >= 0) {
+        return current;
+    }
+
+    tm_flush = _itimediff(ts_flush, current);
+
+    for (const auto& seg : snd_buf) {
+        i32 diff = _itimediff(seg.resendts, current);
+
+        if (diff <= 0) {
+            return current;
+        }
+
+        if (diff < tm_packet) {
+            tm_packet = diff;
+        }
+    }
+
+    minimal = static_cast<u32>(tm_packet < tm_flush ? tm_packet : tm_flush);
+
+    if (minimal >= interval) {
+        minimal = interval;
+    }
+
+    return current + minimal;
+}
