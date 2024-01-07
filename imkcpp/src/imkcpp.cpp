@@ -268,24 +268,24 @@ i32 imkcpp::send(const std::span<const std::byte>& buffer) {
         return -1;
     }
 
-    int len = buffer.size();
-    int sent = 0;
+    size_t len = buffer.size();
+    size_t sent = 0;
     auto buf_ptr = buffer.begin();
 
     if (len <= 0) {
         return sent;
     }
 
-    int count = (len <= mss) ? 1 : (len + mss - 1) / mss;
+    size_t count = (len <= this->mss) ? 1 : (len + this->mss - 1) / this->mss;
 
     if (count >= this->rcv_wnd) {
         return -2;
     }
 
-    count = std::max(count, 1);
+    count = std::max(count, static_cast<size_t>(1));
 
     for (int i = 0; i < count; i++) {
-        int size = std::min(len, static_cast<int32_t>(mss));
+        size_t size = std::min(len, this->mss);
         segment seg(size);
         // TODO: This needs to be a proper insert
         std::copy(buf_ptr, buf_ptr + size, seg.data.begin());

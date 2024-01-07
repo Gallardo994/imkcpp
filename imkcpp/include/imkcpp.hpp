@@ -20,8 +20,8 @@ enum class imkcpp_state : i32 {
 class imkcpp final {
 private:
     u32 conv = 0;
-    u32 mtu = 0;
-    u32 mss = 0;
+    size_t mtu = 0;
+    size_t mss = 0;
 
     imkcpp_state state = imkcpp_state::Alive;
 
