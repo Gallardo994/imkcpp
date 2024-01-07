@@ -507,7 +507,7 @@ i32 imkcpp::input(const std::span<const std::byte>& data) {
 
     if (_itimediff(this->snd_una, prev_una) > 0) {
         if (this->cwnd < this->rmt_wnd) {
-            i32 mss = this->mss;
+            const u32 mss = this->mss;
             if (this->cwnd < this->ssthresh) {
                 this->cwnd++;
                 this->incr += mss;

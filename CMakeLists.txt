@@ -4,8 +4,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(imkcpp_root)
 
-option(BUILD_TESTS "Build tests" OFF)
-option(ENABLE_ASAN "Enable Address Sanitizer" OFF)
+option(ENABLE_ASAN "Enable Address Sanitizer" ON)
 
 if (ENABLE_ASAN)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
@@ -15,7 +14,4 @@ if (ENABLE_ASAN)
 endif()
 
 add_subdirectory(imkcpp)
-
-if(BUILD_TESTS)
-    add_subdirectory(tests)
-endif()
+add_subdirectory(tests)
