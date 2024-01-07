@@ -8,7 +8,7 @@ set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "Suppressing benchmark's tests" FORC
 
 add_subdirectory(lib)
 
-add_executable(flakeflow_benchmarks
+add_executable(imkcpp_benchmarks
 
 )
 
