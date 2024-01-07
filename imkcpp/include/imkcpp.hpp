@@ -89,7 +89,6 @@ public:
     i32 recv(std::span<std::byte>& buffer);
     i32 send(const std::span<const std::byte>& buffer);
     void parse_data(const segment& newseg);
-    void encode_seg(const segment& seg, std::vector<std::byte>& vector);
     i32 input(const std::span<const std::byte>& data);
     void update(u32 current);
     void flush();

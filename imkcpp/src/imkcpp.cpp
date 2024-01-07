@@ -287,9 +287,9 @@ i32 imkcpp::send(const std::span<const std::byte>& buffer) {
     for (int i = 0; i < count; i++) {
         int size = std::min(len, static_cast<int32_t>(mss));
         segment seg(size);
+        // TODO: This needs to be a proper insert
         std::copy(buf_ptr, buf_ptr + size, seg.data.begin());
 
-        seg.len = size;
         seg.frg = count - i - 1;
 
         snd_queue.push_back(seg);
@@ -333,19 +333,6 @@ void imkcpp::parse_data(const segment& newseg) {
             break;
         }
     }
-}
-
-void imkcpp::encode_seg(const segment& seg, std::vector<std::byte>& vector) {
-    assert(vector.size() >= IKCP_OVERHEAD);
-
-    encoder::encode32u(vector, seg.conv);
-    encoder::encode8u(vector, seg.cmd);
-    encoder::encode8u(vector, seg.frg);
-    encoder::encode16u(vector, seg.wnd);
-    encoder::encode32u(vector, seg.ts);
-    encoder::encode32u(vector, seg.sn);
-    encoder::encode32u(vector, seg.una);
-    encoder::encode32u(vector, seg.len);
 }
 
 // TODO: Mismatch between original and this code.
@@ -426,7 +413,6 @@ i32 imkcpp::input(const std::span<const std::byte>& data) {
                         seg.ts = ts;
                         seg.sn = sn;
                         seg.una = una;
-                        seg.len = len;
 
                         if (len > 0) {
                             seg.data.insert(seg.data.end(), ptr, ptr + len);
@@ -521,7 +507,6 @@ void imkcpp::flush() {
 	seg.frg = 0;
 	seg.wnd = this->wnd_unused();
 	seg.una = this->rcv_nxt;
-	seg.len = 0;
 	seg.sn = 0;
 	seg.ts = 0;
 
@@ -535,7 +520,7 @@ void imkcpp::flush() {
         seg.sn = ack.sn;
         seg.ts = ack.ts;
 
-        this->encode_seg(seg, this->buffer);
+        seg.encode_header_to(this->buffer);
     }
 
     this->acklist.clear();
@@ -572,7 +557,7 @@ void imkcpp::flush() {
 		}
 
 	    seg.cmd = IKCP_CMD_WASK;
-	    this->encode_seg(seg, this->buffer);
+	    seg.encode_header_to(this->buffer);
 	}
 
 	// flush window probing commands
@@ -583,7 +568,7 @@ void imkcpp::flush() {
 		}
 
 	    seg.cmd = IKCP_CMD_WINS;
-	    this->encode_seg(seg, this->buffer);
+	    seg.encode_header_to(this->buffer);
 	}
 
 	this->probe = 0;
@@ -659,16 +644,13 @@ void imkcpp::flush() {
 			segment.wnd = seg.wnd;
 			segment.una = this->rcv_nxt;
 
-			if (this->buffer.size() + segment.len > this->mss) {
+			if (this->buffer.size() + segment.data.size() > this->mss) {
 				call_output(this->buffer);
 			    this->buffer.clear();
 			}
 
-			this->encode_seg(segment, this->buffer);
-
-			if (segment.len > 0) {
-			    encoder::encode_raw(this->buffer, segment.data);
-			}
+		    seg.encode_header_to(this->buffer);
+		    seg.encode_data_to(this->buffer);
 
 			if (segment.xmit >= this->dead_link) {
 				this->state = imkcpp_state::Dead;

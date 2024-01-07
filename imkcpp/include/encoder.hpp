@@ -54,8 +54,4 @@ namespace encoder {
         std::memcpy(temp, &l, sizeof(u32));
         buf.insert(buf.end(), std::begin(temp), std::end(temp));
     }
-
-    inline void encode_raw(std::vector<std::byte>& buf, const std::vector<std::byte>& data) {
-        buf.insert(buf.end(), std::begin(data), std::end(data));
-    }
 }
