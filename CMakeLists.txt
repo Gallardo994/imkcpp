@@ -20,3 +20,6 @@ endif()
 
 add_subdirectory(imkcpp)
 add_subdirectory(tests)
+if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_subdirectory(benchmarks)
+endif()
