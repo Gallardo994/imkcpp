@@ -67,7 +67,6 @@ namespace imkcpp {
         void parse_ack(u32 sn);
         void parse_una(u32 una);
         void parse_fastack(u32 sn, u32 ts);
-        void ack_push(u32 sn, u32 ts);
         [[nodiscard]] std::optional<Ack> ack_get(size_t p) const;
         void parse_data(const segment& newseg);
         [[nodiscard]] i32 wnd_unused() const;

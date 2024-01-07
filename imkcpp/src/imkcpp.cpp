@@ -194,11 +194,6 @@ namespace imkcpp {
     }
 
     // ack append
-
-    void ImKcpp::ack_push(const u32 sn, const u32 ts) {
-        this->acklist.emplace_back(sn, ts);
-    }
-
     std::optional<Ack> ImKcpp::ack_get(const size_t p) const {
         if (p >= this->acklist.size()) {
             return std::nullopt;
@@ -401,7 +396,7 @@ namespace imkcpp {
                 }
                 case commands::IKCP_CMD_PUSH: {
                     if (_itimediff(sn, this->rcv_nxt + this->rcv_wnd) < 0) {
-                        this->ack_push(sn, ts);
+                        this->acklist.emplace_back(sn, ts);
                         if (_itimediff(sn, this->rcv_nxt) >= 0) {
                             segment seg(len);
                             seg.conv = conv;
