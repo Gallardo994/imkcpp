@@ -57,6 +57,7 @@ namespace imkcpp {
             return;
         }
 
+        // TODO: Does this really need triple the size?
         this->buffer.resize(static_cast<size_t>(mtu + constants::IKCP_OVERHEAD) * 3);
         this->mtu = mtu;
         this->mss = this->mtu - constants::IKCP_OVERHEAD;
