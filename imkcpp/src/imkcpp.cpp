@@ -380,64 +380,64 @@ namespace imkcpp {
             }
 
             switch (cmd) {
-            case commands::IKCP_CMD_ACK: {
-                this->parse_ack(sn);
-                this->shrink_buf();
+                case commands::IKCP_CMD_ACK: {
+                    this->parse_ack(sn);
+                    this->shrink_buf();
 
-                if (flag == 0) {
-                    flag = 1;
-                    maxack = sn;
-                    latest_ts = ts;
-                }
-                else {
-                    if (_itimediff(sn, maxack) > 0) {
-#ifndef IKCP_FASTACK_CONSERVE
+                    if (flag == 0) {
+                        flag = 1;
                         maxack = sn;
                         latest_ts = ts;
-#else
-                        if (_itimediff(ts, latest_ts) > 0) {
+                    }
+                    else {
+                        if (_itimediff(sn, maxack) > 0) {
+    #ifndef IKCP_FASTACK_CONSERVE
                             maxack = sn;
                             latest_ts = ts;
+    #else
+                            if (_itimediff(ts, latest_ts) > 0) {
+                                maxack = sn;
+                                latest_ts = ts;
+                            }
+    #endif
                         }
-#endif
                     }
+
+                    break;
                 }
+                case commands::IKCP_CMD_PUSH: {
+                    if (_itimediff(sn, this->rcv_nxt + this->rcv_wnd) < 0) {
+                        this->ack_push(sn, ts);
+                        if (_itimediff(sn, this->rcv_nxt) >= 0) {
+                            segment seg(len);
+                            seg.conv = conv;
+                            seg.cmd = cmd;
+                            seg.frg = frg;
+                            seg.wnd = wnd;
+                            seg.ts = ts;
+                            seg.sn = sn;
+                            seg.una = una;
 
-                break;
-            }
-            case commands::IKCP_CMD_PUSH: {
-                if (_itimediff(sn, this->rcv_nxt + this->rcv_wnd) < 0) {
-                    this->ack_push(sn, ts);
-                    if (_itimediff(sn, this->rcv_nxt) >= 0) {
-                        segment seg(len);
-                        seg.conv = conv;
-                        seg.cmd = cmd;
-                        seg.frg = frg;
-                        seg.wnd = wnd;
-                        seg.ts = ts;
-                        seg.sn = sn;
-                        seg.una = una;
+                            if (len > 0) {
+                                seg.data.insert(seg.data.end(), ptr, ptr + len);
+                            }
 
-                        if (len > 0) {
-                            seg.data.insert(seg.data.end(), ptr, ptr + len);
+                            this->parse_data(seg);
                         }
-
-                        this->parse_data(seg);
                     }
+                    break;
                 }
-                break;
-            }
-            case commands::IKCP_CMD_WASK: {
-                this->probe |= constants::IKCP_ASK_TELL;
-                break;
-            }
-            case commands::IKCP_CMD_WINS: {
-                // Do nothing
-                break;
-            }
-            default: {
-                return -3;
-            }
+                case commands::IKCP_CMD_WASK: {
+                    this->probe |= constants::IKCP_ASK_TELL;
+                    break;
+                }
+                case commands::IKCP_CMD_WINS: {
+                    // Do nothing
+                    break;
+                }
+                default: {
+                    return -3;
+                }
             }
 
             ptr += len;
