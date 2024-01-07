@@ -613,26 +613,27 @@ namespace imkcpp {
         // flush data segments
         for (segment& segment : this->snd_buf) {
             int needsend = 0;
+
             if (segment.xmit == 0) {
                 needsend = 1;
                 segment.xmit++;
                 segment.rto = this->rx_rto;
                 segment.resendts = current + segment.rto + rtomin;
-            }
-            else if (_itimediff(current, segment.resendts) >= 0) {
+            } else if (_itimediff(current, segment.resendts) >= 0) {
                 needsend = 1;
                 segment.xmit++;
                 this->xmit++;
+
                 if (this->nodelay == 0) {
                     segment.rto += std::max(segment.rto, this->rx_rto);
                 } else {
                     const u32 step = this->nodelay < 2? segment.rto : this->rx_rto;
                     segment.rto += step / 2;
                 }
+
                 segment.resendts = current + segment.rto;
                 lost = true;
-            }
-            else if (segment.fastack >= resent) {
+            } else if (segment.fastack >= resent) {
                 // TODO: The second check is probably redundant
                 if (segment.xmit <= this->fastlimit || this->fastlimit <= 0) {
                     needsend = 1;
@@ -640,7 +641,7 @@ namespace imkcpp {
                     segment.fastack = 0;
                     segment.resendts = current + segment.rto;
                     change++;
-                    }
+                }
             }
 
             if (needsend) {
