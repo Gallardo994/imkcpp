@@ -21,7 +21,7 @@ private:
     u32 conv, mtu, mss;
     imkcpp_state state;
     u32 snd_una, snd_nxt, rcv_nxt;
-    u32 ts_lastack, ssthresh;
+    u32 ssthresh;
     u32 rx_rttval, rx_srtt, rx_rto, rx_minrto;
     u32 snd_wnd, rcv_wnd, rmt_wnd, cwnd, probe;
     u32 current, interval, ts_flush, xmit;
