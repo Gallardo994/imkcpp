@@ -500,9 +500,9 @@ namespace imkcpp {
             return;
         }
 
-        u32 current = this->current;
+        const u32 current = this->current;
         int change = 0;
-        int lost = 0;
+        bool lost = false;
 
         segment seg;
 
@@ -630,7 +630,7 @@ namespace imkcpp {
                     segment.rto += step / 2;
                 }
                 segment.resendts = current + segment.rto;
-                lost = 1;
+                lost = true;
             }
             else if (segment.fastack >= resent) {
                 if ((int)segment.xmit <= this->fastlimit || this->fastlimit <= 0) {
