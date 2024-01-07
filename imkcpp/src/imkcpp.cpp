@@ -272,38 +272,34 @@ namespace imkcpp {
         }
 
         size_t len = buffer.size();
-        size_t sent = 0;
-        auto buf_ptr = buffer.begin();
-
-        if (len <= 0) {
-            return sent;
-        }
 
         size_t count = (len <= this->mss) ? 1 : (len + this->mss - 1) / this->mss;
 
+        // TODO: Shouldn't this be either rmt_wnd or snd_wnd?
         if (count >= this->rcv_wnd) {
             return -2;
         }
 
         count = std::max(count, static_cast<size_t>(1));
 
-        for (int i = 0; i < count; i++) {
-            size_t size = std::min(len, this->mss);
-            segment seg(size);
-            // TODO: This needs to be a proper insert
-            std::copy(buf_ptr, buf_ptr + size, seg.data.begin());
+        auto buf_ptr = buffer.begin();
+        size_t sent = 0;
 
-            seg.frg = count - i - 1;
+        for (size_t i = 0; i < count; i++) {
+            const size_t size = std::min(len, this->mss);
+            segment& seg = snd_queue.emplace_back();
 
-            snd_queue.push_back(seg);
+            seg.data.assign(buf_ptr, buf_ptr + size);
+            seg.frg = static_cast<uint8_t>(count - i - 1);
 
             buf_ptr += size;
             len -= size;
             sent += size;
         }
 
-        return sent;
+        return static_cast<i32>(sent);
     }
+
 
     void ImKcpp::parse_data(const segment& newseg) {
         u32 sn = newseg.sn;
