@@ -47,7 +47,7 @@ imkcpp::imkcpp(const u32 conv, std::optional<void*> user) : conv(conv), user(use
     this->dead_link = IKCP_DEADLINK;
 }
 
-void imkcpp::set_output(const std::function<i32(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)>&) {
+void imkcpp::set_output(const std::function<i32(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)>& output) {
     this->output = output;
 }
 
