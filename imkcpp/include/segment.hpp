@@ -23,7 +23,7 @@ namespace imkcpp {
         explicit segment(const size_t size) : data(size) { }
 
         void encode_to(std::vector<std::byte>& buf) const {
-            assert(buf.size() >= constants::IKCP_OVERHEAD);
+            assert(buf.size() >= constants::IKCP_OVERHEAD + data.size());
 
             encoder::encode32u(buf, conv);
             encoder::encode8u(buf, cmd);
@@ -34,7 +34,6 @@ namespace imkcpp {
             encoder::encode32u(buf, una);
             encoder::encode32u(buf, data.size());
 
-            assert(buf.size() >= constants::IKCP_OVERHEAD + data.size());
             buf.insert(buf.end(), std::begin(data), std::end(data));
         }
     };
