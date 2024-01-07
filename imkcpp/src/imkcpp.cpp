@@ -208,7 +208,9 @@ void imkcpp::parse_fastack(const u32 sn, const u32 ts) {
     for (auto& seg : snd_buf) {
         if (_itimediff(sn, seg.sn) < 0) {
             break;
-        } else if (sn != seg.sn) {
+        }
+
+        if (sn != seg.sn) {
 #ifndef IKCP_FASTACK_CONSERVE
             seg.fastack++;
 #else
@@ -226,12 +228,12 @@ void imkcpp::ack_push(const u32 sn, const u32 ts) {
     this->acklist.emplace_back(sn, ts);
 }
 
-std::optional<Ack> imkcpp::ack_get(const int p) const {
-    if (p < 0 || static_cast<size_t>(p) >= this->acklist.size()) {
+std::optional<Ack> imkcpp::ack_get(const size_t p) const {
+    if (p >= this->acklist.size()) {
         return std::nullopt;
     }
 
-    return this->acklist[p];
+    return this->acklist.at(p);
 }
 
 // receive

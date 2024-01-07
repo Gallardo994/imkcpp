@@ -66,7 +66,7 @@ public:
     void parse_una(u32 una);
     void parse_fastack(u32 sn, u32 ts);
     void ack_push(u32 sn, u32 ts);
-    [[nodiscard]] std::optional<Ack> ack_get(int p) const;
+    [[nodiscard]] std::optional<Ack> ack_get(size_t p) const;
     i32 recv(std::span<std::byte>& buffer);
     i32 send(const std::span<const std::byte>& buffer);
     void parse_data(const segment& newseg);
