@@ -7,10 +7,6 @@ namespace imkcpp::constants {
     constexpr uint32_t IKCP_RTO_MIN = 100;		// normal min rto
     constexpr uint32_t IKCP_RTO_DEF = 200;
     constexpr uint32_t IKCP_RTO_MAX = 60000;
-    constexpr uint32_t IKCP_CMD_PUSH = 81;		// cmd: push data
-    constexpr uint32_t IKCP_CMD_ACK  = 82;		// cmd: ack
-    constexpr uint32_t IKCP_CMD_WASK = 83;		// cmd: window probe (ask)
-    constexpr uint32_t IKCP_CMD_WINS = 84;		// cmd: window size (tell)
     constexpr uint32_t IKCP_ASK_SEND = 1;		// need to send IKCP_CMD_WASK
     constexpr uint32_t IKCP_ASK_TELL = 2;		// need to send IKCP_CMD_WINS
     constexpr uint32_t IKCP_WND_SND = 32;

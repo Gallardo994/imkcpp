@@ -4,6 +4,7 @@
 #include "imkcpp.hpp"
 #include "constants.hpp"
 #include "encoder.hpp"
+#include "commands.hpp"
 
 namespace imkcpp {
     static i32 _itimediff(u32 later, u32 earlier) {
@@ -377,7 +378,7 @@ namespace imkcpp {
             }
 
             switch (cmd) {
-            case constants::IKCP_CMD_ACK: {
+            case commands::IKCP_CMD_ACK: {
                 this->parse_ack(sn);
                 this->shrink_buf();
 
@@ -402,7 +403,7 @@ namespace imkcpp {
 
                 break;
             }
-            case constants::IKCP_CMD_PUSH: {
+            case commands::IKCP_CMD_PUSH: {
                 if (_itimediff(sn, this->rcv_nxt + this->rcv_wnd) < 0) {
                     this->ack_push(sn, ts);
                     if (_itimediff(sn, this->rcv_nxt) >= 0) {
@@ -424,11 +425,11 @@ namespace imkcpp {
                 }
                 break;
             }
-            case constants::IKCP_CMD_WASK: {
+            case commands::IKCP_CMD_WASK: {
                 this->probe |= constants::IKCP_ASK_TELL;
                 break;
             }
-            case constants::IKCP_CMD_WINS: {
+            case commands::IKCP_CMD_WINS: {
                 // Do nothing
                 break;
             }
@@ -504,7 +505,7 @@ namespace imkcpp {
         segment seg;
 
         seg.conv = this->conv;
-        seg.cmd = constants::IKCP_CMD_ACK;
+        seg.cmd = commands::IKCP_CMD_ACK;
         seg.frg = 0;
         seg.wnd = this->wnd_unused();
         seg.una = this->rcv_nxt;
@@ -557,7 +558,7 @@ namespace imkcpp {
                 this->buffer.clear();
             }
 
-            seg.cmd = constants::IKCP_CMD_WASK;
+            seg.cmd = commands::IKCP_CMD_WASK;
             seg.encode_header_to(this->buffer);
         }
 
@@ -568,7 +569,7 @@ namespace imkcpp {
                 this->buffer.clear();
             }
 
-            seg.cmd = constants::IKCP_CMD_WINS;
+            seg.cmd = commands::IKCP_CMD_WINS;
             seg.encode_header_to(this->buffer);
         }
 
@@ -589,7 +590,7 @@ namespace imkcpp {
             segment& newseg = snd_queue.front();
 
             newseg.conv = this->conv;
-            newseg.cmd = constants::IKCP_CMD_PUSH;
+            newseg.cmd = commands::IKCP_CMD_PUSH;
             newseg.wnd = seg.wnd;
             newseg.ts = current;
             newseg.sn = this->snd_nxt++;
@@ -630,8 +631,7 @@ namespace imkcpp {
                 lost = 1;
             }
             else if (segment.fastack >= resent) {
-                if ((int)segment.xmit <= this->fastlimit ||
-                    this->fastlimit <= 0) {
+                if ((int)segment.xmit <= this->fastlimit || this->fastlimit <= 0) {
                     needsend = 1;
                     segment.xmit++;
                     segment.fastack = 0;
