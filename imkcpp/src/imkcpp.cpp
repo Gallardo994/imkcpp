@@ -15,7 +15,7 @@ namespace imkcpp {
         this->set_mtu(constants::IKCP_MTU_DEF);
     }
 
-    void ImKcpp::set_output(const std::function<i32(std::span<const std::byte> data, const ImKcpp& imkcpp, std::optional<void*> user)>& output) {
+    void ImKcpp::set_output(const output_callback_t& output) {
         this->output = output;
     }
 

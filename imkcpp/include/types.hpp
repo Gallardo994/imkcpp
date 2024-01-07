@@ -1,8 +1,13 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
+#include <optional>
+#include <span>
 
 namespace imkcpp {
+    class ImKcpp;
+
     using i8 = int8_t;
     using u8 = uint8_t;
 
@@ -14,4 +19,6 @@ namespace imkcpp {
 
     using i64 = int64_t;
     using u64 = uint64_t;
+
+    using output_callback_t = std::function<i32(std::span<const std::byte>, const ImKcpp&, std::optional<void*>)>;
 }

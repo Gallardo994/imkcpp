@@ -59,7 +59,7 @@ namespace imkcpp {
         i32 fastlimit = constants::IKCP_FASTACK_LIMIT;
         i32 nocwnd = 0;
 
-        std::function<i32(std::span<const std::byte> data, const ImKcpp& imkcpp, std::optional<void*> user)> output;
+        output_callback_t output;
 
         void call_output(const std::span<const std::byte>& data) const;
         void update_ack(i32 rtt);
@@ -74,7 +74,7 @@ namespace imkcpp {
     public:
         explicit ImKcpp(u32 conv, std::optional<void*> user = std::nullopt);
 
-        void set_output(const std::function<int(std::span<const std::byte> data, const ImKcpp& imkcpp, std::optional<void*> user)>& output);
+        void set_output(const output_callback_t& output);
         void set_interval(u32 interval);
         void set_nodelay(i32 nodelay, u32 interval, i32 resend, i32 nc);
         void set_mtu(u32 mtu);
