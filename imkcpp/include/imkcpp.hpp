@@ -25,7 +25,8 @@ private:
     u32 rx_rttval, rx_srtt, rx_rto, rx_minrto;
     u32 snd_wnd, rcv_wnd, rmt_wnd, cwnd, probe;
     u32 current, interval, ts_flush, xmit;
-    u32 nodelay, updated;
+    u32 nodelay;
+    bool updated;
     u32 ts_probe, probe_wait;
     u32 dead_link, incr;
 

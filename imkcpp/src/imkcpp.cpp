@@ -36,7 +36,7 @@ imkcpp::imkcpp(const u32 conv, std::optional<void*> user) : conv(conv), user(use
     this->interval = IKCP_INTERVAL;
     this->ts_flush = IKCP_INTERVAL;
     this->nodelay = 0;
-    this->updated = 0;
+    this->updated = false;
     this->ssthresh = IKCP_THRESH_INIT;
     this->fastresend = 0;
     this->fastlimit = IKCP_FASTACK_LIMIT;
@@ -538,8 +538,8 @@ i32 imkcpp::input(const std::span<const std::byte>& data) {
 void imkcpp::update(u32 current) {
     this->current = current;
 
-    if (this->updated == 0) {
-        this->updated = 1;
+    if (!this->updated) {
+        this->updated = true;
         this->ts_flush = this->current;
     }
 
@@ -560,7 +560,7 @@ void imkcpp::update(u32 current) {
 }
 
 void imkcpp::flush() {
-	if (this->updated == 0) {
+	if (!this->updated) {
 	    return;
 	}
 
@@ -762,21 +762,21 @@ u32 imkcpp::check(u32 current) {
     i32 tm_packet = 0x7fffffff;
     u32 minimal = 0;
 
-    if (updated == 0) {
+    if (!this->updated) {
         return current;
     }
 
-    if (_itimediff(current, ts_flush) >= 10000 || _itimediff(current, ts_flush) < -10000) {
-        ts_flush = current;
+    if (_itimediff(current, this->ts_flush) >= 10000 || _itimediff(current, this->ts_flush) < -10000) {
+        this->ts_flush = current;
     }
 
-    if (_itimediff(current, ts_flush) >= 0) {
+    if (_itimediff(current, this->ts_flush) >= 0) {
         return current;
     }
 
-    tm_flush = _itimediff(ts_flush, current);
+    tm_flush = _itimediff(this->ts_flush, current);
 
-    for (const auto& seg : snd_buf) {
+    for (const auto& seg : this->snd_buf) {
         const i32 diff = _itimediff(seg.resendts, current);
 
         if (diff <= 0) {
@@ -790,8 +790,8 @@ u32 imkcpp::check(u32 current) {
 
     minimal = static_cast<u32>(tm_packet < tm_flush ? tm_packet : tm_flush);
 
-    if (minimal >= interval) {
-        minimal = interval;
+    if (minimal >= this->interval) {
+        minimal = this->interval;
     }
 
     return current + minimal;
