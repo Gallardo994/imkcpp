@@ -494,6 +494,7 @@ namespace imkcpp {
         }
     }
 
+    // TODO: This may hold data which is undesirable in some segment types.
     void ImKcpp::flush() {
         if (!this->updated) {
             return;
