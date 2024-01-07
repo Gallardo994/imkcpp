@@ -524,7 +524,7 @@ namespace imkcpp {
             seg.sn = ack.sn;
             seg.ts = ack.ts;
 
-            seg.encode_header_to(this->buffer);
+            seg.encode_to(this->buffer);
         }
 
         this->acklist.clear();
@@ -561,7 +561,7 @@ namespace imkcpp {
             }
 
             seg.cmd = commands::IKCP_CMD_WASK;
-            seg.encode_header_to(this->buffer);
+            seg.encode_to(this->buffer);
         }
 
         // flush window probing commands
@@ -572,7 +572,7 @@ namespace imkcpp {
             }
 
             seg.cmd = commands::IKCP_CMD_WINS;
-            seg.encode_header_to(this->buffer);
+            seg.encode_to(this->buffer);
         }
 
         this->probe = 0;
@@ -654,8 +654,7 @@ namespace imkcpp {
                     this->buffer.clear();
                 }
 
-                seg.encode_header_to(this->buffer);
-                seg.encode_data_to(this->buffer);
+                seg.encode_to(this->buffer);
 
                 if (segment.xmit >= this->dead_link) {
                     this->state = State::DeadLink;
