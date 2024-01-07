@@ -1,5 +1,6 @@
 #pragma once
 
+#include <constants.hpp>
 #include <cstdint>
 #include <functional>
 #include <span>
@@ -18,31 +19,49 @@ enum class imkcpp_state : i32 {
 
 class imkcpp final {
 private:
-    u32 conv, mtu, mss;
-    imkcpp_state state;
-    u32 snd_una, snd_nxt, rcv_nxt;
-    u32 ssthresh;
-    u32 rx_rttval, rx_srtt, rx_rto, rx_minrto;
-    u32 snd_wnd, rcv_wnd, rmt_wnd, cwnd, probe;
-    u32 current, interval, ts_flush, xmit;
-    u32 nodelay;
-    bool updated;
-    u32 ts_probe, probe_wait;
-    u32 dead_link, incr;
+    u32 conv = 0;
+    u32 mtu = 0;
+    u32 mss = 0;
 
-    std::deque<segment> snd_queue;
-    std::deque<segment> rcv_queue;
-    std::deque<segment> snd_buf;
-    std::deque<segment> rcv_buf;
+    imkcpp_state state = imkcpp_state::Alive;
 
-    std::vector<Ack> acklist;
+    u32 snd_una = 0;
+    u32 snd_nxt = 0;
+    u32 rcv_nxt = 0;
+    u32 ssthresh = IKCP_THRESH_INIT;
+    u32 rx_rttval = 0;
+    u32 rx_srtt = 0;
+    u32 rx_rto = IKCP_RTO_DEF;
+    u32 rx_minrto = IKCP_RTO_MIN;
+    u32 snd_wnd = IKCP_WND_SND;
+    u32 rcv_wnd = IKCP_WND_RCV;
+    u32 rmt_wnd = IKCP_WND_RCV;
+    u32 cwnd = 0;
+    u32 probe = 0;
+    u32 current = 0;
+    u32 interval = IKCP_INTERVAL;
+    u32 ts_flush = IKCP_INTERVAL;
+    u32 xmit = 0;
+    u32 nodelay = 0;
+    bool updated = false;
+    u32 ts_probe = 0;
+    u32 probe_wait = 0;
+    u32 dead_link = IKCP_DEADLINK;
+    u32 incr = 0;
 
-    std::optional<void*> user;
-    std::vector<std::byte> buffer;
+    std::deque<segment> snd_queue{};
+    std::deque<segment> rcv_queue{};
+    std::deque<segment> snd_buf{};
+    std::deque<segment> rcv_buf{};
 
-    i32 fastresend;
-    i32 fastlimit;
-    i32 nocwnd;
+    std::vector<Ack> acklist{};
+
+    std::optional<void*> user = std::nullopt;
+    std::vector<std::byte> buffer{};
+
+    i32 fastresend = 0;
+    i32 fastlimit = IKCP_FASTACK_LIMIT;
+    i32 nocwnd = 0;
 
     std::function<i32(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)> output;
 
