@@ -3,13 +3,15 @@
 #include "imkcpp.hpp"
 #include "constants.hpp"
 
-TEST(Initialization_Tests, Mtu_Sets) {
+TEST(Initialization_Tests, Mtu_ValidValues) {
     imkcpp kcp(0);
 
-    kcp.set_mtu(128);
+    for (u32 i = IKCP_OVERHEAD + 1; i < IKCP_MTU_DEF; ++i) {
+        kcp.set_mtu(i);
 
-    EXPECT_EQ(kcp.get_mtu(), 128);
-    EXPECT_EQ(kcp.get_max_segment_size(), 128 - IKCP_OVERHEAD);
+        EXPECT_EQ(kcp.get_mtu(), i);
+        EXPECT_EQ(kcp.get_max_segment_size(), i - IKCP_OVERHEAD);
+    }
 }
 
 TEST(Initialization_Tests, Mtu_InvalidValues) {
