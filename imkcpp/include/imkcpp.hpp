@@ -1,6 +1,5 @@
 #pragma once
 
-#include <constants.hpp>
 #include <functional>
 #include <span>
 #include <queue>
@@ -8,6 +7,7 @@
 #include <cstddef>
 
 #include "types.hpp"
+#include "constants.hpp"
 #include "segment.hpp"
 #include "ack.hpp"
 
