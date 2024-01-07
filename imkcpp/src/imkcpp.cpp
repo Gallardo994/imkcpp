@@ -361,6 +361,7 @@ namespace imkcpp {
                 break;
             }
 
+            // TODO: Move decoding to segment-related code
             ptr = encoder::decode32u(ptr, segment_conv);
             ptr = encoder::decode8u(ptr, cmd);
             ptr = encoder::decode8u(ptr, frg);
