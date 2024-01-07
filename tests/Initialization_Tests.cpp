@@ -4,23 +4,27 @@
 #include "constants.hpp"
 
 TEST(Initialization_Tests, Mtu_ValidValues) {
-    imkcpp kcp(0);
+    using namespace imkcpp;
 
-    for (u32 i = IKCP_OVERHEAD + 1; i < IKCP_MTU_DEF; ++i) {
+    ImKcpp kcp(0);
+
+    for (uint32_t i = constants::IKCP_OVERHEAD + 1; i < constants::IKCP_MTU_DEF; ++i) {
         kcp.set_mtu(i);
 
         EXPECT_EQ(kcp.get_mtu(), i);
-        EXPECT_EQ(kcp.get_max_segment_size(), i - IKCP_OVERHEAD);
+        EXPECT_EQ(kcp.get_max_segment_size(), i - constants::IKCP_OVERHEAD);
     }
 }
 
 TEST(Initialization_Tests, Mtu_InvalidValues) {
-    imkcpp kcp(0);
+    using namespace imkcpp;
 
-    for (u32 i = 0; i < IKCP_OVERHEAD; ++i) {
+    ImKcpp kcp(0);
+
+    for (u32 i = 0; i < constants::IKCP_OVERHEAD; ++i) {
         kcp.set_mtu(i);
 
-        EXPECT_EQ(kcp.get_mtu(), IKCP_MTU_DEF);
-        EXPECT_EQ(kcp.get_max_segment_size(), IKCP_MTU_DEF - IKCP_OVERHEAD);
+        EXPECT_EQ(kcp.get_mtu(), constants::IKCP_MTU_DEF);
+        EXPECT_EQ(kcp.get_max_segment_size(), constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD);
     }
 }

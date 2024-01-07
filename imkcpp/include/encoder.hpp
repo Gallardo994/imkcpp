@@ -2,7 +2,7 @@
 
 #include "types.hpp"
 
-namespace encoder {
+namespace imkcpp::encoder {
     // OLD
     inline std::byte* encode8u(std::byte* p, u8 c) {
         *reinterpret_cast<uint8_t*>(p++) = c;
