@@ -13,7 +13,6 @@ imkcpp::imkcpp(const u32 conv, std::optional<void*> user) : conv(conv), user(use
     this->snd_una = 0;
     this->snd_nxt = 0;
     this->rcv_nxt = 0;
-    this->ts_recent = 0;
     this->ts_lastack = 0;
     this->ts_probe = 0;
     this->probe_wait = 0;
