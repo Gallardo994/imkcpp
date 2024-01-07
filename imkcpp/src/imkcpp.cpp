@@ -622,7 +622,7 @@ void imkcpp::flush() {
 
 	// flush window probing commands
 	if (this->probe & IKCP_ASK_SEND) {
-		if (this->buffer.size() + IKCP_OVERHEAD > this->mss) {
+		if (this->buffer.size() > this->mss) {
 		    this->call_output(this->buffer);
 		    this->buffer.clear();
 		}
@@ -633,7 +633,7 @@ void imkcpp::flush() {
 
 	// flush window probing commands
 	if (this->probe & IKCP_ASK_TELL) {
-		if (this->buffer.size() + IKCP_OVERHEAD > this->mss) {
+		if (this->buffer.size() > this->mss) {
 		    this->call_output(this->buffer);
 		    this->buffer.clear();
 		}
