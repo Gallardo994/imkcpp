@@ -23,7 +23,6 @@ imkcpp::imkcpp(const u32 conv, std::optional<void*> user) : conv(conv), user(use
     this->probe = 0;
     this->mtu = IKCP_MTU_DEF;
     this->mss = this->mtu - IKCP_OVERHEAD;
-    this->stream = 0;
 
     this->buffer.reserve((this->mtu + IKCP_OVERHEAD) * 3);
 
@@ -304,28 +303,6 @@ i32 imkcpp::send(const std::span<const std::byte>& buffer) {
     int sent = 0;
     auto buf_ptr = buffer.begin();
 
-    if (stream != 0 && !snd_queue.empty()) {
-        segment& old = snd_queue.back();
-        if (old.data.size() < static_cast<size_t>(mss)) {
-            int capacity = mss - old.data.size();
-            int extend = std::min(len, capacity);
-
-            segment seg(old.data.size() + extend);
-            std::copy(old.data.begin(), old.data.end(), seg.data.begin());
-            std::copy(buf_ptr, buf_ptr + extend, seg.data.begin() + old.data.size());
-
-            seg.len = old.data.size() + extend;
-            seg.frg = 0;
-
-            len -= extend;
-            buf_ptr += extend;
-            sent = extend;
-
-            snd_queue.pop_back();
-            snd_queue.push_back(seg);
-        }
-    }
-
     if (len <= 0) {
         return sent;
     }
@@ -333,10 +310,6 @@ i32 imkcpp::send(const std::span<const std::byte>& buffer) {
     int count = (len <= mss) ? 1 : (len + mss - 1) / mss;
 
     if (count >= this->rcv_wnd) {
-        if (stream != 0 && sent > 0) {
-            return sent;
-        }
-
         return -2;
     }
 
@@ -348,7 +321,7 @@ i32 imkcpp::send(const std::span<const std::byte>& buffer) {
         std::copy(buf_ptr, buf_ptr + size, seg.data.begin());
 
         seg.len = size;
-        seg.frg = (stream == 0) ? (count - i - 1) : 0;
+        seg.frg = count - i - 1;
 
         snd_queue.push_back(seg);
 

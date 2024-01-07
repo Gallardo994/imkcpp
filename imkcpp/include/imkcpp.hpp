@@ -42,7 +42,7 @@ private:
 
     i32 fastresend;
     i32 fastlimit;
-    i32 nocwnd, stream;
+    i32 nocwnd;
 
     std::function<i32(std::span<const std::byte> data, const imkcpp& imkcpp, std::optional<void*> user)> output;
 
