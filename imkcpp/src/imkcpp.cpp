@@ -115,8 +115,7 @@ namespace imkcpp {
         if (this->rx_srtt == 0) {
             this->rx_srtt = rtt;
             this->rx_rttval = rtt / 2;
-        }
-        else {
+        } else {
             i32 delta = rtt - static_cast<i32>(this->rx_srtt);
             delta = delta >= 0 ? delta : -delta;
 
@@ -136,8 +135,7 @@ namespace imkcpp {
         if (!this->snd_buf.empty()) {
             const auto& seg = this->snd_buf.front();
             this->snd_una = seg.sn;
-        }
-        else {
+        } else {
             this->snd_una = this->snd_nxt;
         }
     }
@@ -165,8 +163,7 @@ namespace imkcpp {
         for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
             if (_itimediff(una, it->sn) > 0) {
                 it = this->snd_buf.erase(it);
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -317,7 +314,8 @@ namespace imkcpp {
 
         // Move available data from rcv_buf to rcv_queue
         while (!rcv_buf.empty()) {
-            segment &seg = rcv_buf.front();
+            segment& seg = rcv_buf.front();
+
             if (seg.sn == rcv_nxt && this->rcv_queue.size() < static_cast<size_t>(rcv_wnd)) {
                 rcv_buf.pop_front();
                 rcv_queue.push_back(seg);
@@ -378,8 +376,7 @@ namespace imkcpp {
                         flag = 1;
                         maxack = sn;
                         latest_ts = ts;
-                    }
-                    else {
+                    } else {
                         if (_itimediff(sn, maxack) > 0) {
     #ifndef IKCP_FASTACK_CONSERVE
                             maxack = sn;
@@ -440,17 +437,18 @@ namespace imkcpp {
         if (_itimediff(this->snd_una, prev_una) > 0) {
             if (this->cwnd < this->rmt_wnd) {
                 const u32 mss = this->mss;
+
                 if (this->cwnd < this->ssthresh) {
                     this->cwnd++;
                     this->incr += mss;
-                }
-                else {
+                } else {
                     if (this->incr < mss) this->incr = mss;
                     this->incr += (mss * mss) / this->incr + (mss / 16);
                     if ((this->cwnd + 1) * mss <= this->incr) {
                         this->cwnd = (this->incr + mss - 1) / ((mss > 0) ? mss : 1);
                     }
                 }
+
                 if (this->cwnd > this->rmt_wnd) {
                     this->cwnd = this->rmt_wnd;
                     this->incr = this->rmt_wnd * mss;
