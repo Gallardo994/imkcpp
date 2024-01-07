@@ -12,9 +12,9 @@
 #include "segment.hpp"
 #include "ack.hpp"
 
-enum class imkcpp_state : i32 {
+enum class state : i32 {
     Alive = 0,
-    Dead = 1,
+    DeadLink = 1,
 };
 
 class imkcpp final {
@@ -23,7 +23,7 @@ private:
     size_t mtu = 0;
     size_t mss = 0;
 
-    imkcpp_state state = imkcpp_state::Alive;
+    state state = state::Alive;
 
     u32 snd_una = 0;
     u32 snd_nxt = 0;

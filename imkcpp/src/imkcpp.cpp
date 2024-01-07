@@ -653,7 +653,7 @@ void imkcpp::flush() {
 		    seg.encode_data_to(this->buffer);
 
 			if (segment.xmit >= this->dead_link) {
-				this->state = imkcpp_state::Dead;
+				this->state = state::Dead;
 			}
 		}
 	}
