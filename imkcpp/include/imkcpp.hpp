@@ -10,13 +10,9 @@
 #include "constants.hpp"
 #include "segment.hpp"
 #include "ack.hpp"
+#include "state.hpp"
 
 namespace imkcpp {
-    enum class State : i32 {
-        Alive = 0,
-        DeadLink = 1,
-    };
-
     class ImKcpp final {
     private:
         u32 conv = 0;
