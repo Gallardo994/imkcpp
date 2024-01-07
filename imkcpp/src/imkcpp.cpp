@@ -272,7 +272,6 @@ namespace imkcpp {
         }
 
         size_t len = buffer.size();
-
         size_t count = (len <= this->mss) ? 1 : (len + this->mss - 1) / this->mss;
 
         // TODO: Shouldn't this be either rmt_wnd or snd_wnd?
@@ -290,7 +289,7 @@ namespace imkcpp {
             segment& seg = snd_queue.emplace_back();
 
             seg.data.assign(buf_ptr, buf_ptr + size);
-            seg.frg = static_cast<uint8_t>(count - i - 1);
+            seg.frg = static_cast<u8>(count - i - 1);
 
             buf_ptr += size;
             len -= size;
