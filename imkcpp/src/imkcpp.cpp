@@ -626,14 +626,15 @@ namespace imkcpp {
                 if (this->nodelay == 0) {
                     segment.rto += std::max(segment.rto, this->rx_rto);
                 } else {
-                    i32 step = (this->nodelay < 2)? static_cast<i32>(segment.rto) : this->rx_rto;
+                    const u32 step = this->nodelay < 2? segment.rto : this->rx_rto;
                     segment.rto += step / 2;
                 }
                 segment.resendts = current + segment.rto;
                 lost = true;
             }
             else if (segment.fastack >= resent) {
-                if ((int)segment.xmit <= this->fastlimit || this->fastlimit <= 0) {
+                // TODO: The second check is probably redundant
+                if (segment.xmit <= this->fastlimit || this->fastlimit <= 0) {
                     needsend = 1;
                     segment.xmit++;
                     segment.fastack = 0;
