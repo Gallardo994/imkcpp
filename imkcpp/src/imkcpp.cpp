@@ -264,8 +264,7 @@ namespace imkcpp {
         return static_cast<i32>(len);
     }
 
-    // send
-
+    // TODO: This should return result and error if any.
     i32 ImKcpp::send(const std::span<const std::byte>& buffer) {
         if (buffer.empty()) {
             return -1;
