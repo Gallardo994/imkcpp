@@ -94,6 +94,14 @@ void imkcpp::set_mtu(const u32 mtu) {
     this->mss = this->mtu - IKCP_OVERHEAD;
 }
 
+u32 imkcpp::get_mtu() const {
+    return this->mtu;
+}
+
+u32 imkcpp::get_max_segment_size() const {
+    return this->mss;
+}
+
 void imkcpp::set_wndsize(const u32 sndwnd, const u32 rcvwnd) {
     if (sndwnd > 0) {
         this->snd_wnd = sndwnd;

@@ -54,6 +54,8 @@ public:
     void set_interval(u32 interval);
     void set_nodelay(i32 nodelay, u32 interval, i32 resend, i32 nc);
     void set_mtu(u32 mtu);
+    [[nodiscard]] u32 get_mtu() const;
+    [[nodiscard]] u32 get_max_segment_size() const;
     void set_wndsize(u32 sndwnd, u32 rcvwnd);
 
     [[nodiscard]] i32 peek_size() const;
