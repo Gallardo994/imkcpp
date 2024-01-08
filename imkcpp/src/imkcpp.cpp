@@ -745,7 +745,7 @@ namespace imkcpp {
     }
 
     i32 ImKcpp::wnd_unused() const {
-        if (this->rcv_queue.size() < this->rcv_wnd) {
+        if (this->rcv_wnd > this->rcv_queue.size()) {
             return static_cast<i32>(this->rcv_wnd - this->rcv_queue.size());
         }
 
