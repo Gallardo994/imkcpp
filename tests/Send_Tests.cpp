@@ -5,12 +5,43 @@
 TEST(Send_Tests, Send_ValidValues) {
     using namespace imkcpp;
 
-    ImKcpp kcp(0);
+    for (size_t size = 1; size <= constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD; ++size) {
+        ImKcpp kcp(0);
 
-    for (u32 i = 1; i <= kcp.get_max_segment_size(); ++i) {
-        std::vector<std::byte> data(i);
-        auto result = kcp.send(data);
+        kcp.update(100);
+
+        std::vector<std::byte> send_buffer(size);
+        for (u32 j = 0; j < size; ++j) {
+            send_buffer[j] = static_cast<std::byte>(j);
+        }
+
+        auto segments_count = kcp.estimate_segments_count(size);
+
+        std::vector<std::vector<std::byte>> captured_data;
+        captured_data.reserve(segments_count);
+        kcp.set_output([&captured_data](std::span<const std::byte> data, const ImKcpp& impl, std::optional<void*>) {
+            captured_data.emplace_back(data.begin(), data.end());
+        });
+
+        auto result = kcp.send(send_buffer);
         EXPECT_TRUE(result.has_value()) << err_to_str(result.error());
+
+        ASSERT_EQ(captured_data.size(), segments_count);
+
+        for (auto& captured : captured_data) {
+            auto input_result = kcp.input(captured);
+            EXPECT_TRUE(input_result.has_value()) << err_to_str(input_result.error());
+        }
+
+        kcp.update(1000);
+
+        std::vector<std::byte> recv_buffer(size);
+        auto recv_result = kcp.recv(recv_buffer);
+        EXPECT_TRUE(recv_result.has_value()) << err_to_str(recv_result.error());
+
+        for (size_t j = 0; j < size; ++j) {
+            EXPECT_EQ(send_buffer[j], recv_buffer[j]);
+        }
     }
 }
 

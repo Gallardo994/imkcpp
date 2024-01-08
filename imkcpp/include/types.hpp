@@ -20,5 +20,5 @@ namespace imkcpp {
     using i64 = int64_t;
     using u64 = uint64_t;
 
-    using output_callback_t = std::function<i32(std::span<const std::byte>, const ImKcpp&, std::optional<void*>)>;
+    using output_callback_t = std::function<void(std::span<const std::byte>, const ImKcpp&, std::optional<void*>)>;
 }

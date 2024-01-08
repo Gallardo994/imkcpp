@@ -75,17 +75,19 @@ namespace imkcpp {
         [[nodiscard]] i32 wnd_unused() const;
 
     public:
-        explicit ImKcpp(u32 conv, std::optional<void*> user = std::nullopt);
+        explicit ImKcpp(u32 conv);
 
+        void set_userdata(void* userdata);
         void set_output(const output_callback_t& output);
         void set_interval(u32 interval);
         void set_nodelay(i32 nodelay, u32 interval, i32 resend, i32 nc);
         tl::expected<size_t, error> set_mtu(u32 mtu);
         void set_wndsize(u32 sndwnd, u32 rcvwnd);
 
-        tl::expected<size_t, error> recv(std::span<std::byte>& buffer);
-        tl::expected<size_t, error> send(const std::span<const std::byte>& buffer);
-        tl::expected<size_t, error> input(const std::span<const std::byte>& data);
+        tl::expected<size_t, error> recv(std::span<std::byte> buffer);
+        [[nodiscard]] size_t estimate_segments_count(size_t size) const;
+        tl::expected<size_t, error> send(std::span<const std::byte> buffer);
+        tl::expected<size_t, error> input(std::span<const std::byte> data);
         void update(u32 current);
         u32 check(u32 current);
         void flush();

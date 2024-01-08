@@ -12,9 +12,14 @@ namespace imkcpp {
         return static_cast<i32>(later - earlier);
     }
 
-    ImKcpp::ImKcpp(const u32 conv, const std::optional<void*> user) : conv(conv), user(user) {
+    ImKcpp::ImKcpp(const u32 conv) : conv(conv) {
         this->set_mtu(constants::IKCP_MTU_DEF);
     }
+
+    void ImKcpp::set_userdata(void* userdata) {
+        this->user = userdata;
+    }
+
 
     void ImKcpp::set_output(const output_callback_t& output) {
         this->output = output;
@@ -204,7 +209,7 @@ namespace imkcpp {
 
     // receive
 
-    tl::expected<size_t, error> ImKcpp::recv(std::span<std::byte>& buffer) {
+    tl::expected<size_t, error> ImKcpp::recv(std::span<std::byte> buffer) {
         const auto peeksize = this->peek_size();
 
         if (!peeksize.has_value()) {
@@ -255,13 +260,17 @@ namespace imkcpp {
         return len;
     }
 
-    tl::expected<size_t, error> ImKcpp::send(const std::span<const std::byte>& buffer) {
+    size_t ImKcpp::estimate_segments_count(const size_t size) const {
+        return std::max(static_cast<size_t>(1), (size + this->mss - 1) / this->mss);
+    }
+
+    tl::expected<size_t, error> ImKcpp::send(std::span<const std::byte> buffer) {
         if (buffer.empty()) {
             return tl::unexpected(error::buffer_too_small);
         }
 
         size_t len = buffer.size();
-        size_t count = std::max(static_cast<size_t>(1), (len + this->mss - 1) / this->mss);
+        size_t count = estimate_segments_count(len);
 
         if (count > std::numeric_limits<u8>::max()) {
             return tl::unexpected(error::too_many_fragments);
@@ -324,7 +333,7 @@ namespace imkcpp {
         }
     }
 
-    tl::expected<size_t, error> ImKcpp::input(const std::span<const std::byte>& data) {
+    tl::expected<size_t, error> ImKcpp::input(std::span<const std::byte> data) {
         if (data.size() < constants::IKCP_OVERHEAD) {
             return tl::unexpected(error::less_than_header_size);
         }
@@ -484,7 +493,7 @@ namespace imkcpp {
 
         size_t offset = 0;
 
-        auto flush_buffer = [this, &offset]() {
+        auto flush_buffer = [this, &offset] {
             this->call_output({this->buffer.data(), offset});
             offset = 0;
         };
@@ -541,7 +550,7 @@ namespace imkcpp {
 
         // flush window probing commands
         if (this->probe & constants::IKCP_ASK_SEND) {
-            if (this->buffer.size() > this->mss) {
+            if (offset > this->mss) {
                 flush_buffer();
             }
 
@@ -551,7 +560,7 @@ namespace imkcpp {
 
         // flush window probing commands
         if (this->probe & constants::IKCP_ASK_TELL) {
-            if (this->buffer.size() > this->mss) {
+            if (offset > this->mss) {
                 flush_buffer();
             }
 
@@ -633,7 +642,7 @@ namespace imkcpp {
                 segment.header.wnd = seg.header.wnd;
                 segment.header.una = this->rcv_nxt;
 
-                if (this->buffer.size() + segment.data_size() > this->mss) {
+                if (offset + segment.data_size() > this->mss) {
                     flush_buffer();
                 }
 
@@ -646,7 +655,7 @@ namespace imkcpp {
         }
 
         // flash remain segments
-        if (!this->buffer.empty()) {
+        if (offset > 0) {
             flush_buffer();
         }
 
