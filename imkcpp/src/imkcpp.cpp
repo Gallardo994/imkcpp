@@ -263,8 +263,7 @@ namespace imkcpp {
             return tl::unexpected(error::buffer_too_small);
         }
 
-        size_t len = buffer.size();
-        size_t count = estimate_segments_count(len);
+        const size_t count = estimate_segments_count(buffer.size());
 
         if (count > std::numeric_limits<u8>::max()) {
             return tl::unexpected(error::too_many_fragments);
@@ -277,14 +276,16 @@ namespace imkcpp {
         size_t offset = 0;
 
         for (size_t i = 0; i < count; i++) {
-            const size_t size = std::min(len, this->mss);
+            const size_t size = std::min(buffer.size() - offset, this->mss);
+            assert(size > 0);
 
             Segment& seg = snd_queue.emplace_back();
             seg.data_assign({buffer.data() + offset, size});
             seg.header.frg = static_cast<u8>(count - i - 1);
 
+            assert(seg.data_size() == size);
+
             offset += size;
-            len -= size;
         }
 
         return offset;
@@ -315,8 +316,8 @@ namespace imkcpp {
             Segment& seg = rcv_buf.front();
 
             if (seg.header.sn == rcv_nxt && this->rcv_queue.size() < static_cast<size_t>(rcv_wnd)) {
+                rcv_queue.push_back(std::move(seg));
                 rcv_buf.pop_front();
-                rcv_queue.push_back(seg);
                 rcv_nxt++;
             } else {
                 break;
@@ -448,7 +449,7 @@ namespace imkcpp {
         return offset;
     }
 
-    size_t ImKcpp::update(u32 current) {
+    FlushResult ImKcpp::update(u32 current) {
         this->current = current;
 
         if (!this->updated) {
@@ -471,19 +472,20 @@ namespace imkcpp {
             return this->flush();
         }
 
-        return 0;
+        return {};
     }
 
     // TODO: Fails to send data properly according to tests/Send_Tests.cpp
-    size_t ImKcpp::flush() {
+    FlushResult ImKcpp::flush() {
         if (!this->updated) {
-            return 0;
+            return {};
         }
 
         const u32 current = this->current;
         int change = 0;
         bool lost = false;
 
+        FlushResult result;
         size_t offset = 0;
         size_t flushed_total_size = 0;
 
@@ -510,7 +512,7 @@ namespace imkcpp {
 
         // flush acknowledges
         for (const Ack& ack : this->acklist) {
-            if (this->buffer.size() > this->mss) {
+            if (offset > this->mss) {
                 flush_buffer();
             }
 
@@ -520,6 +522,7 @@ namespace imkcpp {
             seg.encode_to(this->buffer, offset);
         }
 
+        result.ack_sent_count += this->acklist.size();
         this->acklist.clear();
 
         // probe window size (if remote window size equals zero)
@@ -555,6 +558,8 @@ namespace imkcpp {
 
             seg.header.cmd = commands::IKCP_CMD_WASK;
             seg.encode_to(this->buffer, offset);
+
+            result.cmd_wask_count++;
         }
 
         // flush window probing commands
@@ -565,6 +570,8 @@ namespace imkcpp {
 
             seg.header.cmd = commands::IKCP_CMD_WINS;
             seg.encode_to(this->buffer, offset);
+
+            result.cmd_wins_count++;
         }
 
         this->probe = 0;
@@ -604,15 +611,15 @@ namespace imkcpp {
 
         // flush data segments
         for (Segment& segment : this->snd_buf) {
-            int needsend = 0;
+            bool needsend = false;
 
             if (segment.metadata.xmit == 0) {
-                needsend = 1;
+                needsend = true;
                 segment.metadata.xmit++;
                 segment.metadata.rto = this->rx_rto;
                 segment.metadata.resendts = current + segment.metadata.rto + rtomin;
             } else if (_itimediff(current, segment.metadata.resendts) >= 0) {
-                needsend = 1;
+                needsend = true;
                 segment.metadata.xmit++;
                 this->xmit++;
 
@@ -628,7 +635,7 @@ namespace imkcpp {
             } else if (segment.metadata.fastack >= resent) {
                 // TODO: The second check is probably redundant
                 if (segment.metadata.xmit <= this->fastlimit || this->fastlimit <= 0) {
-                    needsend = 1;
+                    needsend = true;
                     segment.metadata.xmit++;
                     segment.metadata.fastack = 0;
                     segment.metadata.resendts = current + segment.metadata.rto;
@@ -645,11 +652,14 @@ namespace imkcpp {
                     flush_buffer();
                 }
 
-                seg.encode_to(this->buffer, offset);
+                assert(segment.data_size() > 0); // TODO: Why is it sending empty segments?
+                segment.encode_to(this->buffer, offset);
 
                 if (segment.metadata.xmit >= this->dead_link) {
                     this->state = State::DeadLink;
                 }
+
+                result.data_sent_count++;
             }
         }
 
@@ -677,7 +687,8 @@ namespace imkcpp {
             this->incr = this->mss;
         }
 
-        return flushed_total_size;
+        result.total_bytes_sent = flushed_total_size;
+        return result;
     }
 
 

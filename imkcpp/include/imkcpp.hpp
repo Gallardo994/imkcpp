@@ -13,6 +13,7 @@
 #include "state.hpp"
 #include "expected.hpp"
 #include "errors.hpp"
+#include "results.hpp"
 
 namespace imkcpp {
     class ImKcpp final {
@@ -87,9 +88,9 @@ namespace imkcpp {
         [[nodiscard]] size_t estimate_segments_count(size_t size) const;
         tl::expected<size_t, error> send(std::span<const std::byte> buffer);
         tl::expected<size_t, error> input(std::span<const std::byte> data);
-        size_t update(u32 current);
+        FlushResult update(u32 current);
         u32 check(u32 current);
-        size_t flush();
+        FlushResult flush();
 
         [[nodiscard]] u32 get_mtu() const;
         [[nodiscard]] u32 get_max_segment_size() const;

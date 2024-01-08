@@ -30,7 +30,11 @@ TEST(Send_Tests, Send_ValidValues) {
         EXPECT_EQ(send_result.value(), size);
 
         auto update_result = kcp_output.update(200);
-        EXPECT_EQ(update_result, size + constants::IKCP_OVERHEAD);
+        EXPECT_EQ(update_result.ack_sent_count, 0);
+        EXPECT_EQ(update_result.cmd_wask_count, 0);
+        EXPECT_EQ(update_result.cmd_wins_count, 0);
+        EXPECT_EQ(update_result.data_sent_count, segments_count);
+        EXPECT_EQ(update_result.total_bytes_sent, size + segments_count * constants::IKCP_OVERHEAD);
 
         ASSERT_EQ(captured_data.size(), segments_count);
 
@@ -60,10 +64,11 @@ TEST(Send_Tests, Send_FragmentedValidValues) {
     ImKcpp kcp(0);
     kcp.set_wndsize(2048, 2048);
 
-    std::vector<std::byte> data(kcp.get_max_segment_size() * 255);
+    auto data_size = kcp.get_max_segment_size() * 255;
+    std::vector<std::byte> data(data_size);
     auto result = kcp.send(data);
     EXPECT_TRUE(result.has_value()) << err_to_str(result.error());
-    EXPECT_EQ(result.value(), 255);
+    EXPECT_EQ(result.value(), data_size);
 }
 
 TEST(Send_Tests, Send_ZeroBytes) {
