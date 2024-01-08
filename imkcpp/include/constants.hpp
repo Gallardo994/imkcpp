@@ -3,6 +3,7 @@
 #include <cstdint>
 
 namespace imkcpp::constants {
+    // TODO: These need to be documented and explained
     constexpr uint32_t IKCP_RTO_NDL = 30;		// no delay min rto
     constexpr uint32_t IKCP_RTO_MIN = 100;		// normal min rto
     constexpr uint32_t IKCP_RTO_DEF = 200;
