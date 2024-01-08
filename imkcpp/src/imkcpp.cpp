@@ -265,6 +265,7 @@ namespace imkcpp {
             return tl::unexpected(error::too_many_fragments);
         }
 
+        // TODO: This should probably be snd_wnd instead of rcv_wnd
         if (count > this->rcv_wnd) {
             return tl::unexpected(error::exceeds_window_size);
         }
