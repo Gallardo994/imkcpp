@@ -16,6 +16,9 @@
 #include "results.hpp"
 
 namespace imkcpp {
+    // TODO: Some day later this should become a template with MTU and max segment size as template parameters
+    // TODO: because changing MTU at runtime will cause issues with already queued segments.
+    // TODO: Additionally, this will allow more compile-time optimizations.
     class ImKcpp final {
     private:
         u32 conv = 0;
