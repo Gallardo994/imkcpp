@@ -50,11 +50,9 @@ TEST(Send_Tests, Send_ValidValues) {
         auto recv_result = kcp_input.recv(recv_buffer);
         EXPECT_TRUE(recv_result.has_value()) << err_to_str(recv_result.error());
 
-        /*
         for (size_t j = 0; j < size; ++j) {
             EXPECT_EQ(send_buffer[j], recv_buffer[j]);
         }
-        */
     }
 }
 

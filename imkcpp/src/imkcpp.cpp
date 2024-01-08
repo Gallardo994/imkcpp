@@ -88,7 +88,7 @@ namespace imkcpp {
             return tl::unexpected(error::queue_empty);
         }
 
-        const auto front = this->rcv_queue.front();
+        const Segment& front = this->rcv_queue.front();
 
         if (front.header.frg == 0) {
             return front.data_size();
@@ -99,7 +99,7 @@ namespace imkcpp {
         }
 
         size_t length = 0;
-        for (const auto& seg : this->rcv_queue) {
+        for (const Segment& seg : this->rcv_queue) {
             length += seg.data_size();
 
             if (seg.header.frg == 0) {
@@ -134,7 +134,7 @@ namespace imkcpp {
 
     void ImKcpp::shrink_buf() {
         if (!this->snd_buf.empty()) {
-            const auto& seg = this->snd_buf.front();
+            const Segment& seg = this->snd_buf.front();
             this->snd_una = seg.header.sn;
         } else {
             this->snd_una = this->snd_nxt;
@@ -175,7 +175,7 @@ namespace imkcpp {
             return;
         }
 
-        for (auto& seg : snd_buf) {
+        for (Segment& seg : snd_buf) {
             if (_itimediff(sn, seg.header.sn) < 0) {
                 break;
             }
@@ -216,28 +216,31 @@ namespace imkcpp {
 
         const bool recover = this->rcv_queue.size() >= rcv_wnd;
 
-        size_t len = 0;
+        size_t offset = 0;
         for (auto it = rcv_queue.begin(); it != rcv_queue.end();) {
             Segment& segment = *it;
-            const size_t copy_len = std::min(segment.data_size(), buffer.size() - len);
-            segment.data.assign({buffer.data() + len, copy_len});
-            len += copy_len;
+            const u8 fragment = segment.header.frg;
+
+            const size_t copy_len = std::min(segment.data_size(), buffer.size() - offset);
+
+            std::memcpy(buffer.data() + offset, segment.data.data.data(), copy_len);
+            offset += copy_len;
 
             it = rcv_queue.erase(it);
 
-            if (segment.header.frg == 0) {
+            if (fragment == 0) {
                 break;
             }
 
-            if (len >= peeksize.value()) {
+            if (offset >= peeksize.value()) {
                 break;
             }
         }
 
-        assert(len == peeksize);
+        assert(offset == peeksize);
 
         while (!rcv_buf.empty()) {
-            auto& seg = rcv_buf.front();
+            Segment& seg = rcv_buf.front();
             if (seg.header.sn != rcv_nxt || this->rcv_queue.size() >= rcv_wnd) {
                 break;
             }
@@ -251,7 +254,7 @@ namespace imkcpp {
             this->probe |= constants::IKCP_ASK_TELL;
         }
 
-        return len;
+        return offset;
     }
 
     size_t ImKcpp::estimate_segments_count(const size_t size) const {
@@ -711,7 +714,7 @@ namespace imkcpp {
 
         tm_flush = _itimediff(this->ts_flush, current);
 
-        for (const auto& seg : this->snd_buf) {
+        for (const Segment& seg : this->snd_buf) {
             const i32 diff = _itimediff(seg.metadata.resendts, current);
 
             if (diff <= 0) {
