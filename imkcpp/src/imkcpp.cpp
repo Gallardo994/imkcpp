@@ -221,9 +221,9 @@ namespace imkcpp {
 
         size_t len = 0;
         for (auto it = rcv_queue.begin(); it != rcv_queue.end();) {
-            const Segment& segment = *it;
-            const size_t copy_len = std::min(segment.header.len, buffer.size() - len);
-            std::memcpy(buffer.data() + len, segment.data.data(), copy_len);
+            Segment& segment = *it;
+            const size_t copy_len = std::min(segment.data_size(), buffer.size() - len);
+            segment.data.assign({buffer.data() + len, copy_len});
             len += copy_len;
 
             it = rcv_queue.erase(it);
@@ -279,7 +279,7 @@ namespace imkcpp {
             const size_t size = std::min(len, this->mss);
             Segment& seg = snd_queue.emplace_back();
 
-            seg.data.assign(buf_ptr, buf_ptr + size);
+            seg.data.assign({buf_ptr, size});
             seg.header.frg = static_cast<u8>(count - i - 1);
 
             buf_ptr += size;
@@ -332,9 +332,9 @@ namespace imkcpp {
             return tl::unexpected(input_error::less_than_header_size);
         }
 
-        i32 prev_una = this->snd_una;
-        i32 maxack = 0, latest_ts = 0;
-        int flag = 0;
+        const u32 prev_una = this->snd_una;
+        u32 maxack = 0, latest_ts = 0;
+        bool flag = false;
 
         size_t offset = 0;
 
@@ -346,7 +346,7 @@ namespace imkcpp {
                 return tl::unexpected(input_error::conv_mismatch);
             }
 
-            if (data.size() - offset < header.len) {
+            if (header.len > data.size() - offset) {
                 return tl::unexpected(input_error::header_and_payload_length_mismatch);
             }
 
@@ -355,8 +355,8 @@ namespace imkcpp {
                     this->parse_ack(header.sn);
                     this->shrink_buf();
 
-                    if (flag == 0) {
-                        flag = 1;
+                    if (!flag) {
+                        flag = true;
                         maxack = header.sn;
                         latest_ts = header.ts;
                     } else {
@@ -380,7 +380,7 @@ namespace imkcpp {
                         this->acklist.emplace_back(header.sn, header.ts);
                         if (_itimediff(header.sn, this->rcv_nxt) >= 0) {
                             Segment seg;
-                            seg.header = header;
+                            seg.header = header; // TODO: Remove this copy
                             seg.data.decode_from(data, offset, header.len);
 
                             this->parse_data(seg);
@@ -397,12 +397,12 @@ namespace imkcpp {
                     break;
                 }
                 default: {
-                    return -3;
+                    return tl::unexpected(input_error::unknown_command);
                 }
             }
         }
 
-        if (flag != 0) {
+        if (flag) {
             this->parse_fastack(maxack, latest_ts);
         }
 
@@ -414,8 +414,12 @@ namespace imkcpp {
                     this->cwnd++;
                     this->incr += mss;
                 } else {
-                    if (this->incr < mss) this->incr = mss;
+                    if (this->incr < mss) {
+                        this->incr = mss;
+                    }
+
                     this->incr += (mss * mss) / this->incr + (mss / 16);
+
                     if ((this->cwnd + 1) * mss <= this->incr) {
                         this->cwnd = (this->incr + mss - 1) / ((mss > 0) ? mss : 1);
                     }
@@ -465,6 +469,13 @@ namespace imkcpp {
         int change = 0;
         bool lost = false;
 
+        size_t offset = 0;
+
+        auto flush_buffer = [this, &offset]() {
+            this->call_output({this->buffer.data(), offset});
+            offset = 0;
+        };
+
         Segment seg;
 
         seg.header.conv = this->conv;
@@ -474,18 +485,18 @@ namespace imkcpp {
         seg.header.una = this->rcv_nxt;
         seg.header.sn = 0;
         seg.header.ts = 0;
+        seg.header.len = 0;
 
         // flush acknowledges
         for (const Ack& ack : this->acklist) {
             if (this->buffer.size() > this->mss) {
-                this->call_output(this->buffer);
-                this->buffer.clear();
+                flush_buffer();
             }
 
             seg.header.sn = ack.sn;
             seg.header.ts = ack.ts;
 
-            seg.encode_to(this->buffer);
+            seg.encode_to(this->buffer, offset);
         }
 
         this->acklist.clear();
@@ -518,23 +529,21 @@ namespace imkcpp {
         // flush window probing commands
         if (this->probe & constants::IKCP_ASK_SEND) {
             if (this->buffer.size() > this->mss) {
-                this->call_output(this->buffer);
-                this->buffer.clear();
+                flush_buffer();
             }
 
             seg.header.cmd = commands::IKCP_CMD_WASK;
-            seg.encode_to(this->buffer);
+            seg.encode_to(this->buffer, offset);
         }
 
         // flush window probing commands
         if (this->probe & constants::IKCP_ASK_TELL) {
             if (this->buffer.size() > this->mss) {
-                this->call_output(this->buffer);
-                this->buffer.clear();
+                flush_buffer();
             }
 
             seg.header.cmd = commands::IKCP_CMD_WINS;
-            seg.encode_to(this->buffer);
+            seg.encode_to(this->buffer, offset);
         }
 
         this->probe = 0;
@@ -611,12 +620,11 @@ namespace imkcpp {
                 segment.header.wnd = seg.header.wnd;
                 segment.header.una = this->rcv_nxt;
 
-                if (this->buffer.size() + segment.data.size() > this->mss) {
-                    call_output(this->buffer);
-                    this->buffer.clear();
+                if (this->buffer.size() + segment.data_size() > this->mss) {
+                    flush_buffer();
                 }
 
-                seg.encode_to(this->buffer);
+                seg.encode_to(this->buffer, offset);
 
                 if (segment.metadata.xmit >= this->dead_link) {
                     this->state = State::DeadLink;
@@ -626,8 +634,7 @@ namespace imkcpp {
 
         // flash remain segments
         if (!this->buffer.empty()) {
-            this->call_output(this->buffer);
-            this->buffer.clear();
+            flush_buffer();
         }
 
         // update ssthresh

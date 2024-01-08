@@ -18,6 +18,7 @@ namespace imkcpp {
         less_than_header_size = 1,
         conv_mismatch = 2,
         header_and_payload_length_mismatch = 3,
+        unknown_command = 4,
     };
 
     enum class recv_error {
