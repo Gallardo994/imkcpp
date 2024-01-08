@@ -66,7 +66,6 @@ namespace imkcpp {
             offset += length;
         }
 
-        // Copies data from buf to data
         void decode_from(const std::span<const std::byte> buf, size_t& offset, const size_t length) {
             assert(buf.size() >= offset + length);
             assign(buf.subspan(offset, length));
