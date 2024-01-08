@@ -16,9 +16,10 @@ namespace imkcpp {
     enum class input_error {
         none = 0,
         less_than_header_size = 1,
-        conv_mismatch = 2,
-        header_and_payload_length_mismatch = 3,
-        unknown_command = 4,
+        more_than_mtu = 2,
+        conv_mismatch = 3,
+        header_and_payload_length_mismatch = 4,
+        unknown_command = 5,
     };
 
     enum class recv_error {

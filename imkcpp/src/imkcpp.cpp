@@ -325,11 +325,13 @@ namespace imkcpp {
         }
     }
 
-    // TODO: Mismatch between original and this code.
-    // TODO: - Original code sets rmt_wnd according to input data.
     tl::expected<size_t, input_error> ImKcpp::input(const std::span<const std::byte>& data) {
         if (data.size() < constants::IKCP_OVERHEAD) {
             return tl::unexpected(input_error::less_than_header_size);
+        }
+
+        if (data.size() > this->mtu) {
+            return tl::unexpected(input_error::more_than_mtu);
         }
 
         const u32 prev_una = this->snd_una;
@@ -349,6 +351,15 @@ namespace imkcpp {
             if (header.len > data.size() - offset) {
                 return tl::unexpected(input_error::header_and_payload_length_mismatch);
             }
+
+            if (header.cmd != commands::IKCP_CMD_PUSH && header.cmd != commands::IKCP_CMD_ACK &&
+                header.cmd != commands::IKCP_CMD_WASK && header.cmd != commands::IKCP_CMD_WINS) {
+                return tl::unexpected(input_error::unknown_command);
+            }
+
+            this->rmt_wnd = header.wnd;
+            this->parse_una(header.una);
+            this->shrink_buf();
 
             switch (header.cmd) {
                 case commands::IKCP_CMD_ACK: {
@@ -432,7 +443,7 @@ namespace imkcpp {
             }
         }
 
-        return 0; // Success
+        return 0;
     }
 
     void ImKcpp::update(u32 current) {
