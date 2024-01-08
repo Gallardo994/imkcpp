@@ -10,6 +10,7 @@ include_directories(${gmock_SOURCE_DIR}/include ${gmock_SOURCE_DIR})
 
 add_executable(imkcpp_tests
         Initialization_Tests.cpp
+        Send_Tests.cpp
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/imkcpp/include)

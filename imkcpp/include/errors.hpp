@@ -7,12 +7,41 @@ namespace imkcpp {
         buffer_too_small = 2,
         queue_empty = 3,
         waiting_for_fragment = 4,
-        buffer_empty = 5,
-        too_many_fragments = 6,
-        less_than_header_size = 7,
-        more_than_mtu = 8,
-        conv_mismatch = 9,
-        header_and_payload_length_mismatch = 10,
-        unknown_command = 11,
+        too_many_fragments = 5,
+        less_than_header_size = 6,
+        more_than_mtu = 7,
+        conv_mismatch = 8,
+        header_and_payload_length_mismatch = 9,
+        unknown_command = 10,
+        exceeds_window_size = 11,
     };
+
+    inline std::string err_to_str(error e) {
+        switch (e) {
+            case error::none:
+                return "none";
+            case error::peek_error:
+                return "peek_error";
+            case error::buffer_too_small:
+                return "buffer_too_small";
+            case error::queue_empty:
+                return "queue_empty";
+            case error::waiting_for_fragment:
+                return "waiting_for_fragment";
+            case error::too_many_fragments:
+                return "too_many_fragments";
+            case error::less_than_header_size:
+                return "less_than_header_size";
+            case error::more_than_mtu:
+                return "more_than_mtu";
+            case error::conv_mismatch:
+                return "conv_mismatch";
+            case error::header_and_payload_length_mismatch:
+                return "header_and_payload_length_mismatch";
+            case error::unknown_command:
+                return "unknown_command";
+            default:
+                return "unknown";
+        }
+    }
 }

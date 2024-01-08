@@ -257,15 +257,18 @@ namespace imkcpp {
 
     tl::expected<size_t, error> ImKcpp::send(const std::span<const std::byte>& buffer) {
         if (buffer.empty()) {
-            return tl::unexpected(error::buffer_empty);
+            return tl::unexpected(error::buffer_too_small);
         }
 
         size_t len = buffer.size();
-        size_t count = (len <= this->mss) ? 1 : (len + this->mss - 1) / this->mss;
+        size_t count = std::max(static_cast<size_t>(1), (len + this->mss - 1) / this->mss);
 
-        // TODO: Shouldn't this be either rmt_wnd or snd_wnd?
-        if (count >= this->rcv_wnd) {
+        if (count > std::numeric_limits<u8>::max()) {
             return tl::unexpected(error::too_many_fragments);
+        }
+
+        if (count > this->rcv_wnd) {
+            return tl::unexpected(error::exceeds_window_size);
         }
 
         count = std::max(count, static_cast<size_t>(1));
@@ -283,7 +286,7 @@ namespace imkcpp {
             len -= size;
         }
 
-        return offset;
+        return count;
     }
 
 
