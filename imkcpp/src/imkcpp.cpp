@@ -25,12 +25,6 @@ namespace imkcpp {
         this->output = output;
     }
 
-    void ImKcpp::call_output(const std::span<const std::byte>& data) const {
-        if (this->output) {
-            this->output(data, *this, this->user);
-        }
-    }
-
     void ImKcpp::set_interval(const u32 interval) {
         this->interval = interval;
     }
@@ -280,8 +274,6 @@ namespace imkcpp {
             return tl::unexpected(error::exceeds_window_size);
         }
 
-        count = std::max(count, static_cast<size_t>(1));
-
         size_t offset = 0;
 
         for (size_t i = 0; i < count; i++) {
@@ -295,9 +287,8 @@ namespace imkcpp {
             len -= size;
         }
 
-        return count;
+        return offset;
     }
-
 
     void ImKcpp::parse_data(const Segment& newseg) {
         u32 sn = newseg.header.sn;
@@ -454,7 +445,7 @@ namespace imkcpp {
             }
         }
 
-        return 0;
+        return offset;
     }
 
     size_t ImKcpp::update(u32 current) {
@@ -483,7 +474,7 @@ namespace imkcpp {
         return 0;
     }
 
-    // TODO: This may hold data which is undesirable in some segment types.
+    // TODO: Fails to send data properly according to tests/Send_Tests.cpp
     size_t ImKcpp::flush() {
         if (!this->updated) {
             return 0;
@@ -494,12 +485,15 @@ namespace imkcpp {
         bool lost = false;
 
         size_t offset = 0;
-        size_t flushed_buffers_count = 0;
+        size_t flushed_total_size = 0;
 
-        auto flush_buffer = [this, &offset, &flushed_buffers_count] {
-            flushed_buffers_count++;
+        auto flush_buffer = [this, &offset, &flushed_total_size] {
+            flushed_total_size += offset;
 
-            this->call_output({this->buffer.data(), offset});
+            if (this->output) {
+                this->output({this->buffer.data(), offset}, *this, this->user);
+            }
+
             offset = 0;
         };
 
@@ -683,7 +677,7 @@ namespace imkcpp {
             this->incr = this->mss;
         }
 
-        return flushed_buffers_count;
+        return flushed_total_size;
     }
 
 

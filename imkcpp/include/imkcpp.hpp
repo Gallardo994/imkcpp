@@ -64,7 +64,6 @@ namespace imkcpp {
 
         output_callback_t output;
 
-        void call_output(const std::span<const std::byte>& data) const;
         void update_ack(i32 rtt);
         void shrink_buf();
         void parse_ack(u32 sn);
