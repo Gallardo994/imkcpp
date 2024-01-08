@@ -112,6 +112,7 @@ namespace imkcpp {
 
     // Parse ack
 
+    // TODO: Haven't seen this amount of magic numbers since I last played WoW
     void ImKcpp::update_ack(const i32 rtt) {
         if (this->rx_srtt == 0) {
             this->rx_srtt = rtt;
