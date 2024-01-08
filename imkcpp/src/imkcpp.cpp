@@ -478,7 +478,6 @@ namespace imkcpp {
         return {};
     }
 
-    // TODO: Fails to send data properly according to tests/Send_Tests.cpp
     FlushResult ImKcpp::flush() {
         if (!this->updated) {
             return {};
