@@ -484,15 +484,16 @@ namespace imkcpp {
 
 
     FlushResult ImKcpp::flush() {
+        FlushResult result;
+
         if (!this->updated) {
-            return {};
+            return result;
         }
 
         const u32 current = this->current;
         int change = 0;
         bool lost = false;
 
-        FlushResult result;
         size_t offset = 0;
         size_t flushed_total_size = 0;
 
