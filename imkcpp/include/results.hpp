@@ -7,6 +7,29 @@ namespace imkcpp {
         u32 cmd_wins_count = 0;
 
         u32 data_sent_count = 0;
+        u32 retransmitted_count = 0;
         size_t total_bytes_sent = 0;
+
+        FlushResult operator+(const FlushResult& other) const {
+            return {
+                ack_sent_count + other.ack_sent_count,
+                cmd_wask_count + other.cmd_wask_count,
+                cmd_wins_count + other.cmd_wins_count,
+                data_sent_count + other.data_sent_count,
+                retransmitted_count + other.retransmitted_count,
+                total_bytes_sent + other.total_bytes_sent
+            };
+        }
+
+        FlushResult& operator+=(const FlushResult& other) {
+            ack_sent_count += other.ack_sent_count;
+            cmd_wask_count += other.cmd_wask_count;
+            cmd_wins_count += other.cmd_wins_count;
+            data_sent_count += other.data_sent_count;
+            retransmitted_count += other.retransmitted_count;
+            total_bytes_sent += other.total_bytes_sent;
+
+            return *this;
+        }
     };
 }

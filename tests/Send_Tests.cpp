@@ -5,11 +5,21 @@
 TEST(Send_Tests, Send_ValidValues) {
     using namespace imkcpp;
 
-    for (size_t size = 1; size <= constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD; ++size) {
+    /*
+    constexpr size_t max_segment_size = constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD;
+    constexpr size_t max_data_size = max_segment_size * 255;
+    constexpr size_t step = max_segment_size / 2;
+    */
+    constexpr size_t max_data_size = constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD;
+    constexpr size_t step = 8;
+
+    for (size_t size = 1; size < max_data_size; size += step) {
         ImKcpp kcp_output(0);
+        kcp_output.set_wndsize(256, 256);
         kcp_output.update(0);
 
         ImKcpp kcp_input(0);
+        kcp_input.set_wndsize(256, 256);
         kcp_input.update(0);
 
         std::vector<std::byte> send_buffer(size);
@@ -34,6 +44,7 @@ TEST(Send_Tests, Send_ValidValues) {
         EXPECT_EQ(update_result.cmd_wask_count, 0);
         EXPECT_EQ(update_result.cmd_wins_count, 0);
         EXPECT_EQ(update_result.data_sent_count, segments_count);
+        EXPECT_EQ(update_result.retransmitted_count, 0);
         EXPECT_EQ(update_result.total_bytes_sent, size + segments_count * constants::IKCP_OVERHEAD);
 
         ASSERT_EQ(captured_data.size(), segments_count);

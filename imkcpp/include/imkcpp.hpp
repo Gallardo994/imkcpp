@@ -90,6 +90,7 @@ namespace imkcpp {
         tl::expected<size_t, error> input(std::span<const std::byte> data);
         FlushResult update(u32 current);
         u32 check(u32 current);
+        u32 flush_acks();
         FlushResult flush();
 
         [[nodiscard]] u32 get_mtu() const;

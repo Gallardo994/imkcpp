@@ -478,6 +478,12 @@ namespace imkcpp {
         return {};
     }
 
+    // TODO: Implement
+    u32 ImKcpp::flush_acks() {
+        return 0;
+    }
+
+
     FlushResult ImKcpp::flush() {
         if (!this->updated) {
             return {};
@@ -491,6 +497,7 @@ namespace imkcpp {
         size_t offset = 0;
         size_t flushed_total_size = 0;
 
+        // TODO: Remake to a standalone buffer class with auto-flush on overflow
         auto flush_buffer = [this, &offset, &flushed_total_size] {
             flushed_total_size += offset;
 
@@ -662,9 +669,12 @@ namespace imkcpp {
                 }
 
                 result.data_sent_count++;
+                result.retransmitted_count += segment.metadata.xmit > 1 ? 1 : 0;
             }
         }
 
+        // TODO: Remake to a standalone buffer class with auto-flush on overflow,
+        // TODO: don't forget to add flush_if_not_empty() method here
         // flash remain segments
         if (offset > 0) {
             flush_buffer();
