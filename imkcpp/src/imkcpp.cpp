@@ -23,10 +23,13 @@ namespace imkcpp {
         this->output = output;
     }
 
+    // TODO: This makes no checks unlike set_nodelay. Should it be removed?
     void ImKcpp::set_interval(const u32 interval) {
         this->interval = interval;
     }
 
+    // TODO: Needs to be separate functions, and should be able to set them independently
+    // TODO: Also, should return a tl::expected with the new value or an error
     void ImKcpp::set_nodelay(const i32 nodelay, u32 interval, const i32 resend, const bool congestion_window) {
         if (nodelay >= 0) {
             this->nodelay = nodelay;
@@ -68,6 +71,8 @@ namespace imkcpp {
         return this->mss;
     }
 
+    // TODO: Needs to be separate functions, and should be able to set them independently
+    // TODO: Also, should return a tl::expected with the new value or an error
     void ImKcpp::set_wndsize(const u32 sndwnd, const u32 rcvwnd) {
         if (sndwnd > 0) {
             this->snd_wnd = sndwnd;
