@@ -3,7 +3,6 @@
 
 #include "imkcpp.hpp"
 #include "constants.hpp"
-#include "encoder.hpp"
 #include "commands.hpp"
 
 namespace imkcpp {
