@@ -535,7 +535,6 @@ namespace imkcpp {
         this->acklist.clear();
 
         // probe window size (if remote window size equals zero)
-        // TODO: This needs investigation because it's not clear when this is triggered.
         if (this->rmt_wnd == 0) {
             if (this->probe_wait == 0) {
                 this->probe_wait = constants::IKCP_PROBE_INIT;
