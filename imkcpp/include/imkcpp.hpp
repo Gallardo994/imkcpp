@@ -88,9 +88,9 @@ namespace imkcpp {
         [[nodiscard]] size_t estimate_segments_count(size_t size) const;
         tl::expected<size_t, error> send(std::span<const std::byte> buffer);
         tl::expected<size_t, error> input(std::span<const std::byte> data);
-        void update(u32 current);
+        size_t update(u32 current);
         u32 check(u32 current);
-        void flush();
+        size_t flush();
 
         [[nodiscard]] u32 get_mtu() const;
         [[nodiscard]] u32 get_max_segment_size() const;

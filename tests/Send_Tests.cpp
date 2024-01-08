@@ -6,37 +6,40 @@ TEST(Send_Tests, Send_ValidValues) {
     using namespace imkcpp;
 
     for (size_t size = 1; size <= constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD; ++size) {
-        ImKcpp kcp(0);
+        ImKcpp kcp_output(0);
+        kcp_output.update(0);
 
-        kcp.update(100);
+        ImKcpp kcp_input(0);
+        kcp_input.update(0);
 
         std::vector<std::byte> send_buffer(size);
         for (u32 j = 0; j < size; ++j) {
             send_buffer[j] = static_cast<std::byte>(j);
         }
 
-        auto segments_count = kcp.estimate_segments_count(size);
+        auto segments_count = kcp_output.estimate_segments_count(size);
 
         std::vector<std::vector<std::byte>> captured_data;
         captured_data.reserve(segments_count);
-        kcp.set_output([&captured_data](std::span<const std::byte> data, const ImKcpp& impl, std::optional<void*>) {
+        kcp_output.set_output([&captured_data](std::span<const std::byte> data, const ImKcpp&, std::optional<void*>) {
             captured_data.emplace_back(data.begin(), data.end());
         });
 
-        auto result = kcp.send(send_buffer);
-        EXPECT_TRUE(result.has_value()) << err_to_str(result.error());
+        auto send_result = kcp_output.send(send_buffer);
+        EXPECT_TRUE(send_result.has_value()) << err_to_str(send_result.error());
+
+        auto update_result = kcp_output.update(200);
+        EXPECT_EQ(update_result, segments_count);
 
         ASSERT_EQ(captured_data.size(), segments_count);
 
         for (auto& captured : captured_data) {
-            auto input_result = kcp.input(captured);
+            auto input_result = kcp_input.input(captured);
             EXPECT_TRUE(input_result.has_value()) << err_to_str(input_result.error());
         }
 
-        kcp.update(1000);
-
         std::vector<std::byte> recv_buffer(size);
-        auto recv_result = kcp.recv(recv_buffer);
+        auto recv_result = kcp_input.recv(recv_buffer);
         EXPECT_TRUE(recv_result.has_value()) << err_to_str(recv_result.error());
 
         for (size_t j = 0; j < size; ++j) {

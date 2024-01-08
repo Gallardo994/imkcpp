@@ -457,7 +457,7 @@ namespace imkcpp {
         return 0;
     }
 
-    void ImKcpp::update(u32 current) {
+    size_t ImKcpp::update(u32 current) {
         this->current = current;
 
         if (!this->updated) {
@@ -477,14 +477,16 @@ namespace imkcpp {
             if (_itimediff(this->current, this->ts_flush) >= 0) {
                 this->ts_flush = this->current + this->interval;
             }
-            this->flush();
+            return this->flush();
         }
+
+        return 0;
     }
 
     // TODO: This may hold data which is undesirable in some segment types.
-    void ImKcpp::flush() {
+    size_t ImKcpp::flush() {
         if (!this->updated) {
-            return;
+            return 0;
         }
 
         const u32 current = this->current;
@@ -492,8 +494,11 @@ namespace imkcpp {
         bool lost = false;
 
         size_t offset = 0;
+        size_t flushed_buffers_count = 0;
 
-        auto flush_buffer = [this, &offset] {
+        auto flush_buffer = [this, &offset, &flushed_buffers_count] {
+            flushed_buffers_count++;
+
             this->call_output({this->buffer.data(), offset});
             offset = 0;
         };
@@ -677,6 +682,8 @@ namespace imkcpp {
             this->cwnd = 1;
             this->incr = this->mss;
         }
+
+        return flushed_buffers_count;
     }
 
 
