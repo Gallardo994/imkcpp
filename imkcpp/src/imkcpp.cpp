@@ -713,7 +713,7 @@ namespace imkcpp {
             return current;
         }
 
-        if (_itimediff(current, this->ts_flush) >= 10000 || _itimediff(current, this->ts_flush) < -10000) {
+        if (std::abs(_itimediff(current, this->ts_flush)) >= 10000) {
             this->ts_flush = current;
         }
 
