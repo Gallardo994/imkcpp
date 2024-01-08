@@ -143,7 +143,7 @@ namespace imkcpp {
 
         for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
             if (sn == it->header.sn) {
-                snd_buf.erase(it);
+                this->snd_buf.erase(it);
                 break;
             }
 
@@ -166,11 +166,11 @@ namespace imkcpp {
     }
 
     void ImKcpp::parse_fastack(const u32 sn, const u32 ts) {
-        if (_itimediff(sn, snd_una) < 0 || _itimediff(sn, snd_nxt) >= 0) {
+        if (_itimediff(sn, this->snd_una) < 0 || _itimediff(sn, this->snd_nxt) >= 0) {
             return;
         }
 
-        for (Segment& seg : snd_buf) {
+        for (Segment& seg : this->snd_buf) {
             if (_itimediff(sn, seg.header.sn) < 0) {
                 break;
             }
@@ -209,19 +209,17 @@ namespace imkcpp {
             return tl::unexpected(error::buffer_too_small);
         }
 
-        const bool recover = this->rcv_queue.size() >= rcv_wnd;
+        const bool recover = this->rcv_queue.size() >= this->rcv_wnd;
 
         size_t offset = 0;
-        for (auto it = rcv_queue.begin(); it != rcv_queue.end();) {
+        for (auto it = this->rcv_queue.begin(); it != this->rcv_queue.end();) {
             Segment& segment = *it;
             const u8 fragment = segment.header.frg;
 
             const size_t copy_len = std::min(segment.data_size(), buffer.size() - offset);
+            segment.data.encode_to(buffer, offset, copy_len);
 
-            std::memcpy(buffer.data() + offset, segment.data.data.data(), copy_len);
-            offset += copy_len;
-
-            it = rcv_queue.erase(it);
+            it = this->rcv_queue.erase(it);
 
             if (fragment == 0) {
                 break;
@@ -234,18 +232,18 @@ namespace imkcpp {
 
         assert(offset == peeksize);
 
-        while (!rcv_buf.empty()) {
-            Segment& seg = rcv_buf.front();
-            if (seg.header.sn != rcv_nxt || this->rcv_queue.size() >= rcv_wnd) {
+        while (!this->rcv_buf.empty()) {
+            Segment& seg = this->rcv_buf.front();
+            if (seg.header.sn != this->rcv_nxt || this->rcv_queue.size() >= this->rcv_wnd) {
                 break;
             }
 
-            rcv_queue.push_back(std::move(seg));
-            rcv_buf.pop_front();
-            rcv_nxt++;
+            this->rcv_queue.push_back(std::move(seg));
+            this->rcv_buf.pop_front();
+            this->rcv_nxt++;
         }
 
-        if (this->rcv_queue.size() < rcv_wnd && recover) {
+        if (this->rcv_queue.size() < this->rcv_wnd && recover) {
             this->probe |= constants::IKCP_ASK_TELL;
         }
 
