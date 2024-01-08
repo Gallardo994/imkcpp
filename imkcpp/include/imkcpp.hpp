@@ -21,7 +21,7 @@ namespace imkcpp {
     // TODO: Additionally, this will allow more compile-time optimizations.
     class ImKcpp final {
     private:
-        u32 conv = 0;
+        u32 conv = 0; // TODO: This never needs to be a full 32-bit value. 16 or even 8 bits should be enough.
         size_t mtu = 0;
         size_t mss = 0;
 
