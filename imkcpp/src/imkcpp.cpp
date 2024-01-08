@@ -82,9 +82,9 @@ namespace imkcpp {
         }
     }
 
-    tl::expected<size_t, peek_error> ImKcpp::peek_size() const {
+    tl::expected<size_t, error> ImKcpp::peek_size() const {
         if (this->rcv_queue.empty()) {
-            return tl::unexpected(peek_error::queue_empty);
+            return tl::unexpected(error::queue_empty);
         }
 
         const auto front = this->rcv_queue.front();
@@ -94,7 +94,7 @@ namespace imkcpp {
         }
 
         if (this->rcv_queue.size() < front.header.frg + 1) {
-            return tl::unexpected(peek_error::waiting_for_fragment);
+            return tl::unexpected(error::waiting_for_fragment);
         }
 
         size_t length = 0;
@@ -202,19 +202,15 @@ namespace imkcpp {
 
     // receive
 
-    tl::expected<size_t, recv_error> ImKcpp::recv(std::span<std::byte>& buffer) {
-        if (this->rcv_queue.empty()) {
-            return tl::unexpected(recv_error::queue_empty);
-        }
-
+    tl::expected<size_t, error> ImKcpp::recv(std::span<std::byte>& buffer) {
         const auto peeksize = this->peek_size();
 
         if (!peeksize.has_value()) {
-            return tl::unexpected(recv_error::peek_error);
+            return tl::unexpected(peeksize.error());
         }
 
         if (peeksize.value() > buffer.size()) {
-            return tl::unexpected(recv_error::buffer_too_small);
+            return tl::unexpected(error::buffer_too_small);
         }
 
         const bool recover = this->rcv_queue.size() >= rcv_wnd;
@@ -257,9 +253,9 @@ namespace imkcpp {
         return len;
     }
 
-    tl::expected<size_t, send_error> ImKcpp::send(const std::span<const std::byte>& buffer) {
+    tl::expected<size_t, error> ImKcpp::send(const std::span<const std::byte>& buffer) {
         if (buffer.empty()) {
-            return tl::unexpected(send_error::buffer_empty);
+            return tl::unexpected(error::buffer_empty);
         }
 
         size_t len = buffer.size();
@@ -267,7 +263,7 @@ namespace imkcpp {
 
         // TODO: Shouldn't this be either rmt_wnd or snd_wnd?
         if (count >= this->rcv_wnd) {
-            return tl::unexpected(send_error::too_many_fragments);
+            return tl::unexpected(error::too_many_fragments);
         }
 
         count = std::max(count, static_cast<size_t>(1));
@@ -325,13 +321,13 @@ namespace imkcpp {
         }
     }
 
-    tl::expected<size_t, input_error> ImKcpp::input(const std::span<const std::byte>& data) {
+    tl::expected<size_t, error> ImKcpp::input(const std::span<const std::byte>& data) {
         if (data.size() < constants::IKCP_OVERHEAD) {
-            return tl::unexpected(input_error::less_than_header_size);
+            return tl::unexpected(error::less_than_header_size);
         }
 
         if (data.size() > this->mtu) {
-            return tl::unexpected(input_error::more_than_mtu);
+            return tl::unexpected(error::more_than_mtu);
         }
 
         const u32 prev_una = this->snd_una;
@@ -345,15 +341,15 @@ namespace imkcpp {
             header.decode_from(data, offset);
 
             if (header.conv != this->conv) {
-                return tl::unexpected(input_error::conv_mismatch);
+                return tl::unexpected(error::conv_mismatch);
             }
 
             if (header.len > data.size() - offset) {
-                return tl::unexpected(input_error::header_and_payload_length_mismatch);
+                return tl::unexpected(error::header_and_payload_length_mismatch);
             }
 
             if (!commands::is_valid(header.cmd)) {
-                return tl::unexpected(input_error::unknown_command);
+                return tl::unexpected(error::unknown_command);
             }
 
             this->rmt_wnd = header.wnd;
@@ -411,7 +407,7 @@ namespace imkcpp {
                     break;
                 }
                 default: {
-                    return tl::unexpected(input_error::unknown_command);
+                    return tl::unexpected(error::unknown_command);
                 }
             }
         }

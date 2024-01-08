@@ -83,15 +83,15 @@ namespace imkcpp {
         void set_mtu(u32 mtu);
         void set_wndsize(u32 sndwnd, u32 rcvwnd);
 
-        tl::expected<size_t, recv_error> recv(std::span<std::byte>& buffer);
-        tl::expected<size_t, send_error> send(const std::span<const std::byte>& buffer);
-        tl::expected<size_t, input_error> input(const std::span<const std::byte>& data);
+        tl::expected<size_t, error> recv(std::span<std::byte>& buffer);
+        tl::expected<size_t, error> send(const std::span<const std::byte>& buffer);
+        tl::expected<size_t, error> input(const std::span<const std::byte>& data);
         void update(u32 current);
         u32 check(u32 current);
         void flush();
 
         [[nodiscard]] u32 get_mtu() const;
         [[nodiscard]] u32 get_max_segment_size() const;
-        [[nodiscard]] tl::expected<size_t, peek_error> peek_size() const;
+        [[nodiscard]] tl::expected<size_t, error> peek_size() const;
     };
 }
