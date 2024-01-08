@@ -27,14 +27,13 @@ namespace imkcpp {
         this->interval = interval;
     }
 
-    void ImKcpp::set_nodelay(const i32 nodelay, u32 interval, const i32 resend, const i32 nc) {
+    void ImKcpp::set_nodelay(const i32 nodelay, u32 interval, const i32 resend, const bool congestion_window) {
         if (nodelay >= 0) {
             this->nodelay = nodelay;
 
             if (nodelay) {
                 this->rx_minrto = constants::IKCP_RTO_NDL;
-            }
-            else {
+            } else {
                 this->rx_minrto = constants::IKCP_RTO_MIN;
             }
         }
@@ -45,9 +44,7 @@ namespace imkcpp {
             this->fastresend = resend;
         }
 
-        if (nc >= 0) {
-            this->nocwnd = nc;
-        }
+        this->congestion_window = congestion_window;
     }
 
     tl::expected<size_t, error> ImKcpp::set_mtu(const u32 mtu) {
@@ -587,7 +584,7 @@ namespace imkcpp {
 
         // calculate window size
         u32 cwnd = std::min(this->snd_wnd, this->rmt_wnd);
-        if (this->nocwnd == 0) {
+        if (this->congestion_window) {
             cwnd = std::min(this->cwnd, cwnd);
         }
 

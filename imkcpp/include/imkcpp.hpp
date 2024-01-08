@@ -61,7 +61,7 @@ namespace imkcpp {
 
         i32 fastresend = 0;
         i32 fastlimit = constants::IKCP_FASTACK_LIMIT;
-        i32 nocwnd = 0;
+        bool congestion_window = true;
 
         output_callback_t output;
 
@@ -80,7 +80,7 @@ namespace imkcpp {
         void set_userdata(void* userdata);
         void set_output(const output_callback_t& output);
         void set_interval(u32 interval);
-        void set_nodelay(i32 nodelay, u32 interval, i32 resend, i32 nc);
+        void set_nodelay(i32 nodelay, u32 interval, i32 resend, bool congestion_window);
         tl::expected<size_t, error> set_mtu(u32 mtu);
         void set_wndsize(u32 sndwnd, u32 rcvwnd);
 
