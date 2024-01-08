@@ -5,15 +5,10 @@
 TEST(Send_Tests, Send_ValidValues) {
     using namespace imkcpp;
 
-    /*
     constexpr size_t max_segment_size = constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD;
     constexpr size_t max_data_size = max_segment_size * 255;
     constexpr size_t step = max_segment_size / 2;
-    */
-    ///*
-    constexpr size_t max_data_size = constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD;
-    constexpr size_t step = 8;
-    //*/
+
     for (size_t size = 1; size < max_data_size; size += step) {
         ImKcpp kcp_output(0);
         kcp_output.set_wndsize(2048, 2048);
@@ -52,6 +47,7 @@ TEST(Send_Tests, Send_ValidValues) {
         ASSERT_EQ(captured_data.size(), segments_count);
 
         for (auto& captured : captured_data) {
+            // TODO: This fails 1400 != 1401 for some reason
             ASSERT_EQ(captured.size(), size + constants::IKCP_OVERHEAD);
 
             auto input_result = kcp_input.input(captured);
@@ -64,7 +60,7 @@ TEST(Send_Tests, Send_ValidValues) {
         EXPECT_TRUE(recv_result.has_value()) << err_to_str(recv_result.error());
 
         for (size_t j = 0; j < size; ++j) {
-            EXPECT_EQ(send_buffer[j], recv_buffer[j]);
+            EXPECT_EQ(send_buffer.at(j), recv_buffer.at(j));
         }
     }
 }
