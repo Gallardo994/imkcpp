@@ -41,7 +41,7 @@ namespace imkcpp {
         u32 rx_minrto = constants::IKCP_RTO_MIN;
         u32 snd_wnd = constants::IKCP_WND_SND;
         u32 rcv_wnd = constants::IKCP_WND_RCV;
-        u32 rmt_wnd = constants::IKCP_WND_RCV;
+        u32 rmt_wnd = constants::IKCP_WND_SND;
         u32 cwnd = 0;
         u32 probe = 0;
         u32 current = 0;

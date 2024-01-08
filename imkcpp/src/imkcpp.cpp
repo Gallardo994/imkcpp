@@ -80,6 +80,7 @@ namespace imkcpp {
     void ImKcpp::set_wndsize(const u32 sndwnd, const u32 rcvwnd) {
         if (sndwnd > 0) {
             this->snd_wnd = sndwnd;
+            this->rmt_wnd = sndwnd;
         }
 
         if (rcvwnd > 0) {
@@ -98,7 +99,7 @@ namespace imkcpp {
             return front.data_size();
         }
 
-        if (this->rcv_queue.size() < front.header.frg + 1) {
+        if (this->rcv_queue.size() < static_cast<size_t>(front.header.frg) + 1) {
             return tl::unexpected(error::waiting_for_fragment);
         }
 
@@ -597,12 +598,7 @@ namespace imkcpp {
             cwnd = std::min(this->cwnd, cwnd);
         }
 
-        // move data from snd_queue to snd_buf
-        while (_itimediff(this->snd_nxt, this->snd_una + cwnd) < 0) {
-            if (snd_queue.empty()) {
-                break;
-            }
-
+        while (!snd_queue.empty() && this->snd_nxt < this->snd_una + cwnd) {
             Segment& newseg = snd_queue.front();
 
             newseg.header.conv = this->conv;
