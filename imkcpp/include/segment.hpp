@@ -103,5 +103,10 @@ namespace imkcpp {
         [[nodiscard]] size_t data_size() const {
             return header.len;
         }
+
+        void data_assign(const std::span<const std::byte> buf) {
+            data.assign(buf);
+            header.len = data.data.size();
+        }
     };
 }

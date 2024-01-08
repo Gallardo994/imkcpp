@@ -268,22 +268,20 @@ namespace imkcpp {
 
         count = std::max(count, static_cast<size_t>(1));
 
-        auto buf_ptr = buffer.begin();
-        size_t sent = 0;
+        size_t offset = 0;
 
         for (size_t i = 0; i < count; i++) {
             const size_t size = std::min(len, this->mss);
-            Segment& seg = snd_queue.emplace_back();
 
-            seg.data.assign({buf_ptr, size});
+            Segment& seg = snd_queue.emplace_back();
+            seg.data_assign({buffer.data() + offset, size});
             seg.header.frg = static_cast<u8>(count - i - 1);
 
-            buf_ptr += size;
+            offset += size;
             len -= size;
-            sent += size;
         }
 
-        return sent;
+        return offset;
     }
 
 
@@ -649,7 +647,7 @@ namespace imkcpp {
 
         // update ssthresh
         if (change) {
-            u32 inflight = this->snd_nxt - this->snd_una;
+            const u32 inflight = this->snd_nxt - this->snd_una;
             this->ssthresh = std::max(inflight / 2, constants::IKCP_THRESH_MIN);
             this->cwnd = this->ssthresh + resent;
             this->incr = this->cwnd * this->mss;
@@ -668,7 +666,7 @@ namespace imkcpp {
     }
 
 
-    u32 ImKcpp::check(u32 current) {
+    u32 ImKcpp::check(const u32 current) {
         i32 tm_flush = 0x7fffffff;
         i32 tm_packet = 0x7fffffff;
         u32 minimal = 0;
