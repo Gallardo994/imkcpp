@@ -6,7 +6,6 @@
 #include "commands.hpp"
 
 namespace imkcpp {
-    // TODO: This uses millisecond precision. Is this enough?
     static i32 _itimediff(u32 later, u32 earlier) {
         return static_cast<i32>(later - earlier);
     }
