@@ -10,9 +10,10 @@ TEST(Send_Tests, Send_ValidValues) {
     constexpr size_t max_data_size = max_segment_size * 255;
     constexpr size_t step = max_segment_size / 2;
     */
+    ///*
     constexpr size_t max_data_size = constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD;
     constexpr size_t step = 8;
-
+    //*/
     for (size_t size = 1; size < max_data_size; size += step) {
         ImKcpp kcp_output(0);
         kcp_output.set_wndsize(256, 256);
