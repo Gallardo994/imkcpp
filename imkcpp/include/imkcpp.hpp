@@ -80,7 +80,7 @@ namespace imkcpp {
         void set_output(const output_callback_t& output);
         void set_interval(u32 interval);
         void set_nodelay(i32 nodelay, u32 interval, i32 resend, i32 nc);
-        void set_mtu(u32 mtu);
+        tl::expected<size_t, error> set_mtu(u32 mtu);
         void set_wndsize(u32 sndwnd, u32 rcvwnd);
 
         tl::expected<size_t, error> recv(std::span<std::byte>& buffer);

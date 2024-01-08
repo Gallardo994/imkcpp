@@ -53,15 +53,17 @@ namespace imkcpp {
         }
     }
 
-    void ImKcpp::set_mtu(const u32 mtu) {
+    tl::expected<size_t, error> ImKcpp::set_mtu(const u32 mtu) {
         if (mtu <= constants::IKCP_OVERHEAD) {
-            return;
+            return tl::unexpected(error::less_than_header_size);
         }
 
         // TODO: Does this really need triple the size?
         this->buffer.resize(static_cast<size_t>(mtu + constants::IKCP_OVERHEAD) * 3);
         this->mtu = mtu;
         this->mss = this->mtu - constants::IKCP_OVERHEAD;
+
+        return mtu;
     }
 
     u32 ImKcpp::get_mtu() const {
