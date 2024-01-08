@@ -1,40 +1,44 @@
 #pragma once
 
+#include <span>
+#include <cstddef>
+#include <cassert>
 #include "types.hpp"
 
 namespace imkcpp::encoder {
-    // OLD
-    inline const std::byte* decode8u(const std::byte* p, u8& c) {
-        c = *reinterpret_cast<const uint8_t*>(p++);
-        return p;
+    inline void encode8u(std::span<std::byte>& buf, size_t& offset, u8 value) {
+        assert(buf.size() >= offset + sizeof(u8));
+        std::memcpy(buf.data() + offset, &value, sizeof(u8));
+        offset += sizeof(u8);
     }
 
-    inline const std::byte* decode16u(const std::byte* p, u16& w) {
-        std::memcpy(&w, p, sizeof(u16));
-        p += sizeof(u16);
-        return p;
+    inline void decode8u(const std::span<const std::byte>& buf, size_t& offset, u8& value) {
+        assert(buf.size() >= offset + sizeof(u8));
+        std::memcpy(&value, buf.data() + offset, sizeof(u8));
+        offset += sizeof(u8);
     }
 
-    inline const std::byte* decode32u(const std::byte* p, u32& l) {
-        std::memcpy(&l, p, sizeof(u32));
-        p += sizeof(u32);
-        return p;
+    inline void encode16u(std::span<std::byte>& buf, size_t& offset, u16 value) {
+        assert(buf.size() >= offset + sizeof(u16));
+        std::memcpy(buf.data() + offset, &value, sizeof(u16));
+        offset += sizeof(u16);
     }
 
-    // NEW
-    inline void encode8u(std::vector<std::byte>& buf, u8 c) {
-        buf.push_back(static_cast<std::byte>(c));
+    inline void decode16u(const std::span<const std::byte>& buf, size_t& offset, u16& value) {
+        assert(buf.size() >= offset + sizeof(u16));
+        std::memcpy(&value, buf.data() + offset, sizeof(u16));
+        offset += sizeof(u16);
     }
 
-    inline void encode16u(std::vector<std::byte>& buf, u16 w) {
-        std::byte temp[sizeof(u16)];
-        std::memcpy(temp, &w, sizeof(u16));
-        buf.insert(buf.end(), std::begin(temp), std::end(temp));
+    inline void encode32u(std::span<std::byte>& buf, size_t& offset, u32 value) {
+        assert(buf.size() >= offset + sizeof(u32));
+        std::memcpy(buf.data() + offset, &value, sizeof(u32));
+        offset += sizeof(u32);
     }
 
-    inline void encode32u(std::vector<std::byte>& buf, u32 l) {
-        std::byte temp[sizeof(u32)];
-        std::memcpy(temp, &l, sizeof(u32));
-        buf.insert(buf.end(), std::begin(temp), std::end(temp));
+    inline void decode32u(const std::span<const std::byte>& buf, size_t& offset, u32& value) {
+        assert(buf.size() >= offset + sizeof(u32));
+        std::memcpy(&value, buf.data() + offset, sizeof(u32));
+        offset += sizeof(u32);
     }
 }

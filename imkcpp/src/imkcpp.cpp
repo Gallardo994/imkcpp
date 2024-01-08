@@ -82,26 +82,26 @@ namespace imkcpp {
         }
     }
 
-    i32 ImKcpp::peek_size() const {
+    tl::expected<size_t, peek_error> ImKcpp::peek_size() const {
         if (this->rcv_queue.empty()) {
-            return -1;
+            return tl::unexpected(peek_error::queue_empty);
         }
 
         const auto front = this->rcv_queue.front();
 
-        if (front.frg == 0) {
-            return static_cast<int>(front.data.size());
+        if (front.header.frg == 0) {
+            return front.data_size();
         }
 
-        if (this->rcv_queue.size() < front.frg + 1) {
-            return -1;
+        if (this->rcv_queue.size() < front.header.frg + 1) {
+            return tl::unexpected(peek_error::waiting_for_fragment);
         }
 
-        int length = 0;
+        size_t length = 0;
         for (const auto& seg : this->rcv_queue) {
-            length += static_cast<int>(seg.data.size());
+            length += seg.data_size();
 
-            if (seg.frg == 0) {
+            if (seg.header.frg == 0) {
                 break;
             }
         }
@@ -134,7 +134,7 @@ namespace imkcpp {
     void ImKcpp::shrink_buf() {
         if (!this->snd_buf.empty()) {
             const auto& seg = this->snd_buf.front();
-            this->snd_una = seg.sn;
+            this->snd_una = seg.header.sn;
         } else {
             this->snd_una = this->snd_nxt;
         }
@@ -146,12 +146,12 @@ namespace imkcpp {
         }
 
         for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
-            if (sn == it->sn) {
+            if (sn == it->header.sn) {
                 snd_buf.erase(it);
                 break;
             }
 
-            if (_itimediff(sn, it->sn) < 0) {
+            if (_itimediff(sn, it->header.sn) < 0) {
                 break;
             }
 
@@ -161,7 +161,7 @@ namespace imkcpp {
 
     void ImKcpp::parse_una(const u32 una) {
         for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
-            if (_itimediff(una, it->sn) > 0) {
+            if (_itimediff(una, it->header.sn) > 0) {
                 it = this->snd_buf.erase(it);
             } else {
                 break;
@@ -175,16 +175,16 @@ namespace imkcpp {
         }
 
         for (auto& seg : snd_buf) {
-            if (_itimediff(sn, seg.sn) < 0) {
+            if (_itimediff(sn, seg.header.sn) < 0) {
                 break;
             }
 
-            if (sn != seg.sn) {
+            if (sn != seg.header.sn) {
 #ifndef IKCP_FASTACK_CONSERVE
-                seg.fastack++;
+                seg.metadata.fastack++;
 #else
                 if (_itimediff(ts, seg.ts) >= 0) {
-                    seg.fastack++;
+                    seg.metadata.fastack++;
                 }
 #endif
             }
@@ -202,37 +202,37 @@ namespace imkcpp {
 
     // receive
 
-    i32 ImKcpp::recv(std::span<std::byte>& buffer) {
+    tl::expected<size_t, recv_error> ImKcpp::recv(std::span<std::byte>& buffer) {
         if (this->rcv_queue.empty()) {
-            return -1;
+            return tl::unexpected(recv_error::queue_empty);
         }
 
-        const int peeksize = this->peek_size();
+        const auto peeksize = this->peek_size();
 
-        if (peeksize < 0) {
-            return -2;
+        if (!peeksize.has_value()) {
+            return tl::unexpected(recv_error::peek_error);
         }
 
-        if (peeksize > buffer.size()) {
-            return -3;
+        if (peeksize.value() > buffer.size()) {
+            return tl::unexpected(recv_error::buffer_too_small);
         }
 
         const bool recover = this->rcv_queue.size() >= rcv_wnd;
 
         size_t len = 0;
         for (auto it = rcv_queue.begin(); it != rcv_queue.end();) {
-            const segment& segment = *it;
-            const size_t copy_len = std::min(segment.data.size(), buffer.size() - len);
+            const Segment& segment = *it;
+            const size_t copy_len = std::min(segment.header.len, buffer.size() - len);
             std::memcpy(buffer.data() + len, segment.data.data(), copy_len);
             len += copy_len;
 
             it = rcv_queue.erase(it);
 
-            if (segment.frg == 0) {
+            if (segment.header.frg == 0) {
                 break;
             }
 
-            if (len >= peeksize) {
+            if (len >= peeksize.value()) {
                 break;
             }
         }
@@ -241,7 +241,7 @@ namespace imkcpp {
 
         while (!rcv_buf.empty()) {
             auto& seg = rcv_buf.front();
-            if (seg.sn != rcv_nxt || this->rcv_queue.size() >= rcv_wnd) {
+            if (seg.header.sn != rcv_nxt || this->rcv_queue.size() >= rcv_wnd) {
                 break;
             }
 
@@ -254,13 +254,12 @@ namespace imkcpp {
             this->probe |= constants::IKCP_ASK_TELL;
         }
 
-        return static_cast<i32>(len);
+        return len;
     }
 
-    // TODO: This should return result and error if any.
-    i32 ImKcpp::send(const std::span<const std::byte>& buffer) {
+    tl::expected<size_t, send_error> ImKcpp::send(const std::span<const std::byte>& buffer) {
         if (buffer.empty()) {
-            return -1;
+            return tl::unexpected(send_error::buffer_empty);
         }
 
         size_t len = buffer.size();
@@ -268,7 +267,7 @@ namespace imkcpp {
 
         // TODO: Shouldn't this be either rmt_wnd or snd_wnd?
         if (count >= this->rcv_wnd) {
-            return -2;
+            return tl::unexpected(send_error::too_many_fragments);
         }
 
         count = std::max(count, static_cast<size_t>(1));
@@ -278,33 +277,33 @@ namespace imkcpp {
 
         for (size_t i = 0; i < count; i++) {
             const size_t size = std::min(len, this->mss);
-            segment& seg = snd_queue.emplace_back();
+            Segment& seg = snd_queue.emplace_back();
 
             seg.data.assign(buf_ptr, buf_ptr + size);
-            seg.frg = static_cast<u8>(count - i - 1);
+            seg.header.frg = static_cast<u8>(count - i - 1);
 
             buf_ptr += size;
             len -= size;
             sent += size;
         }
 
-        return static_cast<i32>(sent);
+        return sent;
     }
 
 
-    void ImKcpp::parse_data(const segment& newseg) {
-        u32 sn = newseg.sn;
+    void ImKcpp::parse_data(const Segment& newseg) {
+        u32 sn = newseg.header.sn;
         bool repeat = false;
 
         if (_itimediff(sn, rcv_nxt + rcv_wnd) >= 0 || _itimediff(sn, rcv_nxt) < 0) {
             return;
         }
 
-        const auto it = std::find_if(rcv_buf.rbegin(), rcv_buf.rend(), [sn](const segment& seg) {
-            return _itimediff(sn, seg.sn) <= 0;
+        const auto it = std::find_if(rcv_buf.rbegin(), rcv_buf.rend(), [sn](const Segment& seg) {
+            return _itimediff(sn, seg.header.sn) <= 0;
         });
 
-        if (it != rcv_buf.rend() && it->sn == sn) {
+        if (it != rcv_buf.rend() && it->header.sn == sn) {
             repeat = true;
         }
 
@@ -314,9 +313,9 @@ namespace imkcpp {
 
         // Move available data from rcv_buf to rcv_queue
         while (!rcv_buf.empty()) {
-            segment& seg = rcv_buf.front();
+            Segment& seg = rcv_buf.front();
 
-            if (seg.sn == rcv_nxt && this->rcv_queue.size() < static_cast<size_t>(rcv_wnd)) {
+            if (seg.header.sn == rcv_nxt && this->rcv_queue.size() < static_cast<size_t>(rcv_wnd)) {
                 rcv_buf.pop_front();
                 rcv_queue.push_back(seg);
                 rcv_nxt++;
@@ -328,61 +327,45 @@ namespace imkcpp {
 
     // TODO: Mismatch between original and this code.
     // TODO: - Original code sets rmt_wnd according to input data.
-    i32 ImKcpp::input(const std::span<const std::byte>& data) {
+    tl::expected<size_t, input_error> ImKcpp::input(const std::span<const std::byte>& data) {
         if (data.size() < constants::IKCP_OVERHEAD) {
-            return -1;
+            return tl::unexpected(input_error::less_than_header_size);
         }
 
         i32 prev_una = this->snd_una;
         i32 maxack = 0, latest_ts = 0;
         int flag = 0;
 
-        const std::byte* ptr = data.data();
-        const std::byte* end = ptr + data.size();
+        size_t offset = 0;
 
-        while (ptr < end) {
-            uint32_t ts, sn, una, len, segment_conv;
-            uint16_t wnd;
-            uint8_t cmd, frg;
+        while (offset + constants::IKCP_OVERHEAD < data.size()) {
+            SegmentHeader header;
+            header.decode_from(data, offset);
 
-            if (std::distance(ptr, end) < constants::IKCP_OVERHEAD) {
-                break;
+            if (header.conv != this->conv) {
+                return tl::unexpected(input_error::conv_mismatch);
             }
 
-            // TODO: Move decoding to segment-related code
-            ptr = encoder::decode32u(ptr, segment_conv);
-            ptr = encoder::decode8u(ptr, cmd);
-            ptr = encoder::decode8u(ptr, frg);
-            ptr = encoder::decode16u(ptr, wnd);
-            ptr = encoder::decode32u(ptr, ts);
-            ptr = encoder::decode32u(ptr, sn);
-            ptr = encoder::decode32u(ptr, una);
-            ptr = encoder::decode32u(ptr, len);
-
-            if (segment_conv != conv) {
-                return -1;
+            if (data.size() - offset < header.len) {
+                return tl::unexpected(input_error::header_and_payload_length_mismatch);
             }
 
-            if (std::distance(ptr, end) < static_cast<long>(len)) {
-                return -2;
-            }
-
-            switch (cmd) {
+            switch (header.cmd) {
                 case commands::IKCP_CMD_ACK: {
-                    this->parse_ack(sn);
+                    this->parse_ack(header.sn);
                     this->shrink_buf();
 
                     if (flag == 0) {
                         flag = 1;
-                        maxack = sn;
-                        latest_ts = ts;
+                        maxack = header.sn;
+                        latest_ts = header.ts;
                     } else {
-                        if (_itimediff(sn, maxack) > 0) {
+                        if (_itimediff(header.sn, maxack) > 0) {
     #ifndef IKCP_FASTACK_CONSERVE
-                            maxack = sn;
-                            latest_ts = ts;
+                            maxack = header.sn;
+                            latest_ts = header.ts;
     #else
-                            if (_itimediff(ts, latest_ts) > 0) {
+                            if (_itimediff(header.ts, latest_ts) > 0) {
                                 maxack = sn;
                                 latest_ts = ts;
                             }
@@ -393,21 +376,12 @@ namespace imkcpp {
                     break;
                 }
                 case commands::IKCP_CMD_PUSH: {
-                    if (_itimediff(sn, this->rcv_nxt + this->rcv_wnd) < 0) {
-                        this->acklist.emplace_back(sn, ts);
-                        if (_itimediff(sn, this->rcv_nxt) >= 0) {
-                            segment seg(len);
-                            seg.conv = conv;
-                            seg.cmd = cmd;
-                            seg.frg = frg;
-                            seg.wnd = wnd;
-                            seg.ts = ts;
-                            seg.sn = sn;
-                            seg.una = una;
-
-                            if (len > 0) {
-                                seg.data.insert(seg.data.end(), ptr, ptr + len);
-                            }
+                    if (_itimediff(header.sn, this->rcv_nxt + this->rcv_wnd) < 0) {
+                        this->acklist.emplace_back(header.sn, header.ts);
+                        if (_itimediff(header.sn, this->rcv_nxt) >= 0) {
+                            Segment seg;
+                            seg.header = header;
+                            seg.data.decode_from(data, offset, header.len);
 
                             this->parse_data(seg);
                         }
@@ -426,8 +400,6 @@ namespace imkcpp {
                     return -3;
                 }
             }
-
-            ptr += len;
         }
 
         if (flag != 0) {
@@ -493,15 +465,15 @@ namespace imkcpp {
         int change = 0;
         bool lost = false;
 
-        segment seg;
+        Segment seg;
 
-        seg.conv = this->conv;
-        seg.cmd = commands::IKCP_CMD_ACK;
-        seg.frg = 0;
-        seg.wnd = this->wnd_unused();
-        seg.una = this->rcv_nxt;
-        seg.sn = 0;
-        seg.ts = 0;
+        seg.header.conv = this->conv;
+        seg.header.cmd = commands::IKCP_CMD_ACK;
+        seg.header.frg = 0;
+        seg.header.wnd = this->wnd_unused();
+        seg.header.una = this->rcv_nxt;
+        seg.header.sn = 0;
+        seg.header.ts = 0;
 
         // flush acknowledges
         for (const Ack& ack : this->acklist) {
@@ -510,8 +482,8 @@ namespace imkcpp {
                 this->buffer.clear();
             }
 
-            seg.sn = ack.sn;
-            seg.ts = ack.ts;
+            seg.header.sn = ack.sn;
+            seg.header.ts = ack.ts;
 
             seg.encode_to(this->buffer);
         }
@@ -550,7 +522,7 @@ namespace imkcpp {
                 this->buffer.clear();
             }
 
-            seg.cmd = commands::IKCP_CMD_WASK;
+            seg.header.cmd = commands::IKCP_CMD_WASK;
             seg.encode_to(this->buffer);
         }
 
@@ -561,7 +533,7 @@ namespace imkcpp {
                 this->buffer.clear();
             }
 
-            seg.cmd = commands::IKCP_CMD_WINS;
+            seg.header.cmd = commands::IKCP_CMD_WINS;
             seg.encode_to(this->buffer);
         }
 
@@ -579,18 +551,18 @@ namespace imkcpp {
                 break;
             }
 
-            segment& newseg = snd_queue.front();
+            Segment& newseg = snd_queue.front();
 
-            newseg.conv = this->conv;
-            newseg.cmd = commands::IKCP_CMD_PUSH;
-            newseg.wnd = seg.wnd;
-            newseg.ts = current;
-            newseg.sn = this->snd_nxt++;
-            newseg.una = this->rcv_nxt;
-            newseg.resendts = current;
-            newseg.rto = this->rx_rto;
-            newseg.fastack = 0;
-            newseg.xmit = 0;
+            newseg.header.conv = this->conv;
+            newseg.header.cmd = commands::IKCP_CMD_PUSH;
+            newseg.header.wnd = seg.header.wnd;
+            newseg.header.ts = current;
+            newseg.header.sn = this->snd_nxt++;
+            newseg.header.una = this->rcv_nxt;
+            newseg.metadata.resendts = current;
+            newseg.metadata.rto = this->rx_rto;
+            newseg.metadata.fastack = 0;
+            newseg.metadata.xmit = 0;
 
             snd_buf.push_back(std::move(newseg));
             snd_queue.pop_front();
@@ -601,43 +573,43 @@ namespace imkcpp {
         u32 rtomin = (this->nodelay == 0) ? (this->rx_rto >> 3) : 0;
 
         // flush data segments
-        for (segment& segment : this->snd_buf) {
+        for (Segment& segment : this->snd_buf) {
             int needsend = 0;
 
-            if (segment.xmit == 0) {
+            if (segment.metadata.xmit == 0) {
                 needsend = 1;
-                segment.xmit++;
-                segment.rto = this->rx_rto;
-                segment.resendts = current + segment.rto + rtomin;
-            } else if (_itimediff(current, segment.resendts) >= 0) {
+                segment.metadata.xmit++;
+                segment.metadata.rto = this->rx_rto;
+                segment.metadata.resendts = current + segment.metadata.rto + rtomin;
+            } else if (_itimediff(current, segment.metadata.resendts) >= 0) {
                 needsend = 1;
-                segment.xmit++;
+                segment.metadata.xmit++;
                 this->xmit++;
 
                 if (this->nodelay == 0) {
-                    segment.rto += std::max(segment.rto, this->rx_rto);
+                    segment.metadata.rto += std::max(segment.metadata.rto, this->rx_rto);
                 } else {
-                    const u32 step = this->nodelay < 2? segment.rto : this->rx_rto;
-                    segment.rto += step / 2;
+                    const u32 step = this->nodelay < 2? segment.metadata.rto : this->rx_rto;
+                    segment.metadata.rto += step / 2;
                 }
 
-                segment.resendts = current + segment.rto;
+                segment.metadata.resendts = current + segment.metadata.rto;
                 lost = true;
-            } else if (segment.fastack >= resent) {
+            } else if (segment.metadata.fastack >= resent) {
                 // TODO: The second check is probably redundant
-                if (segment.xmit <= this->fastlimit || this->fastlimit <= 0) {
+                if (segment.metadata.xmit <= this->fastlimit || this->fastlimit <= 0) {
                     needsend = 1;
-                    segment.xmit++;
-                    segment.fastack = 0;
-                    segment.resendts = current + segment.rto;
+                    segment.metadata.xmit++;
+                    segment.metadata.fastack = 0;
+                    segment.metadata.resendts = current + segment.metadata.rto;
                     change++;
                 }
             }
 
             if (needsend) {
-                segment.ts = current;
-                segment.wnd = seg.wnd;
-                segment.una = this->rcv_nxt;
+                segment.header.ts = current;
+                segment.header.wnd = seg.header.wnd;
+                segment.header.una = this->rcv_nxt;
 
                 if (this->buffer.size() + segment.data.size() > this->mss) {
                     call_output(this->buffer);
@@ -646,7 +618,7 @@ namespace imkcpp {
 
                 seg.encode_to(this->buffer);
 
-                if (segment.xmit >= this->dead_link) {
+                if (segment.metadata.xmit >= this->dead_link) {
                     this->state = State::DeadLink;
                 }
             }
@@ -699,7 +671,7 @@ namespace imkcpp {
         tm_flush = _itimediff(this->ts_flush, current);
 
         for (const auto& seg : this->snd_buf) {
-            const i32 diff = _itimediff(seg.resendts, current);
+            const i32 diff = _itimediff(seg.metadata.resendts, current);
 
             if (diff <= 0) {
                 return current;

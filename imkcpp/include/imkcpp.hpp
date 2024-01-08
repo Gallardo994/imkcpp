@@ -11,6 +11,8 @@
 #include "segment.hpp"
 #include "ack.hpp"
 #include "state.hpp"
+#include "expected.hpp"
+#include "errors.hpp"
 
 namespace imkcpp {
     class ImKcpp final {
@@ -46,10 +48,10 @@ namespace imkcpp {
         u32 dead_link = constants::IKCP_DEADLINK;
         u32 incr = 0;
 
-        std::deque<segment> snd_queue{};
-        std::deque<segment> rcv_queue{};
-        std::deque<segment> snd_buf{};
-        std::deque<segment> rcv_buf{};
+        std::deque<Segment> snd_queue{};
+        std::deque<Segment> rcv_queue{};
+        std::deque<Segment> snd_buf{};
+        std::deque<Segment> rcv_buf{};
 
         std::vector<Ack> acklist{};
 
@@ -69,7 +71,7 @@ namespace imkcpp {
         void parse_una(u32 una);
         void parse_fastack(u32 sn, u32 ts);
         [[nodiscard]] std::optional<Ack> ack_get(size_t p) const;
-        void parse_data(const segment& newseg);
+        void parse_data(const Segment& newseg);
         [[nodiscard]] i32 wnd_unused() const;
 
     public:
@@ -81,15 +83,15 @@ namespace imkcpp {
         void set_mtu(u32 mtu);
         void set_wndsize(u32 sndwnd, u32 rcvwnd);
 
-        i32 recv(std::span<std::byte>& buffer);
-        i32 send(const std::span<const std::byte>& buffer);
-        i32 input(const std::span<const std::byte>& data);
+        tl::expected<size_t, recv_error> recv(std::span<std::byte>& buffer);
+        tl::expected<size_t, send_error> send(const std::span<const std::byte>& buffer);
+        tl::expected<size_t, input_error> input(const std::span<const std::byte>& data);
         void update(u32 current);
         u32 check(u32 current);
         void flush();
 
         [[nodiscard]] u32 get_mtu() const;
         [[nodiscard]] u32 get_max_segment_size() const;
-        [[nodiscard]] i32 peek_size() const;
+        [[nodiscard]] tl::expected<size_t, peek_error> peek_size() const;
     };
 }

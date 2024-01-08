@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(imkcpp)
 
 set(SRC_FILES
-    src/imkcpp.cpp
+        src/imkcpp.cpp
 )
 
 include_directories(include)
