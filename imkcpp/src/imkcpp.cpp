@@ -50,6 +50,10 @@ namespace imkcpp {
         this->congestion_window = congestion_window;
     }
 
+    void ImKcpp::set_congestion_window(const bool congestion_window) {
+        this->congestion_window = congestion_window;
+    }
+
     tl::expected<size_t, error> ImKcpp::set_mtu(const u32 mtu) {
         if (mtu <= constants::IKCP_OVERHEAD) {
             return tl::unexpected(error::less_than_header_size);

@@ -89,6 +89,7 @@ namespace imkcpp {
         void set_nodelay(i32 nodelay, u32 interval, i32 resend, bool congestion_window);
         tl::expected<size_t, error> set_mtu(u32 mtu);
         void set_wndsize(u32 sndwnd, u32 rcvwnd);
+        void set_congestion_window(bool congestion_window);
 
         tl::expected<size_t, error> recv(std::span<std::byte> buffer);
         [[nodiscard]] size_t estimate_segments_count(size_t size) const;

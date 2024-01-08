@@ -16,11 +16,12 @@ TEST(Send_Tests, Send_ValidValues) {
     //*/
     for (size_t size = 1; size < max_data_size; size += step) {
         ImKcpp kcp_output(0);
-        kcp_output.set_wndsize(256, 256);
+        kcp_output.set_wndsize(2048, 2048);
+        kcp_output.set_congestion_window(false);
         kcp_output.update(0);
 
         ImKcpp kcp_input(0);
-        kcp_input.set_wndsize(256, 256);
+        kcp_input.set_wndsize(2048, 2048);
         kcp_input.update(0);
 
         std::vector<std::byte> send_buffer(size);
@@ -79,6 +80,35 @@ TEST(Send_Tests, Send_FragmentedValidValues) {
     auto result = kcp.send(data);
     EXPECT_TRUE(result.has_value()) << err_to_str(result.error());
     EXPECT_EQ(result.value(), data_size);
+}
+
+TEST(Send_Tests, Send_SizeValid) {
+    using namespace imkcpp;
+
+    constexpr size_t max_segment_size = constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD;
+    constexpr size_t max_segments_count = 255;
+    constexpr size_t max_data_size = max_segment_size * max_segments_count;
+    constexpr size_t step = max_segment_size / 2;
+
+    std::vector<std::byte> buffer(max_data_size + 1);
+
+    for (size_t size = 1; size < max_data_size; size += step) {
+        ImKcpp kcp(0);
+        kcp.set_wndsize(255, 255);
+
+        auto result = kcp.send({buffer.data(), size});
+        EXPECT_TRUE(result.has_value()) << err_to_str(result.error());
+        EXPECT_EQ(result.value(), size);
+    }
+
+    // Exceeds max data size
+    {
+        ImKcpp kcp(0);
+        kcp.set_wndsize(255, 255);
+
+        auto result = kcp.send({buffer.data(), max_data_size + 1});
+        EXPECT_EQ(result.error(), error::too_many_fragments);
+    }
 }
 
 TEST(Send_Tests, Send_ZeroBytes) {
