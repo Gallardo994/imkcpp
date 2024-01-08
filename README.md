@@ -21,3 +21,4 @@ C++20 implementation of KCP protocol with improvements ontop
 
 # Special thanks
 - [skywind3000](https://github.com/skywind3000) for the original [kcp](https://github.com/skywind3000/kcp) implementation
+- [TartanLlama](https://github.com/TartanLlama) for the [unexpected](https://github.com/TartanLlama/expected) implementation
