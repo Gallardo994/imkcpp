@@ -508,81 +508,84 @@ namespace imkcpp {
             offset = 0;
         };
 
-        Segment seg;
+        const i32 wnd = this->wnd_unused();
 
-        seg.header.conv = this->conv;
-        seg.header.cmd = commands::IKCP_CMD_ACK;
-        seg.header.frg = 0;
-        seg.header.wnd = this->wnd_unused();
-        seg.header.una = this->rcv_nxt;
-        seg.header.sn = 0;
-        seg.header.ts = 0;
-        seg.header.len = 0;
+        {
+            Segment seg;
+            seg.header.conv = this->conv;
+            seg.header.cmd = commands::IKCP_CMD_ACK;
+            seg.header.frg = 0;
+            seg.header.wnd = wnd;
+            seg.header.una = this->rcv_nxt;
+            seg.header.sn = 0;
+            seg.header.ts = 0;
+            seg.header.len = 0;
 
-        // flush acknowledges
-        for (const Ack& ack : this->acklist) {
-            if (offset > this->mss) {
-                flush_buffer();
-            }
-
-            seg.header.sn = ack.sn;
-            seg.header.ts = ack.ts;
-
-            seg.encode_to(this->buffer, offset);
-        }
-
-        result.ack_sent_count += this->acklist.size();
-        this->acklist.clear();
-
-        // probe window size (if remote window size equals zero)
-        if (this->rmt_wnd == 0) {
-            if (this->probe_wait == 0) {
-                this->probe_wait = constants::IKCP_PROBE_INIT;
-                this->ts_probe = this->current + this->probe_wait;
-            } else {
-                if (_itimediff(this->current, this->ts_probe) >= 0) {
-                    if (this->probe_wait < constants::IKCP_PROBE_INIT) {
-                        this->probe_wait = constants::IKCP_PROBE_INIT;
-                    }
-
-                    this->probe_wait += this->probe_wait / 2;
-                    if (this->probe_wait > constants::IKCP_PROBE_LIMIT) {
-                        this->probe_wait = constants::IKCP_PROBE_LIMIT;
-                    }
-                    this->ts_probe = this->current + this->probe_wait;
-                    this->probe |= constants::IKCP_ASK_SEND;
+            // flush acknowledges
+            for (const Ack& ack : this->acklist) {
+                if (offset > this->mss) {
+                    flush_buffer();
                 }
-            }
-        } else {
-            this->ts_probe = 0;
-            this->probe_wait = 0;
-        }
 
-        // flush window probing commands
-        if (this->probe & constants::IKCP_ASK_SEND) {
-            if (offset > this->mss) {
-                flush_buffer();
+                seg.header.sn = ack.sn;
+                seg.header.ts = ack.ts;
+
+                seg.encode_to(this->buffer, offset);
             }
 
-            seg.header.cmd = commands::IKCP_CMD_WASK;
-            seg.encode_to(this->buffer, offset);
+            result.ack_sent_count += this->acklist.size();
+            this->acklist.clear();
 
-            result.cmd_wask_count++;
-        }
+            // probe window size (if remote window size equals zero)
+            if (this->rmt_wnd == 0) {
+                if (this->probe_wait == 0) {
+                    this->probe_wait = constants::IKCP_PROBE_INIT;
+                    this->ts_probe = this->current + this->probe_wait;
+                } else {
+                    if (_itimediff(this->current, this->ts_probe) >= 0) {
+                        if (this->probe_wait < constants::IKCP_PROBE_INIT) {
+                            this->probe_wait = constants::IKCP_PROBE_INIT;
+                        }
 
-        // flush window probing commands
-        if (this->probe & constants::IKCP_ASK_TELL) {
-            if (offset > this->mss) {
-                flush_buffer();
+                        this->probe_wait += this->probe_wait / 2;
+                        if (this->probe_wait > constants::IKCP_PROBE_LIMIT) {
+                            this->probe_wait = constants::IKCP_PROBE_LIMIT;
+                        }
+                        this->ts_probe = this->current + this->probe_wait;
+                        this->probe |= constants::IKCP_ASK_SEND;
+                    }
+                }
+            } else {
+                this->ts_probe = 0;
+                this->probe_wait = 0;
             }
 
-            seg.header.cmd = commands::IKCP_CMD_WINS;
-            seg.encode_to(this->buffer, offset);
+            // flush window probing commands
+            if (this->probe & constants::IKCP_ASK_SEND) {
+                if (offset > this->mss) {
+                    flush_buffer();
+                }
 
-            result.cmd_wins_count++;
+                seg.header.cmd = commands::IKCP_CMD_WASK;
+                seg.encode_to(this->buffer, offset);
+
+                result.cmd_wask_count++;
+            }
+
+            // flush window probing commands
+            if (this->probe & constants::IKCP_ASK_TELL) {
+                if (offset > this->mss) {
+                    flush_buffer();
+                }
+
+                seg.header.cmd = commands::IKCP_CMD_WINS;
+                seg.encode_to(this->buffer, offset);
+
+                result.cmd_wins_count++;
+            }
+
+            this->probe = 0;
         }
-
-        this->probe = 0;
 
         // calculate window size
         u32 cwnd = std::min(this->snd_wnd, this->rmt_wnd);
@@ -600,7 +603,7 @@ namespace imkcpp {
 
             newseg.header.conv = this->conv;
             newseg.header.cmd = commands::IKCP_CMD_PUSH;
-            newseg.header.wnd = seg.header.wnd;
+            newseg.header.wnd = wnd;
             newseg.header.ts = current;
             newseg.header.sn = this->snd_nxt++;
             newseg.header.una = this->rcv_nxt;
@@ -653,7 +656,7 @@ namespace imkcpp {
 
             if (needsend) {
                 segment.header.ts = current;
-                segment.header.wnd = seg.header.wnd;
+                segment.header.wnd = wnd;
                 segment.header.una = this->rcv_nxt;
 
                 if (offset + segment.data_size() > this->mss) {
