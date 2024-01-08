@@ -6,7 +6,6 @@ C++20 implementation of KCP protocol with improvements ontop
 - Upstream implementation has type issues and depends on undefined behavior and compiler luck
 - Upstream implementation is missing several key features like knowing max packet size
 - Upstream implementation is limited to 255 segments per packet which may be too low for some use cases
-- Upstream implementation uses uint32 for time intervals leading to drift over time, which may be undesirable for some use cases
 - Upstream implementation is poorly documented leaving users to guess how to use it and what parameters mean
 - Upstream repository seems to be abandoned (last release was 2020)
 - Upstream repository has no practical tests and benchmarks
