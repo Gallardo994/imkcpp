@@ -352,8 +352,7 @@ namespace imkcpp {
                 return tl::unexpected(input_error::header_and_payload_length_mismatch);
             }
 
-            if (header.cmd != commands::IKCP_CMD_PUSH && header.cmd != commands::IKCP_CMD_ACK &&
-                header.cmd != commands::IKCP_CMD_WASK && header.cmd != commands::IKCP_CMD_WINS) {
+            if (!commands::is_valid(header.cmd)) {
                 return tl::unexpected(input_error::unknown_command);
             }
 
@@ -363,6 +362,10 @@ namespace imkcpp {
 
             switch (header.cmd) {
                 case commands::IKCP_CMD_ACK: {
+                    if (_itimediff(this->current, header.ts) >= 0) {
+                        this->update_ack(_itimediff(this->current, header.ts));
+                    }
+
                     this->parse_ack(header.sn);
                     this->shrink_buf();
 
