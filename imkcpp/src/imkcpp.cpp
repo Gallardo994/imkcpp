@@ -656,7 +656,6 @@ namespace imkcpp {
                     flush_buffer();
                 }
 
-                assert(segment.data_size() > 0); // TODO: Why is it sending empty segments?
                 segment.encode_to(this->buffer, offset);
 
                 if (segment.metadata.xmit >= this->dead_link) {
