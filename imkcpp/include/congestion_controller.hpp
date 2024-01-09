@@ -1,11 +1,16 @@
 #pragma once
 
+#include <commands.hpp>
+
 #include "types.hpp"
 #include "constants.hpp"
 #include "utility.hpp"
+#include "flusher.hpp"
 
 namespace imkcpp {
     class CongestionController {
+        Flusher& flusher;
+
         bool congestion_window = true;
         u32 mss = constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD;
 
@@ -24,6 +29,8 @@ namespace imkcpp {
         u32 probe_wait = 0; // How long we should wait before probing again
 
     public:
+        explicit CongestionController(Flusher& flusher) : flusher(flusher) {}
+
         void set_mss(const u32 mss) {
             this->mss = mss;
         }
@@ -151,6 +158,26 @@ namespace imkcpp {
 
         void reset_probe_flags() {
             this->probe = 0;
+        }
+
+        void flush_probes(const output_callback_t& output, Segment& base_segment) {
+            // TODO: Return information back to the caller
+
+            if (this->has_probe_flag(constants::IKCP_ASK_SEND)) {
+                flusher.flush_if_full(output);
+
+                base_segment.header.cmd = commands::IKCP_CMD_WASK;
+                flusher.encode(base_segment);
+            }
+
+            if (this->has_probe_flag(constants::IKCP_ASK_TELL)) {
+                flusher.flush_if_full(output);
+
+                base_segment.header.cmd = commands::IKCP_CMD_WINS;
+                flusher.encode(base_segment);
+            }
+
+            this->reset_probe_flags();
         }
     };
 }

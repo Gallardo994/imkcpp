@@ -18,6 +18,9 @@
 #include "congestion_controller.hpp"
 #include "shared_ctx.hpp"
 #include "receiver.hpp"
+#include "sender.hpp"
+#include "ack_controller.hpp"
+#include "flusher.hpp"
 
 namespace imkcpp {
     // TODO: Some day later this should become a template with MTU and max segment size as template parameters
@@ -25,18 +28,16 @@ namespace imkcpp {
     // TODO: Additionally, this will allow more compile-time optimizations.
     class ImKcpp final {
     private:
-        // TODO: This never needs to be a full 32-bit value. 16 or even 8 bits should be enough.
-        // TODO: We must never trust this value from the other side anyway. So the only useful application
-        // TODO: is distinguishing between different "channels" from the same peer.
-        u32 conv = 0;
-        size_t mtu = 0;
-        size_t mss = 0;
-
-        State state = State::Alive;
         SharedCtx shared_ctx{};
+        Flusher flusher{shared_ctx};
+
         RtoCalculator rto_calculator{};
-        CongestionController congestion_controller{};
+        CongestionController congestion_controller{flusher};
+
+        AckController ack_controller{flusher, shared_ctx};
+
         Receiver receiver{congestion_controller, shared_ctx};
+        Sender sender{congestion_controller, rto_calculator, flusher, shared_ctx};
 
         // TODO: This needs to be split into receiver and sender, and maybe shared context part
 
@@ -45,28 +46,8 @@ namespace imkcpp {
         u32 current = 0;
         u32 interval = constants::IKCP_INTERVAL;
         u32 ts_flush = constants::IKCP_INTERVAL;
-        u32 xmit = 0;
-        u32 nodelay = 0;
+
         bool updated = false;
-
-        u32 dead_link = constants::IKCP_DEADLINK;
-
-        std::deque<Segment> snd_queue{};
-        std::deque<Segment> snd_buf{};
-
-        std::vector<Ack> acklist{};
-
-        std::vector<std::byte> buffer{};
-
-        i32 fastresend = 0;
-        i32 fastlimit = constants::IKCP_FASTACK_LIMIT;
-
-        void shrink_buf();
-        void parse_ack(u32 sn);
-        void parse_una(u32 una);
-        void parse_fastack(u32 sn, u32 ts);
-        [[nodiscard]] std::optional<Ack> ack_get(size_t p) const;
-        void move_send_queue_to_buffer(u32 cwnd, u32 current, i32 unused_receive_window);
 
     public:
         explicit ImKcpp(u32 conv);

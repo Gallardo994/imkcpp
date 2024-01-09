@@ -1,19 +1,17 @@
-#include <cstring>
-#include <cassert>
-
 #include "imkcpp.hpp"
 #include "constants.hpp"
 #include "commands.hpp"
 #include "utility.hpp"
 
-// TODO: > 500 lines of code, gg. Split into different implementation files.
+// TODO: > 200 lines of code, gg. Split into different implementation files.
 namespace imkcpp {
-    ImKcpp::ImKcpp(const u32 conv) : conv(conv) {
+    ImKcpp::ImKcpp(const u32 conv) {
+        this->shared_ctx.conv = conv;
         this->set_mtu(constants::IKCP_MTU_DEF);
     }
 
     State ImKcpp::get_state() const {
-        return this->state;
+        return this->shared_ctx.get_state();
     }
 
     void ImKcpp::set_interval(const u32 interval) {
@@ -22,17 +20,12 @@ namespace imkcpp {
 
     // TODO: Should return a tl::expected with the new value or an error
     void ImKcpp::set_nodelay(const i32 nodelay) {
-        if (nodelay >= 0) {
-            this->nodelay = nodelay;
-            this->rto_calculator.set_min_rto(nodelay > 0 ? constants::IKCP_RTO_NDL : constants::IKCP_RTO_MIN);
-        }
+        this->sender.set_nodelay(nodelay);
     }
 
     // TODO: Should return a tl::expected with the new value or an error
     void ImKcpp::set_resend(const i32 resend) {
-        if (resend >= 0) {
-            this->fastresend = resend;
-        }
+        this->sender.set_fastresend(resend);
     }
 
     void ImKcpp::set_congestion_window_enabled(const bool state) {
@@ -45,21 +38,21 @@ namespace imkcpp {
         }
 
         // TODO: Does this really need triple the size?
-        this->buffer.resize(static_cast<size_t>(mtu + constants::IKCP_OVERHEAD) * 3);
-        this->mtu = mtu;
-        this->mss = this->mtu - constants::IKCP_OVERHEAD;
+        this->flusher.resize(static_cast<size_t>(mtu + constants::IKCP_OVERHEAD) * 3);
+        this->shared_ctx.mtu = mtu;
+        this->shared_ctx.mss = this->shared_ctx.mtu - constants::IKCP_OVERHEAD;
 
-        this->congestion_controller.set_mss(this->mss);
+        this->congestion_controller.set_mss(this->shared_ctx.mss);
 
         return mtu;
     }
 
     u32 ImKcpp::get_mtu() const {
-        return this->mtu;
+        return this->shared_ctx.mtu;
     }
 
     u32 ImKcpp::get_max_segment_size() const {
-        return this->mss;
+        return this->shared_ctx.mss;
     }
 
     // TODO: Needs to be separate functions, and should be able to set them independently
@@ -79,113 +72,16 @@ namespace imkcpp {
         return this->receiver.peek_size();
     }
 
-    void ImKcpp::shrink_buf() {
-        if (!this->snd_buf.empty()) {
-            const Segment& seg = this->snd_buf.front();
-            shared_ctx.snd_una = seg.header.sn;
-        } else {
-            shared_ctx.snd_una = shared_ctx.snd_nxt;
-        }
-    }
-
-    void ImKcpp::parse_ack(const u32 sn) {
-        if (time_delta(sn, shared_ctx.snd_una) < 0 || time_delta(sn, shared_ctx.snd_nxt) >= 0) {
-            return;
-        }
-
-        for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
-            if (sn == it->header.sn) {
-                this->snd_buf.erase(it);
-                break;
-            }
-
-            if (time_delta(sn, it->header.sn) < 0) {
-                break;
-            }
-
-            ++it;
-        }
-    }
-
-    void ImKcpp::parse_una(const u32 una) {
-        for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
-            if (time_delta(una, it->header.sn) > 0) {
-                it = this->snd_buf.erase(it);
-            } else {
-                break;
-            }
-        }
-    }
-
-    void ImKcpp::parse_fastack(const u32 sn, const u32 ts) {
-        if (time_delta(sn, shared_ctx.snd_una) < 0 || time_delta(sn, shared_ctx.snd_nxt) >= 0) {
-            return;
-        }
-
-        for (Segment& seg : this->snd_buf) {
-            if (time_delta(sn, seg.header.sn) < 0) {
-                break;
-            }
-
-            if (sn != seg.header.sn) {
-#ifndef IKCP_FASTACK_CONSERVE
-                seg.metadata.fastack++;
-#else
-                if (time_delta(ts, seg.ts) >= 0) {
-                    seg.metadata.fastack++;
-                }
-#endif
-            }
-        }
-    }
-
-    std::optional<Ack> ImKcpp::ack_get(const size_t p) const {
-        if (p >= this->acklist.size()) {
-            return std::nullopt;
-        }
-
-        return this->acklist.at(p);
-    }
-
     tl::expected<size_t, error> ImKcpp::recv(const std::span<std::byte> buffer) {
         return this->receiver.recv(buffer);
     }
 
     size_t ImKcpp::estimate_segments_count(const size_t size) const {
-        return std::max(static_cast<size_t>(1), (size + this->mss - 1) / this->mss);
+        return this->sender.estimate_segments_count(size);
     }
 
-    tl::expected<size_t, error> ImKcpp::send(std::span<const std::byte> buffer) {
-        if (buffer.empty()) {
-            return tl::unexpected(error::buffer_too_small);
-        }
-
-        const size_t count = estimate_segments_count(buffer.size());
-
-        if (count > std::numeric_limits<u8>::max()) {
-            return tl::unexpected(error::too_many_fragments);
-        }
-
-        if (count > this->congestion_controller.get_send_window()) {
-            return tl::unexpected(error::exceeds_window_size);
-        }
-
-        size_t offset = 0;
-
-        for (size_t i = 0; i < count; i++) {
-            const size_t size = std::min(buffer.size() - offset, this->mss);
-            assert(size > 0);
-
-            Segment& seg = snd_queue.emplace_back();
-            seg.data_assign({buffer.data() + offset, size});
-            seg.header.frg = static_cast<u8>(count - i - 1);
-
-            assert(seg.data_size() == size);
-
-            offset += size;
-        }
-
-        return offset;
+    tl::expected<size_t, error> ImKcpp::send(const std::span<const std::byte> buffer) {
+        return this->sender.send(buffer);
     }
 
     tl::expected<size_t, error> ImKcpp::input(std::span<const std::byte> data) {
@@ -193,7 +89,7 @@ namespace imkcpp {
             return tl::unexpected(error::less_than_header_size);
         }
 
-        if (data.size() > this->mtu) {
+        if (data.size() > this->shared_ctx.mtu) {
             return tl::unexpected(error::more_than_mtu);
         }
 
@@ -207,7 +103,7 @@ namespace imkcpp {
             SegmentHeader header;
             header.decode_from(data, offset);
 
-            if (header.conv != this->conv) {
+            if (header.conv != this->shared_ctx.conv) {
                 return tl::unexpected(error::conv_mismatch);
             }
 
@@ -220,8 +116,8 @@ namespace imkcpp {
             }
 
             this->congestion_controller.set_remote_window(header.wnd);
-            this->parse_una(header.una);
-            this->shrink_buf();
+            this->sender.clear_acknowledged(header.una);
+            this->sender.shrink_buf();
 
             switch (header.cmd) {
                 case commands::IKCP_CMD_ACK: {
@@ -230,8 +126,11 @@ namespace imkcpp {
                         this->rto_calculator.update_rtt(rtt, this->interval);
                     }
 
-                    this->parse_ack(header.sn);
-                    this->shrink_buf();
+                    if (this->ack_controller.should_acknowledge(header.sn)) {
+                        this->sender.acknowledge_seqence_number(header.sn);
+                    }
+
+                    this->sender.shrink_buf();
 
                     if (!flag) {
                         flag = true;
@@ -255,7 +154,7 @@ namespace imkcpp {
                 }
                 case commands::IKCP_CMD_PUSH: {
                     if (time_delta(header.sn, shared_ctx.rcv_nxt + this->congestion_controller.get_receive_window()) < 0) {
-                        this->acklist.emplace_back(header.sn, header.ts);
+                        this->ack_controller.emplace_back(header.sn, header.ts);
                         if (time_delta(header.sn, shared_ctx.rcv_nxt) >= 0) {
                             Segment seg;
                             seg.header = header; // TODO: Remove this copy
@@ -279,8 +178,8 @@ namespace imkcpp {
             }
         }
 
-        if (flag) {
-            this->parse_fastack(maxack, latest_ts);
+        if (flag && this->ack_controller.should_acknowledge(maxack)) {
+            this->sender.acknowledge_fastack(maxack, latest_ts);
         }
 
         congestion_controller.packet_acked(shared_ctx.snd_una, prev_una);
@@ -315,6 +214,7 @@ namespace imkcpp {
     }
 
     FlushResult ImKcpp::flush(const output_callback_t& callback) {
+        // TODO: Populate result with information
         FlushResult result;
 
         if (!this->updated) {
@@ -322,24 +222,11 @@ namespace imkcpp {
         }
 
         const u32 current = this->current;
-        bool change = false;
-        bool lost = false;
-
-        size_t offset = 0;
-        size_t flushed_total_size = 0;
-
-        // TODO: Remake to a standalone buffer class with auto-flush on overflow
-        auto flush_buffer = [this, &callback, &offset, &flushed_total_size] {
-            flushed_total_size += offset;
-            callback({this->buffer.data(), offset});
-            offset = 0;
-        };
-
         const i32 unused_receive_window = this->receiver.get_unused_receive_window();
 
         {
             Segment seg;
-            seg.header.conv = this->conv;
+            seg.header.conv = this->shared_ctx.conv;
             seg.header.cmd = commands::IKCP_CMD_ACK;
             seg.header.frg = 0;
             seg.header.wnd = unused_receive_window;
@@ -348,160 +235,19 @@ namespace imkcpp {
             seg.header.ts = 0;
             seg.header.len = 0;
 
-            // flush acknowledges
-            // TODO: This is not optimal to send IKCP_OVERHEAD per ack, should be optimized
-            for (const Ack& ack : this->acklist) {
-                if (offset > this->mss) {
-                    flush_buffer();
-                }
-
-                seg.header.sn = ack.sn;
-                seg.header.ts = ack.ts;
-
-                seg.encode_to(this->buffer, offset);
-            }
-
-            result.ack_sent_count += this->acklist.size();
-            this->acklist.clear();
-
+            this->ack_controller.flush_acks(callback, seg);
             this->congestion_controller.update_probe_request(current);
-
-            if (this->congestion_controller.has_probe_flag(constants::IKCP_ASK_SEND)) {
-                if (offset > this->mss) {
-                    flush_buffer();
-                }
-
-                seg.header.cmd = commands::IKCP_CMD_WASK;
-                seg.encode_to(this->buffer, offset);
-
-                result.cmd_wask_count++;
-            }
-
-            if (this->congestion_controller.has_probe_flag(constants::IKCP_ASK_TELL)) {
-                if (offset > this->mss) {
-                    flush_buffer();
-                }
-
-                seg.header.cmd = commands::IKCP_CMD_WINS;
-                seg.encode_to(this->buffer, offset);
-
-                result.cmd_wins_count++;
-            }
-
-            this->congestion_controller.reset_probe_flags();
+            this->congestion_controller.flush_probes(callback, seg);
         }
 
-        const u32 cwnd = this->congestion_controller.calculate_congestion_window();
+        this->sender.flush_data_segments(callback, current, unused_receive_window);
 
-        this->move_send_queue_to_buffer(cwnd, current, unused_receive_window);
+        flusher.flush_if_not_empty(callback);
 
-        // calculate resent
-        const u32 resent = (this->fastresend > 0) ? this->fastresend : 0xffffffff;
-        const u32 rtomin = (this->nodelay == 0) ? (this->rto_calculator.get_rto() >> 3) : 0;
-
-        // flush data segments
-        for (Segment& segment : this->snd_buf) {
-            bool needsend = false;
-
-            if (segment.metadata.xmit == 0) {
-                needsend = true;
-                segment.metadata.xmit++;
-                segment.metadata.rto = this->rto_calculator.get_rto();
-                segment.metadata.resendts = current + segment.metadata.rto + rtomin;
-            } else if (time_delta(current, segment.metadata.resendts) >= 0) {
-                needsend = true;
-                segment.metadata.xmit++;
-                this->xmit++;
-
-                if (this->nodelay == 0) {
-                    segment.metadata.rto += std::max(segment.metadata.rto, this->rto_calculator.get_rto());
-                } else {
-                    const u32 step = this->nodelay < 2? segment.metadata.rto : this->rto_calculator.get_rto();
-                    segment.metadata.rto += step / 2;
-                }
-
-                segment.metadata.resendts = current + segment.metadata.rto;
-                lost = true;
-            } else if (segment.metadata.fastack >= resent) {
-                // TODO: The second check is probably redundant
-                if (segment.metadata.xmit <= this->fastlimit || this->fastlimit <= 0) {
-                    // TODO: Why isn't this->xmit incremented here?
-                    needsend = true;
-                    change = true;
-
-                    segment.metadata.xmit++;
-                    segment.metadata.fastack = 0;
-                    segment.metadata.resendts = current + segment.metadata.rto;
-                }
-            }
-
-            if (needsend) {
-                segment.header.ts = current;
-                segment.header.wnd = unused_receive_window;
-                segment.header.una = shared_ctx.rcv_nxt;
-
-                if (offset + segment.data_size() > this->mss) {
-                    flush_buffer();
-                }
-
-                segment.encode_to(this->buffer, offset);
-
-                if (segment.metadata.xmit >= this->dead_link) {
-                    this->state = State::DeadLink;
-                }
-
-                result.data_sent_count++;
-                result.retransmitted_count += segment.metadata.xmit > 1 ? 1 : 0;
-            }
-        }
-
-        // TODO: Remake to a standalone buffer class with auto-flush on overflow,
-        // TODO: don't forget to add flush_if_not_empty() method here
-        // flash remain segments
-        if (offset > 0) {
-            flush_buffer();
-        }
-
-        if (change) {
-            this->congestion_controller.resent(shared_ctx.snd_nxt - shared_ctx.snd_una, resent);
-        }
-
-        if (lost) {
-            this->congestion_controller.packet_lost();
-        }
-
-        this->congestion_controller.ensure_at_least_one_packet_in_flight();
-
-        result.total_bytes_sent = flushed_total_size;
         return result;
     }
 
-    void ImKcpp::move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window) {
-        while (!snd_queue.empty() && shared_ctx.snd_nxt < shared_ctx.snd_una + cwnd) {
-            Segment& newseg = snd_queue.front();
-
-            newseg.header.conv = this->conv;
-            newseg.header.cmd = commands::IKCP_CMD_PUSH;
-            newseg.header.wnd = unused_receive_window;
-            newseg.header.ts = current;
-            newseg.header.sn = shared_ctx.snd_nxt++;
-            newseg.header.una = shared_ctx.rcv_nxt;
-
-            newseg.metadata.resendts = current;
-            newseg.metadata.rto = this->rto_calculator.get_rto();
-            newseg.metadata.fastack = 0;
-            newseg.metadata.xmit = 0;
-
-            snd_buf.push_back(std::move(newseg));
-            snd_queue.pop_front();
-        }
-    }
-
     u32 ImKcpp::check(const u32 current) {
-        i32 tm_flush = 0x7fffffff;
-        i32 tm_packet = 0x7fffffff;
-        u32 minimal = 0;
-
         if (!this->updated) {
             return current;
         }
@@ -514,26 +260,17 @@ namespace imkcpp {
             return current;
         }
 
-        tm_flush = time_delta(this->ts_flush, current);
+        const u32 next_flush = static_cast<u32>(std::max(0, time_delta(this->ts_flush, current)));
+        const std::optional<u32> earliest_transmit = this->sender.get_earliest_transmit_delta(current);
 
-        for (const Segment& seg : this->snd_buf) {
-            const i32 diff = time_delta(seg.metadata.resendts, current);
+        u32 minimal = 0;
 
-            if (diff <= 0) {
-                return current;
-            }
-
-            if (diff < tm_packet) {
-                tm_packet = diff;
-            }
+        if (earliest_transmit.has_value()) {
+            minimal = earliest_transmit.value() < next_flush ? earliest_transmit.value() : next_flush;
+        } else {
+            minimal = next_flush;
         }
 
-        minimal = static_cast<u32>(tm_packet < tm_flush ? tm_packet : tm_flush);
-
-        if (minimal >= this->interval) {
-            minimal = this->interval;
-        }
-
-        return current + minimal;
+        return current + std::min(this->interval, minimal);
     }
 }
