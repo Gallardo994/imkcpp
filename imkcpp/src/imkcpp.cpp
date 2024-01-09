@@ -6,7 +6,7 @@
 #include "commands.hpp"
 #include "utility.hpp"
 
-// TODO: > 600 lines of code, gg. Split into different implementation files.
+// TODO: > 500 lines of code, gg. Split into different implementation files.
 namespace imkcpp {
     ImKcpp::ImKcpp(const u32 conv) : conv(conv) {
         this->set_mtu(constants::IKCP_MTU_DEF);
@@ -76,43 +76,20 @@ namespace imkcpp {
     }
 
     tl::expected<size_t, error> ImKcpp::peek_size() const {
-        if (this->rcv_queue.empty()) {
-            return tl::unexpected(error::queue_empty);
-        }
-
-        const Segment& front = this->rcv_queue.front();
-
-        if (front.header.frg == 0) {
-            return front.data_size();
-        }
-
-        if (this->rcv_queue.size() < static_cast<size_t>(front.header.frg) + 1) {
-            return tl::unexpected(error::waiting_for_fragment);
-        }
-
-        size_t length = 0;
-        for (const Segment& seg : this->rcv_queue) {
-            length += seg.data_size();
-
-            if (seg.header.frg == 0) {
-                break;
-            }
-        }
-
-        return length;
+        return this->receiver.peek_size();
     }
 
     void ImKcpp::shrink_buf() {
         if (!this->snd_buf.empty()) {
             const Segment& seg = this->snd_buf.front();
-            this->snd_una = seg.header.sn;
+            shared_ctx.snd_una = seg.header.sn;
         } else {
-            this->snd_una = this->snd_nxt;
+            shared_ctx.snd_una = shared_ctx.snd_nxt;
         }
     }
 
     void ImKcpp::parse_ack(const u32 sn) {
-        if (time_delta(sn, this->snd_una) < 0 || time_delta(sn, this->snd_nxt) >= 0) {
+        if (time_delta(sn, shared_ctx.snd_una) < 0 || time_delta(sn, shared_ctx.snd_nxt) >= 0) {
             return;
         }
 
@@ -141,7 +118,7 @@ namespace imkcpp {
     }
 
     void ImKcpp::parse_fastack(const u32 sn, const u32 ts) {
-        if (time_delta(sn, this->snd_una) < 0 || time_delta(sn, this->snd_nxt) >= 0) {
+        if (time_delta(sn, shared_ctx.snd_una) < 0 || time_delta(sn, shared_ctx.snd_nxt) >= 0) {
             return;
         }
 
@@ -170,47 +147,8 @@ namespace imkcpp {
         return this->acklist.at(p);
     }
 
-    tl::expected<size_t, error> ImKcpp::recv(std::span<std::byte> buffer) {
-        const auto peeksize = this->peek_size();
-
-        if (!peeksize.has_value()) {
-            return tl::unexpected(peeksize.error());
-        }
-
-        if (peeksize.value() > buffer.size()) {
-            return tl::unexpected(error::buffer_too_small);
-        }
-
-        const bool recover = this->rcv_queue.size() >= this->congestion_controller.get_receive_window();
-
-        size_t offset = 0;
-        for (auto it = this->rcv_queue.begin(); it != this->rcv_queue.end();) {
-            Segment& segment = *it;
-            const u8 fragment = segment.header.frg;
-
-            const size_t copy_len = std::min(segment.data_size(), buffer.size() - offset);
-            segment.data.encode_to(buffer, offset, copy_len);
-
-            it = this->rcv_queue.erase(it);
-
-            if (fragment == 0) {
-                break;
-            }
-
-            if (offset >= peeksize.value()) {
-                break;
-            }
-        }
-
-        assert(offset == peeksize);
-
-        this->move_receive_buffer_to_queue();
-
-        if (this->congestion_controller.get_receive_window() > this->rcv_queue.size() && recover) {
-            this->congestion_controller.set_probe_flag(constants::IKCP_ASK_TELL);
-        }
-
-        return offset;
+    tl::expected<size_t, error> ImKcpp::recv(const std::span<std::byte> buffer) {
+        return this->receiver.recv(buffer);
     }
 
     size_t ImKcpp::estimate_segments_count(const size_t size) const {
@@ -250,43 +188,6 @@ namespace imkcpp {
         return offset;
     }
 
-    void ImKcpp::parse_data(const Segment& newseg) {
-        u32 sn = newseg.header.sn;
-        bool repeat = false;
-
-        if (time_delta(sn, this->rcv_nxt + this->congestion_controller.get_receive_window()) >= 0 || time_delta(sn, this->rcv_nxt) < 0) {
-            return;
-        }
-
-        const auto it = std::find_if(this->rcv_buf.rbegin(), this->rcv_buf.rend(), [sn](const Segment& seg) {
-            return time_delta(sn, seg.header.sn) <= 0;
-        });
-
-        if (it != this->rcv_buf.rend() && it->header.sn == sn) {
-            repeat = true;
-        }
-
-        if (!repeat) {
-            // TODO: This copy is probably redundant
-            this->rcv_buf.insert(it.base(), newseg);
-        }
-
-        this->move_receive_buffer_to_queue();
-    }
-
-    void ImKcpp::move_receive_buffer_to_queue() {
-        while (!this->rcv_buf.empty()) {
-            Segment& seg = this->rcv_buf.front();
-            if (seg.header.sn != this->rcv_nxt || this->rcv_queue.size() >= this->congestion_controller.get_receive_window()) {
-                break;
-            }
-
-            this->rcv_queue.push_back(std::move(seg));
-            this->rcv_buf.pop_front();
-            this->rcv_nxt++;
-        }
-    }
-
     tl::expected<size_t, error> ImKcpp::input(std::span<const std::byte> data) {
         if (data.size() < constants::IKCP_OVERHEAD) {
             return tl::unexpected(error::less_than_header_size);
@@ -296,7 +197,7 @@ namespace imkcpp {
             return tl::unexpected(error::more_than_mtu);
         }
 
-        const u32 prev_una = this->snd_una;
+        const u32 prev_una = shared_ctx.snd_una;
         u32 maxack = 0, latest_ts = 0;
         bool flag = false;
 
@@ -353,14 +254,14 @@ namespace imkcpp {
                     break;
                 }
                 case commands::IKCP_CMD_PUSH: {
-                    if (time_delta(header.sn, this->rcv_nxt + this->congestion_controller.get_receive_window()) < 0) {
+                    if (time_delta(header.sn, shared_ctx.rcv_nxt + this->congestion_controller.get_receive_window()) < 0) {
                         this->acklist.emplace_back(header.sn, header.ts);
-                        if (time_delta(header.sn, this->rcv_nxt) >= 0) {
+                        if (time_delta(header.sn, shared_ctx.rcv_nxt) >= 0) {
                             Segment seg;
                             seg.header = header; // TODO: Remove this copy
                             seg.data.decode_from(data, offset, header.len);
 
-                            this->parse_data(seg);
+                            this->receiver.parse_data(seg);
                         }
                     }
                     break;
@@ -382,7 +283,7 @@ namespace imkcpp {
             this->parse_fastack(maxack, latest_ts);
         }
 
-        congestion_controller.packet_acked(this->snd_una, prev_una);
+        congestion_controller.packet_acked(shared_ctx.snd_una, prev_una);
 
         return offset;
     }
@@ -434,7 +335,7 @@ namespace imkcpp {
             offset = 0;
         };
 
-        const i32 unused_receive_window = this->get_unused_receive_window();
+        const i32 unused_receive_window = this->receiver.get_unused_receive_window();
 
         {
             Segment seg;
@@ -442,7 +343,7 @@ namespace imkcpp {
             seg.header.cmd = commands::IKCP_CMD_ACK;
             seg.header.frg = 0;
             seg.header.wnd = unused_receive_window;
-            seg.header.una = this->rcv_nxt;
+            seg.header.una = shared_ctx.rcv_nxt;
             seg.header.sn = 0;
             seg.header.ts = 0;
             seg.header.len = 0;
@@ -537,7 +438,7 @@ namespace imkcpp {
             if (needsend) {
                 segment.header.ts = current;
                 segment.header.wnd = unused_receive_window;
-                segment.header.una = this->rcv_nxt;
+                segment.header.una = shared_ctx.rcv_nxt;
 
                 if (offset + segment.data_size() > this->mss) {
                     flush_buffer();
@@ -562,7 +463,7 @@ namespace imkcpp {
         }
 
         if (change) {
-            this->congestion_controller.resent(this->snd_nxt - this->snd_una, resent);
+            this->congestion_controller.resent(shared_ctx.snd_nxt - shared_ctx.snd_una, resent);
         }
 
         if (lost) {
@@ -576,15 +477,15 @@ namespace imkcpp {
     }
 
     void ImKcpp::move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window) {
-        while (!snd_queue.empty() && this->snd_nxt < this->snd_una + cwnd) {
+        while (!snd_queue.empty() && shared_ctx.snd_nxt < shared_ctx.snd_una + cwnd) {
             Segment& newseg = snd_queue.front();
 
             newseg.header.conv = this->conv;
             newseg.header.cmd = commands::IKCP_CMD_PUSH;
             newseg.header.wnd = unused_receive_window;
             newseg.header.ts = current;
-            newseg.header.sn = this->snd_nxt++;
-            newseg.header.una = this->rcv_nxt;
+            newseg.header.sn = shared_ctx.snd_nxt++;
+            newseg.header.una = shared_ctx.rcv_nxt;
 
             newseg.metadata.resendts = current;
             newseg.metadata.rto = this->rto_calculator.get_rto();
@@ -634,9 +535,5 @@ namespace imkcpp {
         }
 
         return current + minimal;
-    }
-
-    i32 ImKcpp::get_unused_receive_window() const {
-        return std::max(static_cast<i32>(this->congestion_controller.get_receive_window()) - static_cast<i32>(this->rcv_queue.size()), 0);
     }
 }

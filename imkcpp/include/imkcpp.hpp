@@ -16,6 +16,8 @@
 #include "results.hpp"
 #include "rto_calculator.hpp"
 #include "congestion_controller.hpp"
+#include "shared_ctx.hpp"
+#include "receiver.hpp"
 
 namespace imkcpp {
     // TODO: Some day later this should become a template with MTU and max segment size as template parameters
@@ -31,15 +33,14 @@ namespace imkcpp {
         size_t mss = 0;
 
         State state = State::Alive;
+        SharedCtx shared_ctx{};
         RtoCalculator rto_calculator{};
         CongestionController congestion_controller{};
+        Receiver receiver{congestion_controller, shared_ctx};
 
         // TODO: This needs to be split into receiver and sender, and maybe shared context part
 
         // TODO: And for the god's sake, rename all these variables to something more meaningful
-        u32 snd_una = 0;
-        u32 snd_nxt = 0;
-        u32 rcv_nxt = 0;
 
         u32 current = 0;
         u32 interval = constants::IKCP_INTERVAL;
@@ -51,9 +52,7 @@ namespace imkcpp {
         u32 dead_link = constants::IKCP_DEADLINK;
 
         std::deque<Segment> snd_queue{};
-        std::deque<Segment> rcv_queue{};
         std::deque<Segment> snd_buf{};
-        std::deque<Segment> rcv_buf{};
 
         std::vector<Ack> acklist{};
 
@@ -67,9 +66,6 @@ namespace imkcpp {
         void parse_una(u32 una);
         void parse_fastack(u32 sn, u32 ts);
         [[nodiscard]] std::optional<Ack> ack_get(size_t p) const;
-        void parse_data(const Segment& newseg);
-        [[nodiscard]] i32 get_unused_receive_window() const;
-        void move_receive_buffer_to_queue();
         void move_send_queue_to_buffer(u32 cwnd, u32 current, i32 unused_receive_window);
 
     public:
