@@ -70,6 +70,7 @@ namespace imkcpp {
         void parse_data(const Segment& newseg);
         [[nodiscard]] i32 get_unused_receive_window() const;
         void move_receive_buffer_to_queue();
+        void move_send_queue_to_buffer(u32 cwnd, u32 current, i32 unused_receive_window);
 
     public:
         explicit ImKcpp(u32 conv);

@@ -493,24 +493,7 @@ namespace imkcpp {
 
         const u32 cwnd = this->congestion_controller.calculate_congestion_window();
 
-        while (!snd_queue.empty() && this->snd_nxt < this->snd_una + cwnd) {
-            Segment& newseg = snd_queue.front();
-
-            newseg.header.conv = this->conv;
-            newseg.header.cmd = commands::IKCP_CMD_PUSH;
-            newseg.header.wnd = unused_receive_window;
-            newseg.header.ts = current;
-            newseg.header.sn = this->snd_nxt++;
-            newseg.header.una = this->rcv_nxt;
-
-            newseg.metadata.resendts = current;
-            newseg.metadata.rto = this->rto_calculator.get_rto();
-            newseg.metadata.fastack = 0;
-            newseg.metadata.xmit = 0;
-
-            snd_buf.push_back(std::move(newseg));
-            snd_queue.pop_front();
-        }
+        this->move_send_queue_to_buffer(cwnd, current, unused_receive_window);
 
         // calculate resent
         const u32 resent = (this->fastresend > 0) ? this->fastresend : 0xffffffff;
@@ -593,6 +576,26 @@ namespace imkcpp {
         return result;
     }
 
+    void ImKcpp::move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window) {
+        while (!snd_queue.empty() && this->snd_nxt < this->snd_una + cwnd) {
+            Segment& newseg = snd_queue.front();
+
+            newseg.header.conv = this->conv;
+            newseg.header.cmd = commands::IKCP_CMD_PUSH;
+            newseg.header.wnd = unused_receive_window;
+            newseg.header.ts = current;
+            newseg.header.sn = this->snd_nxt++;
+            newseg.header.una = this->rcv_nxt;
+
+            newseg.metadata.resendts = current;
+            newseg.metadata.rto = this->rto_calculator.get_rto();
+            newseg.metadata.fastack = 0;
+            newseg.metadata.xmit = 0;
+
+            snd_buf.push_back(std::move(newseg));
+            snd_queue.pop_front();
+        }
+    }
 
     u32 ImKcpp::check(const u32 current) {
         i32 tm_flush = 0x7fffffff;
