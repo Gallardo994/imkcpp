@@ -105,5 +105,9 @@ namespace imkcpp {
 
             return cwnd;
         }
+
+        [[nodiscard]] bool needs_probing_remote_window() const {
+            return this->rmt_wnd == 0;
+        }
     };
 }

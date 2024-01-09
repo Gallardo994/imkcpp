@@ -486,7 +486,7 @@ namespace imkcpp {
             this->acklist.clear();
 
             // probe window size (if remote window size equals zero)
-            if (this->congestion_controller.get_remote_window() == 0) {
+            if (this->congestion_controller.needs_probing_remote_window()) {
                 if (this->probe_wait == 0) {
                     this->probe_wait = constants::IKCP_PROBE_INIT;
                     this->ts_probe = this->current + this->probe_wait;
