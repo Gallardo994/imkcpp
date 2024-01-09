@@ -6,7 +6,7 @@
 #include "commands.hpp"
 
 namespace imkcpp {
-    static i32 _itimediff(u32 later, u32 earlier) {
+    static i32 _itimediff(const u32 later, const u32 earlier) {
         return static_cast<i32>(later - earlier);
     }
 
@@ -117,16 +117,13 @@ namespace imkcpp {
         return length;
     }
 
-    // Parse ack
-
     // TODO: Haven't seen this amount of magic numbers since I last played WoW
     void ImKcpp::update_ack(const i32 rtt) {
         if (this->rx_srtt == 0) {
             this->rx_srtt = rtt;
             this->rx_rttval = rtt / 2;
         } else {
-            i32 delta = rtt - static_cast<i32>(this->rx_srtt);
-            delta = delta >= 0 ? delta : -delta;
+            const i32 delta = std::abs(rtt - static_cast<i32>(this->rx_srtt));
 
             this->rx_rttval = (3 * this->rx_rttval + delta) / 4;
             this->rx_srtt = (7 * this->rx_srtt + rtt) / 8;
@@ -200,7 +197,6 @@ namespace imkcpp {
         }
     }
 
-    // ack append
     std::optional<Ack> ImKcpp::ack_get(const size_t p) const {
         if (p >= this->acklist.size()) {
             return std::nullopt;
@@ -208,8 +204,6 @@ namespace imkcpp {
 
         return this->acklist.at(p);
     }
-
-    // receive
 
     tl::expected<size_t, error> ImKcpp::recv(std::span<std::byte> buffer) {
         const auto peeksize = this->peek_size();
@@ -416,7 +410,6 @@ namespace imkcpp {
                     break;
                 }
                 case commands::IKCP_CMD_WINS: {
-                    // Do nothing
                     break;
                 }
                 default: {
@@ -458,7 +451,7 @@ namespace imkcpp {
         return offset;
     }
 
-    FlushResult ImKcpp::update(u32 current) {
+    FlushResult ImKcpp::update(const u32 current) {
         this->current = current;
 
         if (!this->updated) {
@@ -483,12 +476,6 @@ namespace imkcpp {
 
         return {};
     }
-
-    // TODO: Implement
-    u32 ImKcpp::flush_acks() {
-        return 0;
-    }
-
 
     FlushResult ImKcpp::flush() {
         FlushResult result;
