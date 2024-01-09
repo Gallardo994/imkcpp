@@ -53,7 +53,6 @@ namespace imkcpp {
         explicit ImKcpp(u32 conv);
 
         [[nodiscard]] State get_state() const;
-        void set_output(const output_callback_t& output);
         void set_interval(u32 interval);
         void set_nodelay(i32 nodelay);
         void set_resend(i32 resend);
