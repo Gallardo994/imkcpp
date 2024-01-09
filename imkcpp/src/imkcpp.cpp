@@ -214,16 +214,7 @@ namespace imkcpp {
 
         assert(offset == peeksize);
 
-        while (!this->rcv_buf.empty()) {
-            Segment& seg = this->rcv_buf.front();
-            if (seg.header.sn != this->rcv_nxt || this->rcv_queue.size() >= this->congestion_controller.get_receive_window()) {
-                break;
-            }
-
-            this->rcv_queue.push_back(std::move(seg));
-            this->rcv_buf.pop_front();
-            this->rcv_nxt++;
-        }
+        this->move_receive_buffer_to_queue();
 
         if (this->congestion_controller.get_receive_window() > this->rcv_queue.size() && recover) {
             this->congestion_controller.set_probe_flag(constants::IKCP_ASK_TELL);
@@ -290,17 +281,19 @@ namespace imkcpp {
             this->rcv_buf.insert(it.base(), newseg);
         }
 
-        // Move available data from rcv_buf to rcv_queue
+        this->move_receive_buffer_to_queue();
+    }
+
+    void ImKcpp::move_receive_buffer_to_queue() {
         while (!this->rcv_buf.empty()) {
             Segment& seg = this->rcv_buf.front();
-
-            if (seg.header.sn == this->rcv_nxt && this->rcv_queue.size() < static_cast<size_t>(this->congestion_controller.get_receive_window())) {
-                this->rcv_queue.push_back(std::move(seg));
-                this->rcv_buf.pop_front();
-                this->rcv_nxt++;
-            } else {
+            if (seg.header.sn != this->rcv_nxt || this->rcv_queue.size() >= this->congestion_controller.get_receive_window()) {
                 break;
             }
+
+            this->rcv_queue.push_back(std::move(seg));
+            this->rcv_buf.pop_front();
+            this->rcv_nxt++;
         }
     }
 
