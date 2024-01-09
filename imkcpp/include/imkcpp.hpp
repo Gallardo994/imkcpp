@@ -72,7 +72,7 @@ namespace imkcpp {
         [[nodiscard]] std::optional<Ack> ack_get(size_t p) const;
         void parse_data(const Segment& newseg);
         [[nodiscard]] i32 get_unused_receive_window() const;
-        void ImKcpp::move_receive_buffer_to_queue();
+        void move_receive_buffer_to_queue();
 
     public:
         explicit ImKcpp(u32 conv);
