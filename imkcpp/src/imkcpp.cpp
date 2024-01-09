@@ -276,30 +276,30 @@ namespace imkcpp {
         u32 sn = newseg.header.sn;
         bool repeat = false;
 
-        if (_itimediff(sn, this->rcv_nxt + this->congestion_controller.get_receive_window()) >= 0 || _itimediff(sn, rcv_nxt) < 0) {
+        if (_itimediff(sn, this->rcv_nxt + this->congestion_controller.get_receive_window()) >= 0 || _itimediff(sn, this->rcv_nxt) < 0) {
             return;
         }
 
-        const auto it = std::find_if(rcv_buf.rbegin(), rcv_buf.rend(), [sn](const Segment& seg) {
+        const auto it = std::find_if(this->rcv_buf.rbegin(), this->rcv_buf.rend(), [sn](const Segment& seg) {
             return _itimediff(sn, seg.header.sn) <= 0;
         });
 
-        if (it != rcv_buf.rend() && it->header.sn == sn) {
+        if (it != this->rcv_buf.rend() && it->header.sn == sn) {
             repeat = true;
         }
 
         if (!repeat) {
-            rcv_buf.insert(it.base(), newseg);
+            this->rcv_buf.insert(it.base(), newseg);
         }
 
         // Move available data from rcv_buf to rcv_queue
-        while (!rcv_buf.empty()) {
-            Segment& seg = rcv_buf.front();
+        while (!this->rcv_buf.empty()) {
+            Segment& seg = this->rcv_buf.front();
 
-            if (seg.header.sn == rcv_nxt && this->rcv_queue.size() < static_cast<size_t>(this->congestion_controller.get_receive_window())) {
-                rcv_queue.push_back(std::move(seg));
-                rcv_buf.pop_front();
-                rcv_nxt++;
+            if (seg.header.sn == this->rcv_nxt && this->rcv_queue.size() < static_cast<size_t>(this->congestion_controller.get_receive_window())) {
+                this->rcv_queue.push_back(std::move(seg));
+                this->rcv_buf.pop_front();
+                this->rcv_nxt++;
             } else {
                 break;
             }
