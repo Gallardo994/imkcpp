@@ -22,7 +22,7 @@ namespace imkcpp {
 
     // TODO: Needs to be separate functions, and should be able to set them independently
     // TODO: Also, should return a tl::expected with the new value or an error
-    void ImKcpp::set_nodelay(const i32 nodelay, u32 interval, const i32 resend, const bool congestion_window_state) {
+    void ImKcpp::set_nodelay(const i32 nodelay, u32 interval, const i32 resend) {
         if (nodelay >= 0) {
             this->nodelay = nodelay;
             this->rto_calculator.set_min_rto(nodelay > 0 ? constants::IKCP_RTO_NDL : constants::IKCP_RTO_MIN);
@@ -33,8 +33,6 @@ namespace imkcpp {
         if (resend >= 0) {
             this->fastresend = resend;
         }
-
-        this->set_congestion_window_enabled(congestion_window_state);
     }
 
     void ImKcpp::set_congestion_window_enabled(const bool state) {
