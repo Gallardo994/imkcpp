@@ -448,6 +448,7 @@ namespace imkcpp {
             seg.header.len = 0;
 
             // flush acknowledges
+            // TODO: This is not optimal to send IKCP_OVERHEAD per ack, should be optimized
             for (const Ack& ack : this->acklist) {
                 if (offset > this->mss) {
                     flush_buffer();
