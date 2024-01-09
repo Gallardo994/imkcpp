@@ -122,6 +122,7 @@ namespace imkcpp {
 
             switch (header.cmd) {
                 case commands::IKCP_CMD_ACK: {
+                    // TODO: Move to RtoCalculator
                     if (time_delta(this->current, header.ts) >= 0) {
                         const i32 rtt = time_delta(this->current, header.ts);
                         this->rto_calculator.update_rtt(rtt, this->interval);
