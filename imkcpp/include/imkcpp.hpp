@@ -26,11 +26,10 @@ namespace imkcpp {
     // TODO: because changing MTU at runtime will cause issues with already queued segments.
     // TODO: Additionally, this will allow more compile-time optimizations.
     class ImKcpp final {
-    private:
         SharedCtx shared_ctx{};
         Flusher flusher{shared_ctx};
 
-        RtoCalculator rto_calculator{};
+        RtoCalculator rto_calculator{shared_ctx};
         CongestionController congestion_controller{flusher};
 
         AckController ack_controller{flusher, shared_ctx};
@@ -39,8 +38,7 @@ namespace imkcpp {
         Sender sender{congestion_controller, rto_calculator, flusher, ack_controller, shared_ctx};
 
         bool updated = false;
-        u32 current = 0;
-        u32 interval = constants::IKCP_INTERVAL;
+        u32 current = 0; // TODO: Should probably move to shared_ctx as well, but idk
         u32 ts_flush = constants::IKCP_INTERVAL;
 
         [[nodiscard]] auto create_service_segment(i32 unused_receive_window) const -> Segment;

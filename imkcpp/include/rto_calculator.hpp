@@ -1,13 +1,17 @@
 #pragma once
 
+#include <algorithm>
 #include "types.hpp"
 #include "constants.hpp"
-#include <algorithm>
+#include "shared_ctx.hpp"
+#include "utility.hpp"
 
 namespace imkcpp {
     // https://www.computer-networking.info/1st/html/transport/tcp.html
     // https://datatracker.ietf.org/doc/html/rfc2988.html#section-2
     class RtoCalculator {
+        SharedCtx& shared_ctx;
+
         u32 srtt = 0; // Smoothed round trip time
         u32 rttvar = 0; // Round trip time variation
         u32 rto = constants::IKCP_RTO_DEF; // Retransmission timeout
@@ -16,7 +20,16 @@ namespace imkcpp {
         u32 maxrto = constants::IKCP_RTO_MAX; // Maximum retransmission timeout
 
     public:
-        void update_rtt(const i32 rtt, const u32 interval) {
+        explicit RtoCalculator(SharedCtx& shared_ctx) : shared_ctx(shared_ctx) {}
+
+        void ack_received(const u32 current, const u32 ts) {
+            if (time_delta(current, ts) >= 0) {
+                const i32 rtt = time_delta(current, ts);
+                this->update_rtt(rtt);
+            }
+        }
+
+        void update_rtt(const i32 rtt) {
             if (this->srtt == 0) {
                 // First measurement
                 this->srtt = rtt;
@@ -42,7 +55,7 @@ namespace imkcpp {
 
             // RTO = SRTT + max(G, K * RTTVAR)
             constexpr u32 K = 4;
-            const u32 rto = this->srtt + std::max(interval, K * this->rttvar);
+            const u32 rto = this->srtt + std::max(this->shared_ctx.interval, K * this->rttvar);
 
             // Limiting to IKCP_RTO_MAX is not mentioned in RFC 2988, but is present in the original C implementation
             // TODO: Investigate why it's needed

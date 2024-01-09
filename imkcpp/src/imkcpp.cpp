@@ -27,7 +27,7 @@ namespace imkcpp {
 
     // TODO: Should return a tl::expected with the new value or an error
     void ImKcpp::set_interval(const u32 interval) {
-        this->interval = std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000));
+        this->shared_ctx.interval = std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000));
     }
 
     // TODO: Should return a tl::expected with the new value or an error
@@ -110,11 +110,8 @@ namespace imkcpp {
 
             switch (header.cmd) {
                 case commands::IKCP_CMD_ACK: {
-                    // TODO: Move to RtoCalculator
-                    if (time_delta(this->current, header.ts) >= 0) {
-                        const i32 rtt = time_delta(this->current, header.ts);
-                        this->rto_calculator.update_rtt(rtt, this->interval);
-                    }
+                    // TODO: This should probaby go through AckController first
+                    this->rto_calculator.ack_received(this->current, header.ts);
 
                     if (this->ack_controller.should_acknowledge(header.sn)) {
                         this->sender.acknowledge_seqence_number(header.sn);
@@ -209,7 +206,7 @@ namespace imkcpp {
             minimal = next_flush;
         }
 
-        return current + std::min(this->interval, minimal);
+        return current + std::min(this->shared_ctx.interval, minimal);
     }
 
     FlushResult ImKcpp::update(const u32 current, const output_callback_t& callback) {
@@ -228,9 +225,9 @@ namespace imkcpp {
         }
 
         if (slap >= 0) {
-            this->ts_flush += this->interval;
+            this->ts_flush += this->shared_ctx.interval;
             if (time_delta(this->current, this->ts_flush) >= 0) {
-                this->ts_flush = this->current + this->interval;
+                this->ts_flush = this->current + this->shared_ctx.interval;
             }
             return this->flush(callback);
         }

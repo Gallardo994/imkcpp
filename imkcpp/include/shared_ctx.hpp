@@ -16,6 +16,8 @@ namespace imkcpp {
         u32 snd_nxt = 0;
         u32 rcv_nxt = 0;
 
+        u32 interval = constants::IKCP_INTERVAL;
+
         [[nodiscard]] State get_state() const {
             return this->state;
         }
