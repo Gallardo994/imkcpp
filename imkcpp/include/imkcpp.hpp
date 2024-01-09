@@ -84,6 +84,7 @@ namespace imkcpp {
         explicit ImKcpp(u32 conv);
 
         void set_userdata(void* userdata);
+        [[nodiscard]] State get_state() const;
         void set_output(const output_callback_t& output);
         void set_interval(u32 interval);
         void set_nodelay(i32 nodelay, u32 interval, i32 resend, bool congestion_window);

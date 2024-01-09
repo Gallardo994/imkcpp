@@ -18,6 +18,9 @@ namespace imkcpp {
         this->user = userdata;
     }
 
+    State ImKcpp::get_state() const {
+        return this->state;
+    }
 
     void ImKcpp::set_output(const output_callback_t& output) {
         this->output = output;
@@ -34,7 +37,7 @@ namespace imkcpp {
         if (nodelay >= 0) {
             this->nodelay = nodelay;
 
-            if (nodelay) {
+            if (nodelay > 0) {
                 this->rx_minrto = constants::IKCP_RTO_NDL;
             } else {
                 this->rx_minrto = constants::IKCP_RTO_MIN;
