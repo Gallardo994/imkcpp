@@ -118,24 +118,35 @@ namespace imkcpp {
         return length;
     }
 
-    // TODO: Haven't seen this amount of magic numbers since I last played WoW
     // https://www.computer-networking.info/1st/html/transport/tcp.html (RFC 2988, pt. 2.3)
     void ImKcpp::update_ack(const i32 rtt) {
         if (this->rx_srtt == 0) {
+            // First measurement
             this->rx_srtt = rtt;
-            this->rx_rttval = rtt / 2;
+            this->rx_rttvar = rtt / 2;
         } else {
+            // Consequent measurements
             const i32 delta = std::abs(rtt - static_cast<i32>(this->rx_srtt));
 
-            this->rx_rttval = (3 * this->rx_rttval + delta) / 4;
-            this->rx_srtt = (7 * this->rx_srtt + rtt) / 8;
+            // RTTVAR = (1 - BETA) * RTTVAR + BETA * |SRTT - RTT|
+            // Simplified to: RTTVAR = (BETA_MUL * RTTVAR + delta) / BETA_DIV
+            // In RFC 2988, BETA = 1/4
+            constexpr u32 BETA_MUL = 3;
+            constexpr u32 BETA_DIV = 4;
+            this->rx_rttvar = (BETA_MUL * this->rx_rttvar + delta) / BETA_DIV;
 
-            if (this->rx_srtt < 1) {
-                this->rx_srtt = 1;
-            }
+            // SRTT = (1 - ALPHA) * SRTT + ALPHA * RTT
+            // Simplified to: SRTT = (ALPHA_MUL * SRTT + RTT) / ALPHA_DIV
+            // In RFC 2988, ALPHA = 1/8
+            constexpr u32 ALPHA_MUL = 7;
+            constexpr u32 ALPHA_DIV = 8;
+            this->rx_srtt = (ALPHA_MUL * this->rx_srtt + rtt) / ALPHA_DIV;
         }
 
-        const u32 rto = this->rx_srtt + std::max(this->interval, 4 * this->rx_rttval);
+        // RTO = SRTT + max(G, K * RTTVAR)
+        constexpr u32 K = 4;
+        const u32 rto = this->rx_srtt + std::max(this->interval, K * this->rx_rttvar);
+
         this->rx_rto = std::clamp(rto, this->rx_minrto, constants::IKCP_RTO_MAX);
     }
 

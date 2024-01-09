@@ -37,7 +37,7 @@ namespace imkcpp {
         u32 snd_nxt = 0;
         u32 rcv_nxt = 0;
         u32 ssthresh = constants::IKCP_THRESH_INIT;
-        u32 rx_rttval = 0;
+        u32 rx_rttvar = 0;
         u32 rx_srtt = 0;
         u32 rx_rto = constants::IKCP_RTO_DEF;
         u32 rx_minrto = constants::IKCP_RTO_MIN;
