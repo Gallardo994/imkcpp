@@ -59,7 +59,7 @@ namespace imkcpp {
             this->data.assign(buf.begin(), buf.end());
         }
 
-        void encode_to(std::span<std::byte>& buf, size_t& offset, const size_t length) const {
+        void encode_to(std::span<std::byte> buf, size_t& offset, const size_t length) const {
             assert(buf.size() >= this->data.size());
 
             std::memcpy(buf.data() + offset, this->data.data(), length);
@@ -80,7 +80,7 @@ namespace imkcpp {
 
         explicit Segment() = default;
 
-        void encode_to(std::span<std::byte> buf, size_t& offset) const {
+        void encode_to(const std::span<std::byte> buf, size_t& offset) const {
             assert(buf.size() >= constants::IKCP_OVERHEAD + header.len);
             assert(this->header.len == this->data.data.size());
 
