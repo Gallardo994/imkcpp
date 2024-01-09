@@ -13,7 +13,7 @@ TEST(Send_Tests, Send_ValidValues) {
     for (size_t size = min_data_size; size < max_data_size; size += step) {
         ImKcpp kcp_output(0);
         kcp_output.set_wndsize(2048, 2048);
-        kcp_output.set_congestion_window(false);
+        kcp_output.set_congestion_window_enabled(false);
         kcp_output.update(0);
 
         ImKcpp kcp_input(0);

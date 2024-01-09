@@ -5,7 +5,7 @@
 #include "constants.hpp"
 #include "commands.hpp"
 
-// TODO: > 700 lines of code, gg. Split into different implementation files.
+// TODO: > 600 lines of code, gg. Split into different implementation files.
 namespace imkcpp {
     static i32 _itimediff(const u32 later, const u32 earlier) {
         return static_cast<i32>(later - earlier);
@@ -33,7 +33,7 @@ namespace imkcpp {
 
     // TODO: Needs to be separate functions, and should be able to set them independently
     // TODO: Also, should return a tl::expected with the new value or an error
-    void ImKcpp::set_nodelay(const i32 nodelay, u32 interval, const i32 resend, const bool congestion_window) {
+    void ImKcpp::set_nodelay(const i32 nodelay, u32 interval, const i32 resend, const bool congestion_window_state) {
         if (nodelay >= 0) {
             this->nodelay = nodelay;
             this->rto_calculator.set_min_rto(nodelay > 0 ? constants::IKCP_RTO_NDL : constants::IKCP_RTO_MIN);
@@ -45,11 +45,11 @@ namespace imkcpp {
             this->fastresend = resend;
         }
 
-        this->set_congestion_window(congestion_window);
+        this->set_congestion_window_enabled(congestion_window_state);
     }
 
-    void ImKcpp::set_congestion_window(const bool congestion_window) {
-        this->congestion_window = congestion_window;
+    void ImKcpp::set_congestion_window_enabled(const bool state) {
+        this->congestion_controller.set_congestion_window_enabled(state);
     }
 
     tl::expected<size_t, error> ImKcpp::set_mtu(const u32 mtu) {
@@ -61,6 +61,8 @@ namespace imkcpp {
         this->buffer.resize(static_cast<size_t>(mtu + constants::IKCP_OVERHEAD) * 3);
         this->mtu = mtu;
         this->mss = this->mtu - constants::IKCP_OVERHEAD;
+
+        this->congestion_controller.set_mss(this->mss);
 
         return mtu;
     }
@@ -77,12 +79,12 @@ namespace imkcpp {
     // TODO: Also, should return a tl::expected with the new value or an error
     void ImKcpp::set_wndsize(const u32 sndwnd, const u32 rcvwnd) {
         if (sndwnd > 0) {
-            this->snd_wnd = sndwnd;
-            this->rmt_wnd = sndwnd;
+            this->congestion_controller.set_send_window(sndwnd);
+            this->congestion_controller.set_remote_window(sndwnd);
         }
 
         if (rcvwnd > 0) {
-            this->rcv_wnd = std::max(rcvwnd, constants::IKCP_WND_RCV);
+            this->congestion_controller.set_receive_window(rcvwnd);
         }
     }
 
@@ -192,7 +194,7 @@ namespace imkcpp {
             return tl::unexpected(error::buffer_too_small);
         }
 
-        const bool recover = this->rcv_queue.size() >= this->rcv_wnd;
+        const bool recover = this->rcv_queue.size() >= this->congestion_controller.get_receive_window();
 
         size_t offset = 0;
         for (auto it = this->rcv_queue.begin(); it != this->rcv_queue.end();) {
@@ -217,7 +219,7 @@ namespace imkcpp {
 
         while (!this->rcv_buf.empty()) {
             Segment& seg = this->rcv_buf.front();
-            if (seg.header.sn != this->rcv_nxt || this->rcv_queue.size() >= this->rcv_wnd) {
+            if (seg.header.sn != this->rcv_nxt || this->rcv_queue.size() >= this->congestion_controller.get_receive_window()) {
                 break;
             }
 
@@ -226,7 +228,7 @@ namespace imkcpp {
             this->rcv_nxt++;
         }
 
-        if (this->rcv_queue.size() < this->rcv_wnd && recover) {
+        if (this->rcv_queue.size() < this->congestion_controller.get_receive_window() && recover) {
             this->probe |= constants::IKCP_ASK_TELL;
         }
 
@@ -248,7 +250,7 @@ namespace imkcpp {
             return tl::unexpected(error::too_many_fragments);
         }
 
-        if (count > this->snd_wnd) {
+        if (count > this->congestion_controller.get_send_window()) {
             return tl::unexpected(error::exceeds_window_size);
         }
 
@@ -274,7 +276,7 @@ namespace imkcpp {
         u32 sn = newseg.header.sn;
         bool repeat = false;
 
-        if (_itimediff(sn, rcv_nxt + rcv_wnd) >= 0 || _itimediff(sn, rcv_nxt) < 0) {
+        if (_itimediff(sn, this->rcv_nxt + this->congestion_controller.get_receive_window()) >= 0 || _itimediff(sn, rcv_nxt) < 0) {
             return;
         }
 
@@ -294,7 +296,7 @@ namespace imkcpp {
         while (!rcv_buf.empty()) {
             Segment& seg = rcv_buf.front();
 
-            if (seg.header.sn == rcv_nxt && this->rcv_queue.size() < static_cast<size_t>(rcv_wnd)) {
+            if (seg.header.sn == rcv_nxt && this->rcv_queue.size() < static_cast<size_t>(this->congestion_controller.get_receive_window())) {
                 rcv_queue.push_back(std::move(seg));
                 rcv_buf.pop_front();
                 rcv_nxt++;
@@ -335,7 +337,7 @@ namespace imkcpp {
                 return tl::unexpected(error::unknown_command);
             }
 
-            this->rmt_wnd = header.wnd;
+            this->congestion_controller.set_remote_window(header.wnd);
             this->parse_una(header.una);
             this->shrink_buf();
 
@@ -370,7 +372,7 @@ namespace imkcpp {
                     break;
                 }
                 case commands::IKCP_CMD_PUSH: {
-                    if (_itimediff(header.sn, this->rcv_nxt + this->rcv_wnd) < 0) {
+                    if (_itimediff(header.sn, this->rcv_nxt + this->congestion_controller.get_receive_window()) < 0) {
                         this->acklist.emplace_back(header.sn, header.ts);
                         if (_itimediff(header.sn, this->rcv_nxt) >= 0) {
                             Segment seg;
@@ -399,31 +401,7 @@ namespace imkcpp {
             this->parse_fastack(maxack, latest_ts);
         }
 
-        if (_itimediff(this->snd_una, prev_una) > 0) {
-            if (this->cwnd < this->rmt_wnd) {
-                const u32 mss = this->mss;
-
-                if (this->cwnd < this->ssthresh) {
-                    this->cwnd++;
-                    this->incr += mss;
-                } else {
-                    if (this->incr < mss) {
-                        this->incr = mss;
-                    }
-
-                    this->incr += (mss * mss) / this->incr + (mss / 16);
-
-                    if ((this->cwnd + 1) * mss <= this->incr) {
-                        this->cwnd = (this->incr + mss - 1) / ((mss > 0) ? mss : 1);
-                    }
-                }
-
-                if (this->cwnd > this->rmt_wnd) {
-                    this->cwnd = this->rmt_wnd;
-                    this->incr = this->rmt_wnd * mss;
-                }
-            }
-        }
+        congestion_controller.packet_acked(this->snd_una, prev_una);
 
         return offset;
     }
@@ -462,7 +440,7 @@ namespace imkcpp {
         }
 
         const u32 current = this->current;
-        int change = 0;
+        bool change = false;
         bool lost = false;
 
         size_t offset = 0;
@@ -508,7 +486,7 @@ namespace imkcpp {
             this->acklist.clear();
 
             // probe window size (if remote window size equals zero)
-            if (this->rmt_wnd == 0) {
+            if (this->congestion_controller.get_remote_window() == 0) {
                 if (this->probe_wait == 0) {
                     this->probe_wait = constants::IKCP_PROBE_INIT;
                     this->ts_probe = this->current + this->probe_wait;
@@ -558,11 +536,7 @@ namespace imkcpp {
             this->probe = 0;
         }
 
-        // calculate window size
-        u32 cwnd = std::min(this->snd_wnd, this->rmt_wnd);
-        if (this->congestion_window) {
-            cwnd = std::min(this->cwnd, cwnd);
-        }
+        const u32 cwnd = this->congestion_controller.calculate_congestion_window();
 
         while (!snd_queue.empty() && this->snd_nxt < this->snd_una + cwnd) {
             Segment& newseg = snd_queue.front();
@@ -615,10 +589,11 @@ namespace imkcpp {
                 if (segment.metadata.xmit <= this->fastlimit || this->fastlimit <= 0) {
                     // TODO: Why isn't this->xmit incremented here?
                     needsend = true;
+                    change = true;
+
                     segment.metadata.xmit++;
                     segment.metadata.fastack = 0;
                     segment.metadata.resendts = current + segment.metadata.rto;
-                    change++;
                 }
             }
 
@@ -649,24 +624,15 @@ namespace imkcpp {
             flush_buffer();
         }
 
-        // update ssthresh
         if (change) {
-            const u32 inflight = this->snd_nxt - this->snd_una;
-            this->ssthresh = std::max(inflight / 2, constants::IKCP_THRESH_MIN);
-            this->cwnd = this->ssthresh + resent;
-            this->incr = this->cwnd * this->mss;
+            this->congestion_controller.resent(this->snd_nxt - this->snd_una, resent);
         }
 
         if (lost) {
-            this->ssthresh = std::max(cwnd / 2, constants::IKCP_THRESH_MIN);
-            this->cwnd = 1;
-            this->incr = this->mss;
+            this->congestion_controller.packet_lost();
         }
 
-        if (this->cwnd < 1) {
-            this->cwnd = 1;
-            this->incr = this->mss;
-        }
+        this->congestion_controller.ensure_at_least_one_packet_in_flight();
 
         result.total_bytes_sent = flushed_total_size;
         return result;
@@ -714,8 +680,8 @@ namespace imkcpp {
     }
 
     i32 ImKcpp::wnd_unused() const {
-        if (this->rcv_wnd > this->rcv_queue.size()) {
-            return static_cast<i32>(this->rcv_wnd - this->rcv_queue.size());
+        if (this->congestion_controller.get_receive_window() > this->rcv_queue.size()) {
+            return static_cast<i32>(this->congestion_controller.get_receive_window() - this->rcv_queue.size());
         }
 
         return 0;

@@ -15,6 +15,7 @@
 #include "errors.hpp"
 #include "results.hpp"
 #include "rto_calculator.hpp"
+#include "congestion_controller.hpp"
 
 namespace imkcpp {
     // TODO: Some day later this should become a template with MTU and max segment size as template parameters
@@ -31,6 +32,7 @@ namespace imkcpp {
 
         State state = State::Alive;
         RtoCalculator rto_calculator{};
+        CongestionController congestion_controller{};
 
         // TODO: This needs to be split into receiver and sender, and maybe shared context part
 
@@ -38,11 +40,6 @@ namespace imkcpp {
         u32 snd_una = 0;
         u32 snd_nxt = 0;
         u32 rcv_nxt = 0;
-        u32 ssthresh = constants::IKCP_THRESH_INIT;
-        u32 snd_wnd = constants::IKCP_WND_SND;
-        u32 rcv_wnd = constants::IKCP_WND_RCV;
-        u32 rmt_wnd = constants::IKCP_WND_SND;
-        u32 cwnd = 0;
         u32 probe = 0;
         u32 current = 0;
         u32 interval = constants::IKCP_INTERVAL;
@@ -53,7 +50,6 @@ namespace imkcpp {
         u32 ts_probe = 0;
         u32 probe_wait = 0;
         u32 dead_link = constants::IKCP_DEADLINK;
-        u32 incr = 0;
 
         std::deque<Segment> snd_queue{};
         std::deque<Segment> rcv_queue{};
@@ -67,7 +63,6 @@ namespace imkcpp {
 
         i32 fastresend = 0;
         i32 fastlimit = constants::IKCP_FASTACK_LIMIT;
-        bool congestion_window = true;
 
         output_callback_t output;
 
@@ -86,10 +81,10 @@ namespace imkcpp {
         [[nodiscard]] State get_state() const;
         void set_output(const output_callback_t& output);
         void set_interval(u32 interval);
-        void set_nodelay(i32 nodelay, u32 interval, i32 resend, bool congestion_window);
+        void set_nodelay(i32 nodelay, u32 interval, i32 resend, bool congestion_window_state);
         tl::expected<size_t, error> set_mtu(u32 mtu);
         void set_wndsize(u32 sndwnd, u32 rcvwnd);
-        void set_congestion_window(bool congestion_window);
+        void set_congestion_window_enabled(bool state);
 
         tl::expected<size_t, error> recv(std::span<std::byte> buffer);
         [[nodiscard]] size_t estimate_segments_count(size_t size) const;
