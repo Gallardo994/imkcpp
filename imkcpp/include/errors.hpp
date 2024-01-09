@@ -40,6 +40,8 @@ namespace imkcpp {
                 return "header_and_payload_length_mismatch";
             case error::unknown_command:
                 return "unknown_command";
+            case error::exceeds_window_size:
+                return "exceeds_window_size";
             default:
                 return "unknown";
         }
