@@ -2,6 +2,7 @@
 
 #include "types.hpp"
 #include "constants.hpp"
+#include "utility.hpp"
 
 namespace imkcpp {
     class CongestionController {
@@ -15,6 +16,12 @@ namespace imkcpp {
         u32 ssthresh = constants::IKCP_THRESH_INIT; // Slow Start Threshold
         u32 cwnd = 0; // Congestion Window
         u32 incr = 0; // Increment
+
+        // Probe is a part of flow control but it's deeply intertwined with congestion control so it's here
+
+        u32 probe = 0; // Probing
+        u32 ts_probe = 0; // Timestamp of the last time we probed the remote window
+        u32 probe_wait = 0; // How long we should wait before probing again
 
     public:
         void set_mss(const u32 mss) {
@@ -106,8 +113,43 @@ namespace imkcpp {
             return cwnd;
         }
 
-        [[nodiscard]] bool needs_probing_remote_window() const {
-            return this->rmt_wnd == 0;
+        // Flow control mechanism
+
+        void update_probe_request(const u32 current) {
+            if (this->rmt_wnd != 0) {
+                this->ts_probe = 0;
+                this->probe_wait = 0;
+            }
+
+            if (this->probe_wait == 0) {
+                this->probe_wait = constants::IKCP_PROBE_INIT;
+                this->ts_probe = current + this->probe_wait;
+            } else {
+                if (time_delta(current, this->ts_probe) >= 0) {
+                    if (this->probe_wait < constants::IKCP_PROBE_INIT) {
+                        this->probe_wait = constants::IKCP_PROBE_INIT;
+                    }
+
+                    this->probe_wait += this->probe_wait / 2;
+                    if (this->probe_wait > constants::IKCP_PROBE_LIMIT) {
+                        this->probe_wait = constants::IKCP_PROBE_LIMIT;
+                    }
+                    this->ts_probe = current + this->probe_wait;
+                    this->set_probe_flag(constants::IKCP_ASK_SEND);
+                }
+            }
+        }
+
+        void set_probe_flag(const u32 flag) {
+            this->probe |= flag;
+        }
+
+        [[nodiscard]] bool has_probe_flag(const u32 flag) const {
+            return (this->probe & flag) != 0;
+        }
+
+        void reset_probe_flags() {
+            this->probe = 0;
         }
     };
 }

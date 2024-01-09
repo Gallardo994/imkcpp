@@ -4,13 +4,10 @@
 #include "imkcpp.hpp"
 #include "constants.hpp"
 #include "commands.hpp"
+#include "utility.hpp"
 
 // TODO: > 600 lines of code, gg. Split into different implementation files.
 namespace imkcpp {
-    static i32 _itimediff(const u32 later, const u32 earlier) {
-        return static_cast<i32>(later - earlier);
-    }
-
     ImKcpp::ImKcpp(const u32 conv) : conv(conv) {
         this->set_mtu(constants::IKCP_MTU_DEF);
     }
@@ -125,7 +122,7 @@ namespace imkcpp {
     }
 
     void ImKcpp::parse_ack(const u32 sn) {
-        if (_itimediff(sn, this->snd_una) < 0 || _itimediff(sn, this->snd_nxt) >= 0) {
+        if (time_delta(sn, this->snd_una) < 0 || time_delta(sn, this->snd_nxt) >= 0) {
             return;
         }
 
@@ -135,7 +132,7 @@ namespace imkcpp {
                 break;
             }
 
-            if (_itimediff(sn, it->header.sn) < 0) {
+            if (time_delta(sn, it->header.sn) < 0) {
                 break;
             }
 
@@ -145,7 +142,7 @@ namespace imkcpp {
 
     void ImKcpp::parse_una(const u32 una) {
         for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
-            if (_itimediff(una, it->header.sn) > 0) {
+            if (time_delta(una, it->header.sn) > 0) {
                 it = this->snd_buf.erase(it);
             } else {
                 break;
@@ -154,12 +151,12 @@ namespace imkcpp {
     }
 
     void ImKcpp::parse_fastack(const u32 sn, const u32 ts) {
-        if (_itimediff(sn, this->snd_una) < 0 || _itimediff(sn, this->snd_nxt) >= 0) {
+        if (time_delta(sn, this->snd_una) < 0 || time_delta(sn, this->snd_nxt) >= 0) {
             return;
         }
 
         for (Segment& seg : this->snd_buf) {
-            if (_itimediff(sn, seg.header.sn) < 0) {
+            if (time_delta(sn, seg.header.sn) < 0) {
                 break;
             }
 
@@ -167,7 +164,7 @@ namespace imkcpp {
 #ifndef IKCP_FASTACK_CONSERVE
                 seg.metadata.fastack++;
 #else
-                if (_itimediff(ts, seg.ts) >= 0) {
+                if (time_delta(ts, seg.ts) >= 0) {
                     seg.metadata.fastack++;
                 }
 #endif
@@ -228,8 +225,8 @@ namespace imkcpp {
             this->rcv_nxt++;
         }
 
-        if (this->rcv_queue.size() < this->congestion_controller.get_receive_window() && recover) {
-            this->probe |= constants::IKCP_ASK_TELL;
+        if (this->congestion_controller.get_receive_window() > this->rcv_queue.size() && recover) {
+            this->congestion_controller.set_probe_flag(constants::IKCP_ASK_TELL);
         }
 
         return offset;
@@ -276,12 +273,12 @@ namespace imkcpp {
         u32 sn = newseg.header.sn;
         bool repeat = false;
 
-        if (_itimediff(sn, this->rcv_nxt + this->congestion_controller.get_receive_window()) >= 0 || _itimediff(sn, this->rcv_nxt) < 0) {
+        if (time_delta(sn, this->rcv_nxt + this->congestion_controller.get_receive_window()) >= 0 || time_delta(sn, this->rcv_nxt) < 0) {
             return;
         }
 
         const auto it = std::find_if(this->rcv_buf.rbegin(), this->rcv_buf.rend(), [sn](const Segment& seg) {
-            return _itimediff(sn, seg.header.sn) <= 0;
+            return time_delta(sn, seg.header.sn) <= 0;
         });
 
         if (it != this->rcv_buf.rend() && it->header.sn == sn) {
@@ -343,8 +340,8 @@ namespace imkcpp {
 
             switch (header.cmd) {
                 case commands::IKCP_CMD_ACK: {
-                    if (_itimediff(this->current, header.ts) >= 0) {
-                        const i32 rtt = _itimediff(this->current, header.ts);
+                    if (time_delta(this->current, header.ts) >= 0) {
+                        const i32 rtt = time_delta(this->current, header.ts);
                         this->rto_calculator.update_rtt(rtt, this->interval);
                     }
 
@@ -356,12 +353,12 @@ namespace imkcpp {
                         maxack = header.sn;
                         latest_ts = header.ts;
                     } else {
-                        if (_itimediff(header.sn, maxack) > 0) {
+                        if (time_delta(header.sn, maxack) > 0) {
     #ifndef IKCP_FASTACK_CONSERVE
                             maxack = header.sn;
                             latest_ts = header.ts;
     #else
-                            if (_itimediff(header.ts, latest_ts) > 0) {
+                            if (time_delta(header.ts, latest_ts) > 0) {
                                 maxack = sn;
                                 latest_ts = ts;
                             }
@@ -372,9 +369,9 @@ namespace imkcpp {
                     break;
                 }
                 case commands::IKCP_CMD_PUSH: {
-                    if (_itimediff(header.sn, this->rcv_nxt + this->congestion_controller.get_receive_window()) < 0) {
+                    if (time_delta(header.sn, this->rcv_nxt + this->congestion_controller.get_receive_window()) < 0) {
                         this->acklist.emplace_back(header.sn, header.ts);
-                        if (_itimediff(header.sn, this->rcv_nxt) >= 0) {
+                        if (time_delta(header.sn, this->rcv_nxt) >= 0) {
                             Segment seg;
                             seg.header = header; // TODO: Remove this copy
                             seg.data.decode_from(data, offset, header.len);
@@ -385,7 +382,7 @@ namespace imkcpp {
                     break;
                 }
                 case commands::IKCP_CMD_WASK: {
-                    this->probe |= constants::IKCP_ASK_TELL;
+                    this->congestion_controller.set_probe_flag(constants::IKCP_ASK_TELL);
                     break;
                 }
                 case commands::IKCP_CMD_WINS: {
@@ -414,7 +411,7 @@ namespace imkcpp {
             this->ts_flush = this->current;
         }
 
-        i32 slap = _itimediff(this->current, this->ts_flush);
+        i32 slap = time_delta(this->current, this->ts_flush);
 
         if (slap >= 10000 || slap < -10000) {
             this->ts_flush = this->current;
@@ -423,7 +420,7 @@ namespace imkcpp {
 
         if (slap >= 0) {
             this->ts_flush += this->interval;
-            if (_itimediff(this->current, this->ts_flush) >= 0) {
+            if (time_delta(this->current, this->ts_flush) >= 0) {
                 this->ts_flush = this->current + this->interval;
             }
             return this->flush();
@@ -486,31 +483,16 @@ namespace imkcpp {
             this->acklist.clear();
 
             // probe window size (if remote window size equals zero)
-            if (this->congestion_controller.needs_probing_remote_window()) {
-                if (this->probe_wait == 0) {
-                    this->probe_wait = constants::IKCP_PROBE_INIT;
-                    this->ts_probe = this->current + this->probe_wait;
-                } else {
-                    if (_itimediff(this->current, this->ts_probe) >= 0) {
-                        if (this->probe_wait < constants::IKCP_PROBE_INIT) {
-                            this->probe_wait = constants::IKCP_PROBE_INIT;
-                        }
+            this->congestion_controller.update_probe_request(current);
+            //if (this->congestion_controller.needs_probing_remote_window()) {
 
-                        this->probe_wait += this->probe_wait / 2;
-                        if (this->probe_wait > constants::IKCP_PROBE_LIMIT) {
-                            this->probe_wait = constants::IKCP_PROBE_LIMIT;
-                        }
-                        this->ts_probe = this->current + this->probe_wait;
-                        this->probe |= constants::IKCP_ASK_SEND;
-                    }
-                }
-            } else {
-                this->ts_probe = 0;
-                this->probe_wait = 0;
-            }
+            //} else {
+                //this->ts_probe = 0;
+                //this->probe_wait = 0;
+           // }
 
             // flush window probing commands
-            if (this->probe & constants::IKCP_ASK_SEND) {
+            if (this->congestion_controller.has_probe_flag(constants::IKCP_ASK_SEND)) {
                 if (offset > this->mss) {
                     flush_buffer();
                 }
@@ -522,7 +504,7 @@ namespace imkcpp {
             }
 
             // flush window probing commands
-            if (this->probe & constants::IKCP_ASK_TELL) {
+            if (this->congestion_controller.has_probe_flag(constants::IKCP_ASK_TELL)) {
                 if (offset > this->mss) {
                     flush_buffer();
                 }
@@ -533,7 +515,7 @@ namespace imkcpp {
                 result.cmd_wins_count++;
             }
 
-            this->probe = 0;
+            this->congestion_controller.reset_probe_flags();
         }
 
         const u32 cwnd = this->congestion_controller.calculate_congestion_window();
@@ -570,7 +552,7 @@ namespace imkcpp {
                 segment.metadata.xmit++;
                 segment.metadata.rto = this->rto_calculator.get_rto();
                 segment.metadata.resendts = current + segment.metadata.rto + rtomin;
-            } else if (_itimediff(current, segment.metadata.resendts) >= 0) {
+            } else if (time_delta(current, segment.metadata.resendts) >= 0) {
                 needsend = true;
                 segment.metadata.xmit++;
                 this->xmit++;
@@ -648,18 +630,18 @@ namespace imkcpp {
             return current;
         }
 
-        if (std::abs(_itimediff(current, this->ts_flush)) >= 10000) {
+        if (std::abs(time_delta(current, this->ts_flush)) >= 10000) {
             this->ts_flush = current;
         }
 
-        if (_itimediff(current, this->ts_flush) >= 0) {
+        if (time_delta(current, this->ts_flush) >= 0) {
             return current;
         }
 
-        tm_flush = _itimediff(this->ts_flush, current);
+        tm_flush = time_delta(this->ts_flush, current);
 
         for (const Segment& seg : this->snd_buf) {
-            const i32 diff = _itimediff(seg.metadata.resendts, current);
+            const i32 diff = time_delta(seg.metadata.resendts, current);
 
             if (diff <= 0) {
                 return current;

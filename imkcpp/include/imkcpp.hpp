@@ -40,15 +40,14 @@ namespace imkcpp {
         u32 snd_una = 0;
         u32 snd_nxt = 0;
         u32 rcv_nxt = 0;
-        u32 probe = 0;
+
         u32 current = 0;
         u32 interval = constants::IKCP_INTERVAL;
         u32 ts_flush = constants::IKCP_INTERVAL;
         u32 xmit = 0;
         u32 nodelay = 0;
         bool updated = false;
-        u32 ts_probe = 0;
-        u32 probe_wait = 0;
+
         u32 dead_link = constants::IKCP_DEADLINK;
 
         std::deque<Segment> snd_queue{};
