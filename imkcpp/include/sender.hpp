@@ -7,6 +7,7 @@
 #include "commands.hpp"
 #include "congestion_controller.hpp"
 #include "shared_ctx.hpp"
+#include "ack_controller.hpp"
 
 namespace imkcpp {
     // TODO: Move snd_buf to AckController as it is generally used there for ACKs information
@@ -14,6 +15,7 @@ namespace imkcpp {
         CongestionController& congestion_controller;
         RtoCalculator& rto_calculator;
         Flusher& flusher;
+        AckController& ack_controller;
         SharedCtx& shared_ctx;
 
         std::deque<Segment> snd_queue{};
@@ -27,8 +29,16 @@ namespace imkcpp {
         u32 dead_link = constants::IKCP_DEADLINK;
 
     public:
-        explicit Sender(CongestionController& congestion_controller, RtoCalculator& rto_calculator, Flusher& flusher, SharedCtx& shared_ctx) :
-            congestion_controller(congestion_controller), rto_calculator(rto_calculator), flusher(flusher), shared_ctx(shared_ctx) {}
+        explicit Sender(CongestionController& congestion_controller,
+                        RtoCalculator& rto_calculator,
+                        Flusher& flusher,
+                        AckController& ack_controller,
+                        SharedCtx& shared_ctx) :
+                        congestion_controller(congestion_controller),
+                        rto_calculator(rto_calculator),
+                        flusher(flusher),
+                        ack_controller(ack_controller),
+                        shared_ctx(shared_ctx) {}
 
         [[nodiscard]] tl::expected<size_t, error> send(const std::span<const std::byte> buffer) {
             if (buffer.empty()) {
