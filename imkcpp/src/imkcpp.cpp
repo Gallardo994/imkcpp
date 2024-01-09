@@ -613,6 +613,7 @@ namespace imkcpp {
             } else if (segment.metadata.fastack >= resent) {
                 // TODO: The second check is probably redundant
                 if (segment.metadata.xmit <= this->fastlimit || this->fastlimit <= 0) {
+                    // TODO: Why isn't this->xmit incremented here?
                     needsend = true;
                     segment.metadata.xmit++;
                     segment.metadata.fastack = 0;
