@@ -36,7 +36,7 @@ namespace imkcpp {
         AckController ack_controller{flusher, shared_ctx};
 
         Receiver receiver{congestion_controller, shared_ctx};
-        Sender sender{congestion_controller, rto_calculator, flusher, shared_ctx};
+        Sender sender{congestion_controller, rto_calculator, flusher, ack_controller, shared_ctx};
 
         // TODO: This needs to be split into receiver and sender, and maybe shared context part
 
