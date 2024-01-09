@@ -8,14 +8,14 @@ namespace imkcpp {
     // TODO: Too many public members, make them private. Also, make the Segment class a friend of the SegmentHeader class.
     // TODO: The logic is heavily reliant on the fact that everything is public. Rework this.
     struct SegmentHeader {
-        u32 conv = 0;
-        u8 cmd = 0;
-        u8 frg = 0;
-        u16 wnd = 0;
-        u32 ts = 0;
-        u32 sn = 0;
-        u32 una = 0;
-        u32 len = 0;
+        u32 conv = 0; // Conversation ID. // TODO: Does this need to be 4 bytes?
+        u8 cmd = 0; // Command type.
+        u8 frg = 0; // Fragment.
+        u16 wnd = 0; // Window size (available space in the receive buffer).
+        u32 ts = 0; // Timestamp.
+        u32 sn = 0; // Sequence number.
+        u32 una = 0; // Unacknowledged sequence number.
+        u32 len = 0; // Length of the payload.
 
         void encode_to(std::span<std::byte> buf, size_t& offset) const {
             assert(buf.size() >= constants::IKCP_OVERHEAD);
