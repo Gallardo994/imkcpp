@@ -20,16 +20,16 @@ namespace imkcpp {
         this->interval = std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000));
     }
 
-    // TODO: Needs to be separate functions, and should be able to set them independently
-    // TODO: Also, should return a tl::expected with the new value or an error
-    void ImKcpp::set_nodelay(const i32 nodelay, u32 interval, const i32 resend) {
+    // TODO: Should return a tl::expected with the new value or an error
+    void ImKcpp::set_nodelay(const i32 nodelay) {
         if (nodelay >= 0) {
             this->nodelay = nodelay;
             this->rto_calculator.set_min_rto(nodelay > 0 ? constants::IKCP_RTO_NDL : constants::IKCP_RTO_MIN);
         }
+    }
 
-        this->set_interval(interval);
-
+    // TODO: Should return a tl::expected with the new value or an error
+    void ImKcpp::set_resend(const i32 resend) {
         if (resend >= 0) {
             this->fastresend = resend;
         }

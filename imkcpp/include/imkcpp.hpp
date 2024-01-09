@@ -78,7 +78,8 @@ namespace imkcpp {
         [[nodiscard]] State get_state() const;
         void set_output(const output_callback_t& output);
         void set_interval(u32 interval);
-        void set_nodelay(i32 nodelay, u32 interval, i32 resend);
+        void set_nodelay(i32 nodelay);
+        void set_resend(i32 resend);
         tl::expected<size_t, error> set_mtu(u32 mtu);
         void set_wndsize(u32 sndwnd, u32 rcvwnd);
         void set_congestion_window_enabled(bool state);
