@@ -26,7 +26,6 @@ namespace imkcpp {
         this->output = output;
     }
 
-    // TODO: This makes no checks unlike set_nodelay. Should it be removed?
     void ImKcpp::set_interval(const u32 interval) {
         this->interval = std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000));
     }
