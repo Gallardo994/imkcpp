@@ -15,7 +15,7 @@ namespace imkcpp {
         u32 una = 0;
         u32 len = 0;
 
-        void encode_to(std::span<std::byte>& buf, size_t& offset) const {
+        void encode_to(std::span<std::byte> buf, size_t& offset) const {
             assert(buf.size() >= constants::IKCP_OVERHEAD);
 
             encoder::encode32u(buf, offset, this->conv);

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
-
 #include "imkcpp.hpp"
+#include "commands.hpp"
 
 TEST(Send_Tests, Send_ValidValues) {
     using namespace imkcpp;
@@ -119,4 +119,32 @@ TEST(Send_Tests, Send_ExceedsWindowSize) {
     std::vector<std::byte> data(kcp.get_max_segment_size() * 128 + 1);
     auto result = kcp.send(data);
     EXPECT_EQ(result.error(), error::exceeds_window_size);
+}
+
+TEST(Send_Tests, Send_ReceivedMalformedData) {
+    using namespace imkcpp;
+
+    ImKcpp kcp(0);
+
+    {
+        std::vector<std::byte> data(constants::IKCP_OVERHEAD - 1);
+        ASSERT_EQ(kcp.input(data).error(), error::less_than_header_size);
+    }
+
+    {
+        std::vector<std::byte> data(constants::IKCP_MTU_DEF + 1);
+        ASSERT_EQ(kcp.input(data).error(), error::more_than_mtu);
+    }
+
+    {
+        std::vector<std::byte> data(constants::IKCP_OVERHEAD);
+        SegmentHeader header{};
+        header.cmd = commands::IKCP_CMD_PUSH;
+        header.len = 128;
+
+        size_t offset = 0;
+        header.encode_to(data, offset);
+
+        ASSERT_EQ(kcp.input(data).error(), error::header_and_payload_length_mismatch);
+    }
 }
