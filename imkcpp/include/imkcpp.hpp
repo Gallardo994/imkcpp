@@ -72,7 +72,7 @@ namespace imkcpp {
         void parse_fastack(u32 sn, u32 ts);
         [[nodiscard]] std::optional<Ack> ack_get(size_t p) const;
         void parse_data(const Segment& newseg);
-        [[nodiscard]] i32 wnd_unused() const;
+        [[nodiscard]] i32 get_unused_receive_window() const;
 
     public:
         explicit ImKcpp(u32 conv);

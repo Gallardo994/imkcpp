@@ -457,14 +457,14 @@ namespace imkcpp {
             offset = 0;
         };
 
-        const i32 wnd = this->wnd_unused();
+        const i32 unused_receive_window = this->get_unused_receive_window();
 
         {
             Segment seg;
             seg.header.conv = this->conv;
             seg.header.cmd = commands::IKCP_CMD_ACK;
             seg.header.frg = 0;
-            seg.header.wnd = wnd;
+            seg.header.wnd = unused_receive_window;
             seg.header.una = this->rcv_nxt;
             seg.header.sn = 0;
             seg.header.ts = 0;
@@ -543,7 +543,7 @@ namespace imkcpp {
 
             newseg.header.conv = this->conv;
             newseg.header.cmd = commands::IKCP_CMD_PUSH;
-            newseg.header.wnd = wnd;
+            newseg.header.wnd = unused_receive_window;
             newseg.header.ts = current;
             newseg.header.sn = this->snd_nxt++;
             newseg.header.una = this->rcv_nxt;
@@ -599,7 +599,7 @@ namespace imkcpp {
 
             if (needsend) {
                 segment.header.ts = current;
-                segment.header.wnd = wnd;
+                segment.header.wnd = unused_receive_window;
                 segment.header.una = this->rcv_nxt;
 
                 if (offset + segment.data_size() > this->mss) {
@@ -679,11 +679,7 @@ namespace imkcpp {
         return current + minimal;
     }
 
-    i32 ImKcpp::wnd_unused() const {
-        if (this->congestion_controller.get_receive_window() > this->rcv_queue.size()) {
-            return static_cast<i32>(this->congestion_controller.get_receive_window() - this->rcv_queue.size());
-        }
-
-        return 0;
+    i32 ImKcpp::get_unused_receive_window() const {
+        return std::max(static_cast<i32>(this->congestion_controller.get_receive_window()) - static_cast<i32>(this->rcv_queue.size()), 0);
     }
 }
