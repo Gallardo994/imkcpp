@@ -607,8 +607,8 @@ namespace imkcpp {
         }
 
         // calculate resent
-        u32 resent = (this->fastresend > 0) ? this->fastresend : 0xffffffff;
-        u32 rtomin = (this->nodelay == 0) ? (this->rx_rto >> 3) : 0;
+        const u32 resent = (this->fastresend > 0) ? this->fastresend : 0xffffffff;
+        const u32 rtomin = (this->nodelay == 0) ? (this->rx_rto >> 3) : 0;
 
         // flush data segments
         for (Segment& segment : this->snd_buf) {
