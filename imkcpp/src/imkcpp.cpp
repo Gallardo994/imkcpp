@@ -227,6 +227,7 @@ namespace imkcpp {
         const i32 unused_receive_window = this->receiver.get_unused_receive_window();
 
         {
+            // TODO: Create a separate function for this
             Segment seg;
             seg.header.conv = this->shared_ctx.conv;
             seg.header.cmd = commands::IKCP_CMD_ACK;
