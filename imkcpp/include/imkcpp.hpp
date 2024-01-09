@@ -49,6 +49,8 @@ namespace imkcpp {
 
         bool updated = false;
 
+        [[nodiscard]] Segment create_service_segment(i32 unused_receive_window) const;
+
     public:
         explicit ImKcpp(u32 conv);
 

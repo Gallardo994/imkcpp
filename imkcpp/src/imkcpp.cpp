@@ -226,28 +226,33 @@ namespace imkcpp {
         const u32 current = this->current;
         const i32 unused_receive_window = this->receiver.get_unused_receive_window();
 
-        {
-            // TODO: Create a separate function for this
-            Segment seg;
-            seg.header.conv = this->shared_ctx.conv;
-            seg.header.cmd = commands::IKCP_CMD_ACK;
-            seg.header.frg = 0;
-            seg.header.wnd = unused_receive_window;
-            seg.header.una = shared_ctx.rcv_nxt;
-            seg.header.sn = 0;
-            seg.header.ts = 0;
-            seg.header.len = 0;
+        // Service data
+        Segment seg = this->create_service_segment(unused_receive_window);
+        this->ack_controller.flush_acks(callback, seg);
+        this->congestion_controller.update_probe_request(current);
+        this->congestion_controller.flush_probes(callback, seg);
 
-            this->ack_controller.flush_acks(callback, seg);
-            this->congestion_controller.update_probe_request(current);
-            this->congestion_controller.flush_probes(callback, seg);
-        }
-
+        // Useful data
         this->sender.flush_data_segments(callback, current, unused_receive_window);
 
         flusher.flush_if_not_empty(callback);
 
         return result;
+    }
+
+    Segment ImKcpp::create_service_segment(const i32 unused_receive_window) const {
+        Segment seg;
+
+        seg.header.conv = this->shared_ctx.conv;
+        seg.header.cmd = commands::IKCP_CMD_ACK;
+        seg.header.frg = 0;
+        seg.header.wnd = unused_receive_window;
+        seg.header.una = shared_ctx.rcv_nxt;
+        seg.header.sn = 0;
+        seg.header.ts = 0;
+        seg.header.len = 0;
+
+        return seg;
     }
 
     u32 ImKcpp::check(const u32 current) {
