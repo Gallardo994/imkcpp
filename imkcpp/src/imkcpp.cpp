@@ -350,7 +350,7 @@ namespace imkcpp {
 
         size_t offset = 0;
 
-        while (offset + constants::IKCP_OVERHEAD < data.size()) {
+        while (offset + constants::IKCP_OVERHEAD <= data.size()) {
             SegmentHeader header;
             header.decode_from(data, offset);
 
