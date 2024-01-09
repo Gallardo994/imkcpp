@@ -147,6 +147,8 @@ namespace imkcpp {
         constexpr u32 K = 4;
         const u32 rto = this->rx_srtt + std::max(this->interval, K * this->rx_rttvar);
 
+        // Limiting to IKCP_RTO_MAX is not mentioned in RFC 2988, but is present in the original C implementation
+        // TODO: Investigate why it's needed
         this->rx_rto = std::clamp(rto, this->rx_minrto, constants::IKCP_RTO_MAX);
     }
 
