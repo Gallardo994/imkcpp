@@ -10,10 +10,22 @@ namespace imkcpp {
         this->set_mtu(constants::IKCP_MTU_DEF);
     }
 
-    State ImKcpp::get_state() const {
-        return this->shared_ctx.get_state();
+    Segment ImKcpp::create_service_segment(const i32 unused_receive_window) const {
+        Segment seg;
+
+        seg.header.conv = this->shared_ctx.conv;
+        seg.header.cmd = commands::IKCP_CMD_ACK;
+        seg.header.frg = 0;
+        seg.header.wnd = unused_receive_window;
+        seg.header.una = shared_ctx.rcv_nxt;
+        seg.header.sn = 0;
+        seg.header.ts = 0;
+        seg.header.len = 0;
+
+        return seg;
     }
 
+    // TODO: Should return a tl::expected with the new value or an error
     void ImKcpp::set_interval(const u32 interval) {
         this->interval = std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000));
     }
@@ -26,10 +38,6 @@ namespace imkcpp {
     // TODO: Should return a tl::expected with the new value or an error
     void ImKcpp::set_resend(const i32 resend) {
         this->sender.set_fastresend(resend);
-    }
-
-    void ImKcpp::set_congestion_window_enabled(const bool state) {
-        this->congestion_controller.set_congestion_window_enabled(state);
     }
 
     tl::expected<size_t, error> ImKcpp::set_mtu(const u32 mtu) {
@@ -47,14 +55,6 @@ namespace imkcpp {
         return mtu;
     }
 
-    u32 ImKcpp::get_mtu() const {
-        return this->shared_ctx.mtu;
-    }
-
-    u32 ImKcpp::get_max_segment_size() const {
-        return this->shared_ctx.mss;
-    }
-
     // TODO: Needs to be separate functions, and should be able to set them independently
     // TODO: Also, should return a tl::expected with the new value or an error
     void ImKcpp::set_wndsize(const u32 sndwnd, const u32 rcvwnd) {
@@ -68,20 +68,8 @@ namespace imkcpp {
         }
     }
 
-    tl::expected<size_t, error> ImKcpp::peek_size() const {
-        return this->receiver.peek_size();
-    }
-
-    tl::expected<size_t, error> ImKcpp::recv(const std::span<std::byte> buffer) {
-        return this->receiver.recv(buffer);
-    }
-
-    size_t ImKcpp::estimate_segments_count(const size_t size) const {
-        return this->sender.estimate_segments_count(size);
-    }
-
-    tl::expected<size_t, error> ImKcpp::send(const std::span<const std::byte> buffer) {
-        return this->sender.send(buffer);
+    void ImKcpp::set_congestion_window_enabled(const bool state) {
+        this->congestion_controller.set_congestion_window_enabled(state);
     }
 
     // TODO: Move to receiver, but only after moving snd_buf to AckController
@@ -189,6 +177,41 @@ namespace imkcpp {
         return offset;
     }
 
+    tl::expected<size_t, error> ImKcpp::recv(const std::span<std::byte> buffer) {
+        return this->receiver.recv(buffer);
+    }
+
+    tl::expected<size_t, error> ImKcpp::send(const std::span<const std::byte> buffer) {
+        return this->sender.send(buffer);
+    }
+
+    u32 ImKcpp::check(const u32 current) {
+        if (!this->updated) {
+            return current;
+        }
+
+        if (std::abs(time_delta(current, this->ts_flush)) >= 10000) {
+            this->ts_flush = current;
+        }
+
+        if (time_delta(current, this->ts_flush) >= 0) {
+            return current;
+        }
+
+        const u32 next_flush = static_cast<u32>(std::max(0, time_delta(this->ts_flush, current)));
+        const std::optional<u32> earliest_transmit = this->sender.get_earliest_transmit_delta(current);
+
+        u32 minimal = 0;
+
+        if (earliest_transmit.has_value()) {
+            minimal = earliest_transmit.value() < next_flush ? earliest_transmit.value() : next_flush;
+        } else {
+            minimal = next_flush;
+        }
+
+        return current + std::min(this->interval, minimal);
+    }
+
     FlushResult ImKcpp::update(const u32 current, const output_callback_t& callback) {
         this->current = current;
 
@@ -240,45 +263,23 @@ namespace imkcpp {
         return result;
     }
 
-    Segment ImKcpp::create_service_segment(const i32 unused_receive_window) const {
-        Segment seg;
-
-        seg.header.conv = this->shared_ctx.conv;
-        seg.header.cmd = commands::IKCP_CMD_ACK;
-        seg.header.frg = 0;
-        seg.header.wnd = unused_receive_window;
-        seg.header.una = shared_ctx.rcv_nxt;
-        seg.header.sn = 0;
-        seg.header.ts = 0;
-        seg.header.len = 0;
-
-        return seg;
+    State ImKcpp::get_state() const {
+        return this->shared_ctx.get_state();
     }
 
-    u32 ImKcpp::check(const u32 current) {
-        if (!this->updated) {
-            return current;
-        }
+    u32 ImKcpp::get_mtu() const {
+        return this->shared_ctx.mtu;
+    }
 
-        if (std::abs(time_delta(current, this->ts_flush)) >= 10000) {
-            this->ts_flush = current;
-        }
+    u32 ImKcpp::get_max_segment_size() const {
+        return this->shared_ctx.mss;
+    }
 
-        if (time_delta(current, this->ts_flush) >= 0) {
-            return current;
-        }
+    tl::expected<size_t, error> ImKcpp::peek_size() const {
+        return this->receiver.peek_size();
+    }
 
-        const u32 next_flush = static_cast<u32>(std::max(0, time_delta(this->ts_flush, current)));
-        const std::optional<u32> earliest_transmit = this->sender.get_earliest_transmit_delta(current);
-
-        u32 minimal = 0;
-
-        if (earliest_transmit.has_value()) {
-            minimal = earliest_transmit.value() < next_flush ? earliest_transmit.value() : next_flush;
-        } else {
-            minimal = next_flush;
-        }
-
-        return current + std::min(this->interval, minimal);
+    size_t ImKcpp::estimate_segments_count(const size_t size) const {
+        return this->sender.estimate_segments_count(size);
     }
 }
