@@ -119,6 +119,7 @@ namespace imkcpp {
     }
 
     // TODO: Haven't seen this amount of magic numbers since I last played WoW
+    // https://www.computer-networking.info/1st/html/transport/tcp.html (RFC 2988, pt. 2.3)
     void ImKcpp::update_ack(const i32 rtt) {
         if (this->rx_srtt == 0) {
             this->rx_srtt = rtt;
