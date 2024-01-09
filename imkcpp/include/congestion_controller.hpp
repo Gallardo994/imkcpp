@@ -119,6 +119,7 @@ namespace imkcpp {
             if (this->rmt_wnd != 0) {
                 this->ts_probe = 0;
                 this->probe_wait = 0;
+                return;
             }
 
             if (this->probe_wait == 0) {
