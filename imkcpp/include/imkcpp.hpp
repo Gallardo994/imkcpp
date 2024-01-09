@@ -57,13 +57,10 @@ namespace imkcpp {
 
         std::vector<Ack> acklist{};
 
-        std::optional<void*> user = std::nullopt;
         std::vector<std::byte> buffer{};
 
         i32 fastresend = 0;
         i32 fastlimit = constants::IKCP_FASTACK_LIMIT;
-
-        output_callback_t output;
 
         void shrink_buf();
         void parse_ack(u32 sn);
@@ -77,7 +74,6 @@ namespace imkcpp {
     public:
         explicit ImKcpp(u32 conv);
 
-        void set_userdata(void* userdata);
         [[nodiscard]] State get_state() const;
         void set_output(const output_callback_t& output);
         void set_interval(u32 interval);
@@ -90,10 +86,9 @@ namespace imkcpp {
         [[nodiscard]] size_t estimate_segments_count(size_t size) const;
         tl::expected<size_t, error> send(std::span<const std::byte> buffer);
         tl::expected<size_t, error> input(std::span<const std::byte> data);
-        FlushResult update(u32 current);
+        FlushResult update(u32 current, const output_callback_t& callback);
         u32 check(u32 current);
-        u32 flush_acks();
-        FlushResult flush();
+        FlushResult flush(const output_callback_t& callback);
 
         [[nodiscard]] u32 get_mtu() const;
         [[nodiscard]] u32 get_max_segment_size() const;

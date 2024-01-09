@@ -14,30 +14,31 @@ TEST(Send_Tests, Send_ValidValues) {
         ImKcpp kcp_output(0);
         kcp_output.set_wndsize(2048, 2048);
         kcp_output.set_congestion_window_enabled(false);
-        kcp_output.update(0);
+
+        auto segments_count = kcp_output.estimate_segments_count(size);
+
+        std::vector<std::vector<std::byte>> captured_data;
+        captured_data.reserve(segments_count);
+        auto output_callback = [&captured_data](std::span<const std::byte> data) {
+            captured_data.emplace_back(data.begin(), data.end());
+        };
+
+        kcp_output.update(0, output_callback);
 
         ImKcpp kcp_input(0);
         kcp_input.set_wndsize(2048, 2048);
-        kcp_input.update(0);
+        kcp_input.update(0, [](std::span<const std::byte>) { });
 
         std::vector<std::byte> send_buffer(size);
         for (u32 j = 0; j < size; ++j) {
             send_buffer[j] = static_cast<std::byte>(j);
         }
 
-        auto segments_count = kcp_output.estimate_segments_count(size);
-
-        std::vector<std::vector<std::byte>> captured_data;
-        captured_data.reserve(segments_count);
-        kcp_output.set_output([&captured_data](std::span<const std::byte> data, const ImKcpp&, std::optional<void*>) {
-            captured_data.emplace_back(data.begin(), data.end());
-        });
-
         auto send_result = kcp_output.send(send_buffer);
         ASSERT_TRUE(send_result.has_value()) << err_to_str(send_result.error());
         ASSERT_EQ(send_result.value(), size);
 
-        auto update_result = kcp_output.update(200);
+        auto update_result = kcp_output.update(200, output_callback);
         ASSERT_EQ(update_result.ack_sent_count, 0);
         ASSERT_EQ(update_result.cmd_wask_count, 0);
         ASSERT_EQ(update_result.cmd_wins_count, 0);

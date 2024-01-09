@@ -12,16 +12,8 @@ namespace imkcpp {
         this->set_mtu(constants::IKCP_MTU_DEF);
     }
 
-    void ImKcpp::set_userdata(void* userdata) {
-        this->user = userdata;
-    }
-
     State ImKcpp::get_state() const {
         return this->state;
-    }
-
-    void ImKcpp::set_output(const output_callback_t& output) {
-        this->output = output;
     }
 
     void ImKcpp::set_interval(const u32 interval) {
@@ -397,7 +389,7 @@ namespace imkcpp {
         return offset;
     }
 
-    FlushResult ImKcpp::update(const u32 current) {
+    FlushResult ImKcpp::update(const u32 current, const output_callback_t& callback) {
         this->current = current;
 
         if (!this->updated) {
@@ -417,13 +409,13 @@ namespace imkcpp {
             if (time_delta(this->current, this->ts_flush) >= 0) {
                 this->ts_flush = this->current + this->interval;
             }
-            return this->flush();
+            return this->flush(callback);
         }
 
         return {};
     }
 
-    FlushResult ImKcpp::flush() {
+    FlushResult ImKcpp::flush(const output_callback_t& callback) {
         FlushResult result;
 
         if (!this->updated) {
@@ -438,13 +430,9 @@ namespace imkcpp {
         size_t flushed_total_size = 0;
 
         // TODO: Remake to a standalone buffer class with auto-flush on overflow
-        auto flush_buffer = [this, &offset, &flushed_total_size] {
+        auto flush_buffer = [this, &callback, &offset, &flushed_total_size] {
             flushed_total_size += offset;
-
-            if (this->output) {
-                this->output({this->buffer.data(), offset}, *this, this->user);
-            }
-
+            callback({this->buffer.data(), offset});
             offset = 0;
         };
 
