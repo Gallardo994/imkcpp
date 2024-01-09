@@ -28,7 +28,7 @@ namespace imkcpp {
 
     // TODO: This makes no checks unlike set_nodelay. Should it be removed?
     void ImKcpp::set_interval(const u32 interval) {
-        this->interval = interval;
+        this->interval = std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000));
     }
 
     // TODO: Needs to be separate functions, and should be able to set them independently
@@ -44,13 +44,13 @@ namespace imkcpp {
             }
         }
 
-        this->interval = std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000));
+        this->set_interval(interval);
 
         if (resend >= 0) {
             this->fastresend = resend;
         }
 
-        this->congestion_window = congestion_window;
+        this->set_congestion_window(congestion_window);
     }
 
     void ImKcpp::set_congestion_window(const bool congestion_window) {
