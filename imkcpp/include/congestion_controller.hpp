@@ -8,13 +8,13 @@ namespace imkcpp {
         bool congestion_window = true;
         u32 mss = constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD;
 
-        u32 rcv_wnd = constants::IKCP_WND_RCV;
-        u32 rmt_wnd = constants::IKCP_WND_SND;
-        u32 snd_wnd = constants::IKCP_WND_SND;
+        u32 rcv_wnd = constants::IKCP_WND_RCV; // Receive Window
+        u32 rmt_wnd = constants::IKCP_WND_SND; // Remote Window (receive window for the other side, advertised by the other side)
+        u32 snd_wnd = constants::IKCP_WND_SND; // Send Window
 
-        u32 ssthresh = constants::IKCP_THRESH_INIT;
-        u32 cwnd = 0;
-        u32 incr = 0;
+        u32 ssthresh = constants::IKCP_THRESH_INIT; // Slow Start Threshold
+        u32 cwnd = 0; // Congestion Window
+        u32 incr = 0; // Increment
 
     public:
         void set_mss(const u32 mss) {
