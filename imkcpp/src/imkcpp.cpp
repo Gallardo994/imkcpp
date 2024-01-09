@@ -482,16 +482,8 @@ namespace imkcpp {
             result.ack_sent_count += this->acklist.size();
             this->acklist.clear();
 
-            // probe window size (if remote window size equals zero)
             this->congestion_controller.update_probe_request(current);
-            //if (this->congestion_controller.needs_probing_remote_window()) {
 
-            //} else {
-                //this->ts_probe = 0;
-                //this->probe_wait = 0;
-           // }
-
-            // flush window probing commands
             if (this->congestion_controller.has_probe_flag(constants::IKCP_ASK_SEND)) {
                 if (offset > this->mss) {
                     flush_buffer();
@@ -503,7 +495,6 @@ namespace imkcpp {
                 result.cmd_wask_count++;
             }
 
-            // flush window probing commands
             if (this->congestion_controller.has_probe_flag(constants::IKCP_ASK_TELL)) {
                 if (offset > this->mss) {
                     flush_buffer();
