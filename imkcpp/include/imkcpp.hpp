@@ -31,6 +31,8 @@ namespace imkcpp {
         State state = State::Alive;
 
         // TODO: This needs to be split into receiver and sender, and maybe shared context part
+
+        // TODO: And for the god's sake, rename all these variables to something more meaningful
         u32 snd_una = 0;
         u32 snd_nxt = 0;
         u32 rcv_nxt = 0;

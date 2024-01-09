@@ -5,6 +5,8 @@
 #include <vector>
 
 namespace imkcpp {
+    // TODO: Too many public members, make them private. Also, make the Segment class a friend of the SegmentHeader class.
+    // TODO: The logic is heavily reliant on the fact that everything is public. Rework this.
     struct SegmentHeader {
         u32 conv = 0;
         u8 cmd = 0;

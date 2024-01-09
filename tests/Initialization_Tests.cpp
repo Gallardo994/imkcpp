@@ -3,6 +3,8 @@
 #include "imkcpp.hpp"
 #include "constants.hpp"
 
+// TODO: Add tests for other initialization methods after they're reworked.
+
 TEST(Initialization_Tests, Mtu_ValidValues) {
     using namespace imkcpp;
 
