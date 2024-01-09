@@ -5,6 +5,7 @@
 #include "constants.hpp"
 #include "commands.hpp"
 
+// TODO: > 700 lines of code, gg. Split into different implementation files.
 namespace imkcpp {
     static i32 _itimediff(const u32 later, const u32 earlier) {
         return static_cast<i32>(later - earlier);
