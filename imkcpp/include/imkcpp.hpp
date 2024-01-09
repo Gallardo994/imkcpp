@@ -9,7 +9,6 @@
 #include "types.hpp"
 #include "constants.hpp"
 #include "segment.hpp"
-#include "ack.hpp"
 #include "state.hpp"
 #include "expected.hpp"
 #include "errors.hpp"
