@@ -22,14 +22,6 @@ namespace imkcpp {
             return true;
         }
 
-        [[nodiscard]] std::optional<Ack> get(const size_t position) const {
-            if (position >= this->acklist.size()) {
-                return std::nullopt;
-            }
-
-            return this->acklist.at(position);
-        }
-
         void emplace_back(const u32 sn, const u32 ts) {
             this->acklist.emplace_back(sn, ts);
         }
@@ -44,6 +36,7 @@ namespace imkcpp {
 
                 base_segment.header.sn = ack.sn;
                 base_segment.header.ts = ack.ts;
+
                 flusher.encode(base_segment);
             }
 
