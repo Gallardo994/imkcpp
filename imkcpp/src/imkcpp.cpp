@@ -36,12 +36,7 @@ namespace imkcpp {
     void ImKcpp::set_nodelay(const i32 nodelay, u32 interval, const i32 resend, const bool congestion_window) {
         if (nodelay >= 0) {
             this->nodelay = nodelay;
-
-            if (nodelay > 0) {
-                this->rx_minrto = constants::IKCP_RTO_NDL;
-            } else {
-                this->rx_minrto = constants::IKCP_RTO_MIN;
-            }
+            this->rto_calculator.set_min_rto(nodelay > 0 ? constants::IKCP_RTO_NDL : constants::IKCP_RTO_MIN);
         }
 
         this->set_interval(interval);
@@ -120,36 +115,7 @@ namespace imkcpp {
 
     // https://www.computer-networking.info/1st/html/transport/tcp.html (RFC 2988, pt. 2.3)
     void ImKcpp::update_ack(const i32 rtt) {
-        if (this->rx_srtt == 0) {
-            // First measurement
-            this->rx_srtt = rtt;
-            this->rx_rttvar = rtt / 2;
-        } else {
-            // Consequent measurements
-            const i32 delta = std::abs(rtt - static_cast<i32>(this->rx_srtt));
-
-            // RTTVAR = (1 - BETA) * RTTVAR + BETA * |SRTT - RTT|
-            // Simplified to: RTTVAR = (BETA_MUL * RTTVAR + delta) / BETA_DIV
-            // In RFC 2988, BETA = 1/4
-            constexpr u32 BETA_MUL = 3;
-            constexpr u32 BETA_DIV = 4;
-            this->rx_rttvar = (BETA_MUL * this->rx_rttvar + delta) / BETA_DIV;
-
-            // SRTT = (1 - ALPHA) * SRTT + ALPHA * RTT
-            // Simplified to: SRTT = (ALPHA_MUL * SRTT + RTT) / ALPHA_DIV
-            // In RFC 2988, ALPHA = 1/8
-            constexpr u32 ALPHA_MUL = 7;
-            constexpr u32 ALPHA_DIV = 8;
-            this->rx_srtt = (ALPHA_MUL * this->rx_srtt + rtt) / ALPHA_DIV;
-        }
-
-        // RTO = SRTT + max(G, K * RTTVAR)
-        constexpr u32 K = 4;
-        const u32 rto = this->rx_srtt + std::max(this->interval, K * this->rx_rttvar);
-
-        // Limiting to IKCP_RTO_MAX is not mentioned in RFC 2988, but is present in the original C implementation
-        // TODO: Investigate why it's needed
-        this->rx_rto = std::clamp(rto, this->rx_minrto, constants::IKCP_RTO_MAX);
+        this->rto_calculator.update_rtt(rtt, this->interval);
     }
 
     void ImKcpp::shrink_buf() {
@@ -611,8 +577,9 @@ namespace imkcpp {
             newseg.header.ts = current;
             newseg.header.sn = this->snd_nxt++;
             newseg.header.una = this->rcv_nxt;
+
             newseg.metadata.resendts = current;
-            newseg.metadata.rto = this->rx_rto;
+            newseg.metadata.rto = this->rto_calculator.get_rto();
             newseg.metadata.fastack = 0;
             newseg.metadata.xmit = 0;
 
@@ -622,7 +589,7 @@ namespace imkcpp {
 
         // calculate resent
         const u32 resent = (this->fastresend > 0) ? this->fastresend : 0xffffffff;
-        const u32 rtomin = (this->nodelay == 0) ? (this->rx_rto >> 3) : 0;
+        const u32 rtomin = (this->nodelay == 0) ? (this->rto_calculator.get_rto() >> 3) : 0;
 
         // flush data segments
         for (Segment& segment : this->snd_buf) {
@@ -631,7 +598,7 @@ namespace imkcpp {
             if (segment.metadata.xmit == 0) {
                 needsend = true;
                 segment.metadata.xmit++;
-                segment.metadata.rto = this->rx_rto;
+                segment.metadata.rto = this->rto_calculator.get_rto();
                 segment.metadata.resendts = current + segment.metadata.rto + rtomin;
             } else if (_itimediff(current, segment.metadata.resendts) >= 0) {
                 needsend = true;
@@ -639,9 +606,9 @@ namespace imkcpp {
                 this->xmit++;
 
                 if (this->nodelay == 0) {
-                    segment.metadata.rto += std::max(segment.metadata.rto, this->rx_rto);
+                    segment.metadata.rto += std::max(segment.metadata.rto, this->rto_calculator.get_rto());
                 } else {
-                    const u32 step = this->nodelay < 2? segment.metadata.rto : this->rx_rto;
+                    const u32 step = this->nodelay < 2? segment.metadata.rto : this->rto_calculator.get_rto();
                     segment.metadata.rto += step / 2;
                 }
 
