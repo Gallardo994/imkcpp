@@ -84,6 +84,7 @@ namespace imkcpp {
         return this->sender.send(buffer);
     }
 
+    // TODO: Move to receiver, but only after moving snd_buf to AckController
     tl::expected<size_t, error> ImKcpp::input(std::span<const std::byte> data) {
         if (data.size() < constants::IKCP_OVERHEAD) {
             return tl::unexpected(error::less_than_header_size);
