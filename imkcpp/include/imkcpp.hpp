@@ -71,7 +71,6 @@ namespace imkcpp {
 
         output_callback_t output;
 
-        void update_ack(i32 rtt);
         void shrink_buf();
         void parse_ack(u32 sn);
         void parse_una(u32 una);

@@ -113,11 +113,6 @@ namespace imkcpp {
         return length;
     }
 
-    // https://www.computer-networking.info/1st/html/transport/tcp.html (RFC 2988, pt. 2.3)
-    void ImKcpp::update_ack(const i32 rtt) {
-        this->rto_calculator.update_rtt(rtt, this->interval);
-    }
-
     void ImKcpp::shrink_buf() {
         if (!this->snd_buf.empty()) {
             const Segment& seg = this->snd_buf.front();
@@ -347,7 +342,8 @@ namespace imkcpp {
             switch (header.cmd) {
                 case commands::IKCP_CMD_ACK: {
                     if (_itimediff(this->current, header.ts) >= 0) {
-                        this->update_ack(_itimediff(this->current, header.ts));
+                        const i32 rtt = _itimediff(this->current, header.ts);
+                        this->rto_calculator.update_rtt(rtt, this->interval);
                     }
 
                     this->parse_ack(header.sn);
