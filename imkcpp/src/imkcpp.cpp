@@ -286,6 +286,7 @@ namespace imkcpp {
         }
 
         if (!repeat) {
+            // TODO: This copy is probably redundant
             this->rcv_buf.insert(it.base(), newseg);
         }
 
