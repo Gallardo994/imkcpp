@@ -7,17 +7,20 @@
 #include "errors.hpp"
 #include "segment.hpp"
 #include "congestion_controller.hpp"
+#include "receiver_buffer.hpp"
 
 namespace imkcpp {
     class Receiver {
         SharedCtx& shared_ctx;
+        ReceiverBuffer& receiver_buffer;
         CongestionController& congestion_controller;
 
         std::deque<Segment> rcv_queue{};
-        std::deque<Segment> rcv_buf{};
+
     public:
 
-        explicit Receiver(SharedCtx& shared_ctx, CongestionController& congestion_controller) : shared_ctx(shared_ctx), congestion_controller(congestion_controller) {}
+        explicit Receiver(SharedCtx& shared_ctx, ReceiverBuffer& receiver_buffer, CongestionController& congestion_controller) :
+            shared_ctx(shared_ctx), receiver_buffer(receiver_buffer), congestion_controller(congestion_controller) {}
 
         [[nodiscard]] tl::expected<size_t, error> peek_size() const {
             if (this->rcv_queue.empty()) {
@@ -90,41 +93,7 @@ namespace imkcpp {
         }
 
         void move_receive_buffer_to_queue() {
-            while (!this->rcv_buf.empty()) {
-                Segment& seg = this->rcv_buf.front();
-                if (seg.header.sn != shared_ctx.rcv_nxt || this->rcv_queue.size() >= this->congestion_controller.get_receive_window()) {
-                    break;
-                }
-
-                this->rcv_queue.push_back(std::move(seg));
-                this->rcv_buf.pop_front();
-                this->shared_ctx.rcv_nxt++;
-            }
-        }
-
-        void parse_data(const Segment& newseg) {
-            u32 sn = newseg.header.sn;
-            bool repeat = false;
-
-            // TODO: Partially duplicates logic in imkcpp.hpp. Should probably stay here
-            if (sn >= this->shared_ctx.rcv_nxt + this->congestion_controller.get_receive_window() || sn < this->shared_ctx.rcv_nxt) {
-                return;
-            }
-
-            const auto it = std::find_if(this->rcv_buf.rbegin(), this->rcv_buf.rend(), [sn](const Segment& seg) {
-                return time_delta(sn, seg.header.sn) <= 0;
-            });
-
-            if (it != this->rcv_buf.rend() && it->header.sn == sn) {
-                repeat = true;
-            }
-
-            if (!repeat) {
-                // TODO: This copy is probably redundant
-                this->rcv_buf.insert(it.base(), newseg);
-            }
-
-            this->move_receive_buffer_to_queue();
+            this->receiver_buffer.move_receive_buffer_to_queue(this->rcv_queue);
         }
 
         [[nodiscard]] i32 get_unused_receive_window() const {

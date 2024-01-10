@@ -31,7 +31,8 @@ namespace imkcpp {
         Flusher flusher{shared_ctx};
         CongestionController congestion_controller{shared_ctx, flusher};
 
-        Receiver receiver{shared_ctx, congestion_controller};
+        ReceiverBuffer receiver_buffer{shared_ctx, congestion_controller};
+        Receiver receiver{shared_ctx, receiver_buffer, congestion_controller};
 
         SenderBuffer sender_buffer{shared_ctx};
         AckController ack_controller{shared_ctx, flusher, rto_calculator, sender_buffer};
@@ -158,7 +159,8 @@ namespace imkcpp {
                             seg.header = header; // TODO: Remove this copy
                             seg.data.decode_from(data, offset, header.len);
 
-                            this->receiver.parse_data(seg);
+                            this->receiver_buffer.emplace_segment(seg);
+                            this->receiver.move_receive_buffer_to_queue();
                         }
                         break;
                     }
