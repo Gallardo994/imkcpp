@@ -13,7 +13,6 @@ namespace imkcpp::constants {
     constexpr uint32_t IKCP_WND_SND = 32;
     constexpr uint32_t IKCP_WND_RCV = 128;       // must >= max fragment size
     constexpr uint32_t IKCP_MTU_DEF = 1400;
-    constexpr uint32_t IKCP_ACK_FAST = 3;
     constexpr uint32_t IKCP_INTERVAL = 100;
     constexpr uint32_t IKCP_OVERHEAD = 24;
     constexpr uint32_t IKCP_DEADLINK = 20;
