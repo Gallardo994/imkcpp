@@ -80,8 +80,7 @@ namespace imkcpp {
                 return tl::unexpected(error::less_than_header_size);
             }
 
-            // TODO: Does this really need triple the size?
-            this->flusher.resize(static_cast<size_t>(mtu + constants::IKCP_OVERHEAD) * 3);
+            this->flusher.resize(mtu);
             this->shared_ctx.mtu = mtu;
             this->shared_ctx.mss = this->shared_ctx.mtu - constants::IKCP_OVERHEAD;
 
