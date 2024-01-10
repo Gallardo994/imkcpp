@@ -29,14 +29,15 @@ namespace imkcpp {
         SharedCtx shared_ctx{};
         RtoCalculator rto_calculator{shared_ctx};
         Flusher flusher{shared_ctx};
-        CongestionController congestion_controller{shared_ctx, flusher};
+        SegmentTracker segment_tracker{};
+        CongestionController congestion_controller{shared_ctx, flusher, segment_tracker};
 
-        ReceiverBuffer receiver_buffer{shared_ctx, congestion_controller};
+        ReceiverBuffer receiver_buffer{shared_ctx, congestion_controller, segment_tracker};
         Receiver receiver{shared_ctx, receiver_buffer, congestion_controller};
 
-        SenderBuffer sender_buffer{shared_ctx};
-        AckController ack_controller{shared_ctx, flusher, rto_calculator, sender_buffer};
-        Sender sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, ack_controller};
+        SenderBuffer sender_buffer{shared_ctx, segment_tracker};
+        AckController ack_controller{shared_ctx, flusher, rto_calculator, sender_buffer, segment_tracker};
+        Sender sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, ack_controller, segment_tracker};
 
         bool updated = false; // Whether update() was called at least once
         u32 current = 0; // Current / last time we updated the state
@@ -49,7 +50,7 @@ namespace imkcpp {
             seg.header.cmd = commands::IKCP_CMD_ACK;
             seg.header.frg = 0;
             seg.header.wnd = unused_receive_window;
-            seg.header.una = shared_ctx.rcv_nxt;
+            seg.header.una = this->segment_tracker.get_rcv_nxt();
             seg.header.sn = 0;
             seg.header.ts = 0;
             seg.header.len = 0;
@@ -111,7 +112,7 @@ namespace imkcpp {
                 return tl::unexpected(error::more_than_mtu);
             }
 
-            const u32 prev_una = shared_ctx.snd_una;
+            const u32 prev_una = this->segment_tracker.get_snd_una();
             FastAckCtx fastack_ctx{};
 
             size_t offset = 0;
@@ -153,7 +154,7 @@ namespace imkcpp {
                         this->ack_controller.schedule_ack(header.sn, header.ts);
 
                         // TODO: This is half-duplicate of what's in receiver.hpp. Refactor it.
-                        if (header.sn >= shared_ctx.rcv_nxt) {
+                        if (header.sn >= this->segment_tracker.get_rcv_nxt()) {
                             Segment seg;
                             seg.header = header; // TODO: Remove this copy
                             seg.data.decode_from(data, offset, header.len);
@@ -177,7 +178,7 @@ namespace imkcpp {
             }
 
             this->ack_controller.acknowledge_fastack(fastack_ctx);
-            congestion_controller.adjust_parameters(shared_ctx.snd_una, prev_una);
+            congestion_controller.adjust_parameters(this->segment_tracker.get_snd_una(), prev_una);
 
             return offset;
         }

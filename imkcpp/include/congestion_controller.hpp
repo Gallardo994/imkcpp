@@ -7,11 +7,13 @@
 #include "utility.hpp"
 #include "shared_ctx.hpp"
 #include "flusher.hpp"
+#include "segment_tracker.hpp"
 
 namespace imkcpp {
     class CongestionController {
         SharedCtx& shared_ctx;
         Flusher& flusher;
+        SegmentTracker& segment_tracker;
 
         bool congestion_window = true; // Congestion Window Enabled
 
@@ -30,7 +32,12 @@ namespace imkcpp {
         u32 probe_wait = 0; // How long we should wait before probing again
 
     public:
-        explicit CongestionController(SharedCtx& shared_ctx, Flusher& flusher) : shared_ctx(shared_ctx), flusher(flusher) {}
+        explicit CongestionController(SharedCtx& shared_ctx,
+                                      Flusher& flusher,
+                                      SegmentTracker& segment_tracker) :
+                                      shared_ctx(shared_ctx),
+                                      flusher(flusher),
+                                      segment_tracker(segment_tracker) {}
 
         void set_congestion_window_enabled(const bool state) {
             this->congestion_window = state;
@@ -45,7 +52,7 @@ namespace imkcpp {
         }
 
         [[nodiscard]] bool fits_receive_window(const u32 sn) const {
-            return sn < this->shared_ctx.rcv_nxt + this->get_receive_window();
+            return sn < this->segment_tracker.get_rcv_nxt() + this->get_receive_window();
         }
 
         void set_remote_window(const u32 rmt_wnd) {

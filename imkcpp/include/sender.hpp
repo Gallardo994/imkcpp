@@ -18,6 +18,7 @@ namespace imkcpp {
         Flusher& flusher;
         SenderBuffer& sender_buffer;
         AckController& ack_controller;
+        SegmentTracker& segment_tracker;
 
         std::deque<Segment> snd_queue{};
 
@@ -34,13 +35,15 @@ namespace imkcpp {
                         RtoCalculator& rto_calculator,
                         Flusher& flusher,
                         SenderBuffer& sender_buffer,
-                        AckController& ack_controller) :
+                        AckController& ack_controller,
+                        SegmentTracker& segment_tracker) :
                         shared_ctx(shared_ctx),
                         congestion_controller(congestion_controller),
                         rto_calculator(rto_calculator),
                         flusher(flusher),
                         sender_buffer(sender_buffer),
-                        ack_controller(ack_controller) {}
+                        ack_controller(ack_controller),
+                        segment_tracker(segment_tracker) {}
 
         // Takes the payload, splits it into segments and puts them into the send queue.
         [[nodiscard]] tl::expected<size_t, error> send(const std::span<const std::byte> buffer) {
@@ -78,15 +81,15 @@ namespace imkcpp {
 
         // Flushes data segments from the send queue to the sender buffer.
         void move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window) {
-            while (!this->snd_queue.empty() && this->shared_ctx.snd_nxt < this->shared_ctx.snd_una + cwnd) {
+            while (!this->snd_queue.empty() && this->segment_tracker.get_snd_nxt() < this->segment_tracker.get_snd_una() + cwnd) {
                 Segment& newseg = this->snd_queue.front();
 
                 newseg.header.conv = this->shared_ctx.conv;
                 newseg.header.cmd = commands::IKCP_CMD_PUSH;
                 newseg.header.wnd = unused_receive_window;
                 newseg.header.ts = current;
-                newseg.header.sn = this->shared_ctx.snd_nxt++;
-                newseg.header.una = this->shared_ctx.rcv_nxt;
+                newseg.header.sn = this->segment_tracker.get_and_increment_snd_nxt();
+                newseg.header.una = this->segment_tracker.get_rcv_nxt();
 
                 newseg.metadata.resendts = current;
                 newseg.metadata.rto = this->rto_calculator.get_rto();
@@ -164,7 +167,7 @@ namespace imkcpp {
                 if (needsend) {
                     segment.header.ts = current;
                     segment.header.wnd = unused_receive_window;
-                    segment.header.una = this->shared_ctx.rcv_nxt;
+                    segment.header.una = this->segment_tracker.get_rcv_nxt();
 
                     this->flusher.flush_if_does_not_fit(output, segment.data_size());
                     this->flusher.emplace_segment(segment);
@@ -179,7 +182,7 @@ namespace imkcpp {
             }
 
             if (change) {
-                this->congestion_controller.packet_resent(this->shared_ctx.snd_nxt - this->shared_ctx.snd_una, resent);
+                this->congestion_controller.packet_resent(this->segment_tracker.get_packets_in_flight(), resent);
             }
 
             if (lost) {

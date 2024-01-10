@@ -3,14 +3,21 @@
 #include <deque>
 #include "types.hpp"
 #include "segment.hpp"
+#include "shared_ctx.hpp"
+#include "segment_tracker.hpp"
 
 namespace imkcpp {
     class SenderBuffer {
         SharedCtx& shared_ctx;
+        SegmentTracker& segment_tracker;
+
         std::deque<Segment> snd_buf{};
 
     public:
-        explicit SenderBuffer(SharedCtx& shared_ctx) : shared_ctx(shared_ctx) {}
+        explicit SenderBuffer(SharedCtx& shared_ctx,
+                              SegmentTracker& segment_tracker) :
+                              shared_ctx(shared_ctx),
+                              segment_tracker(segment_tracker) {}
 
         void push_segment(Segment& segment) {
             this->snd_buf.push_back(std::move(segment));
@@ -19,9 +26,9 @@ namespace imkcpp {
         void shrink() {
             if (!this->snd_buf.empty()) {
                 const Segment& seg = this->snd_buf.front();
-                this->shared_ctx.snd_una = seg.header.sn;
+                this->segment_tracker.set_snd_una(seg.header.sn);
             } else {
-                this->shared_ctx.snd_una = this->shared_ctx.snd_nxt;
+                this->segment_tracker.reset_snd_una();
             }
         }
 

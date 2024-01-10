@@ -12,10 +12,6 @@ namespace imkcpp {
         size_t mtu = 0; // Maximum Transmission Unit
         size_t mss = 0; // Maximum Segment Size (mtu - header size)
 
-        u32 snd_una = 0; // Sequence number of the first unacknowledged segment.
-        u32 snd_nxt = 0; // Sequence number of the next segment to be sent.
-        u32 rcv_nxt = 0; // Sequence number of the next segment to be received.
-
         u32 interval = constants::IKCP_INTERVAL; // Interval.
 
         // Gets the current state of the connection.

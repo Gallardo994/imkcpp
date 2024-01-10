@@ -4,6 +4,7 @@
 #include "flusher.hpp"
 #include "rto_calculator.hpp"
 #include "sender_buffer.hpp"
+#include "segment_tracker.hpp"
 
 namespace imkcpp {
     // FastAckCtx is used to track the latest received segment and its timestamp.
@@ -56,11 +57,12 @@ namespace imkcpp {
         Flusher& flusher;
         RtoCalculator& rto_calculator;
         SenderBuffer& sender_buffer;
+        SegmentTracker& segment_tracker;
 
         std::vector<Ack> acklist{};
 
         [[nodiscard]] bool should_acknowledge(const u32 sn) const {
-            if (sn < shared_ctx.snd_una || sn >= shared_ctx.snd_nxt) {
+            if (sn < this->segment_tracker.get_snd_una() || sn >= this->segment_tracker.get_snd_nxt()) {
                 return false;
             }
 
@@ -71,11 +73,13 @@ namespace imkcpp {
         explicit AckController(SharedCtx& shared_ctx,
                                Flusher& flusher,
                                RtoCalculator& rto_calculator,
-                               SenderBuffer& sender_buffer) :
+                               SenderBuffer& sender_buffer,
+                               SegmentTracker& segment_tracker) :
                                shared_ctx(shared_ctx),
                                flusher(flusher),
                                rto_calculator(rto_calculator),
-                               sender_buffer(sender_buffer) {}
+                               sender_buffer(sender_buffer),
+                               segment_tracker(segment_tracker) {}
 
         void acknowledge_fastack(const FastAckCtx& fast_ack_ctx) {
             if (!fast_ack_ctx.is_valid()) {
