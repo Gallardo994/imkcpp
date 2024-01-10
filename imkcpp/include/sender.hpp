@@ -11,7 +11,6 @@
 #include "sender_buffer.hpp"
 
 namespace imkcpp {
-    // TODO: Move snd_buf to AckController as it is generally used there for ACKs information
     class Sender {
         CongestionController& congestion_controller;
         RtoCalculator& rto_calculator;
