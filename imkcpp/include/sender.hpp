@@ -64,7 +64,7 @@ namespace imkcpp {
             size_t offset = 0;
 
             for (size_t i = 0; i < count; i++) {
-                const size_t size = std::min(buffer.size() - offset, this->shared_ctx.mss);
+                const size_t size = std::min(buffer.size() - offset, this->shared_ctx.get_mss());
                 assert(size > 0);
 
                 Segment& seg = this->snd_queue.emplace_back();
@@ -84,7 +84,7 @@ namespace imkcpp {
             while (!this->snd_queue.empty() && this->segment_tracker.get_snd_nxt() < this->segment_tracker.get_snd_una() + cwnd) {
                 Segment& newseg = this->snd_queue.front();
 
-                newseg.header.conv = this->shared_ctx.conv;
+                newseg.header.conv = this->shared_ctx.get_conv();
                 newseg.header.cmd = commands::IKCP_CMD_PUSH;
                 newseg.header.wnd = unused_receive_window;
                 newseg.header.ts = current;
@@ -103,7 +103,8 @@ namespace imkcpp {
 
         // Given current max segment size, estimates the number of segments needed to fit the payload.
         [[nodiscard]] size_t estimate_segments_count(const size_t size) const {
-            return std::max(static_cast<size_t>(1), (size + this->shared_ctx.mss - 1) / this->shared_ctx.mss);
+            const auto mss = this->shared_ctx.get_mss();
+            return std::max(static_cast<size_t>(1), (size + mss - 1) / mss);
         }
 
         void set_fastresend(const u32 value) {

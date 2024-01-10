@@ -74,13 +74,13 @@ namespace imkcpp {
         void packet_resent(const u32 packets_in_flight, const u32 resent) {
             this->ssthresh = std::max(packets_in_flight / 2, constants::IKCP_THRESH_MIN);
             this->cwnd = this->ssthresh + resent;
-            this->incr = this->cwnd * this->shared_ctx.mss;
+            this->incr = this->cwnd * this->shared_ctx.get_mss();
         }
 
         void packet_lost() {
             this->ssthresh = std::max(this->cwnd / 2, constants::IKCP_THRESH_MIN);
             this->cwnd = 1;
-            this->incr = this->shared_ctx.mss;
+            this->incr = this->shared_ctx.get_mss();
         }
 
         void adjust_parameters(const u32 latest_una, const u32 prev_una) {
@@ -89,7 +89,7 @@ namespace imkcpp {
             }
 
             if (this->cwnd < this->rmt_wnd) {
-                const u32 mss = this->shared_ctx.mss;
+                const u32 mss = this->shared_ctx.get_mss();
 
                 if (this->cwnd < this->ssthresh) {
                     this->cwnd++;
@@ -116,7 +116,7 @@ namespace imkcpp {
         void ensure_at_least_one_packet_in_flight() {
             if (this->cwnd < 1) {
                 this->cwnd = 1;
-                this->incr = this->shared_ctx.mss;
+                this->incr = this->shared_ctx.get_mss();
             }
         }
 

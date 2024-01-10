@@ -53,7 +53,6 @@ namespace imkcpp {
             explicit Ack(const u32 sn, const u32 ts) : sn(sn), ts(ts) { }
         };
 
-        SharedCtx& shared_ctx;
         Flusher& flusher;
         RtoCalculator& rto_calculator;
         SenderBuffer& sender_buffer;
@@ -70,12 +69,10 @@ namespace imkcpp {
         }
 
     public:
-        explicit AckController(SharedCtx& shared_ctx,
-                               Flusher& flusher,
+        explicit AckController(Flusher& flusher,
                                RtoCalculator& rto_calculator,
                                SenderBuffer& sender_buffer,
                                SegmentTracker& segment_tracker) :
-                               shared_ctx(shared_ctx),
                                flusher(flusher),
                                rto_calculator(rto_calculator),
                                sender_buffer(sender_buffer),

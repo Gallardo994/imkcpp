@@ -4,7 +4,6 @@
 #include "types.hpp"
 #include "constants.hpp"
 #include "shared_ctx.hpp"
-#include "utility.hpp"
 
 namespace imkcpp {
     // https://www.computer-networking.info/1st/html/transport/tcp.html
@@ -52,7 +51,7 @@ namespace imkcpp {
 
             // RTO = SRTT + max(G, K * RTTVAR)
             constexpr u32 K = 4;
-            const u32 rto = this->srtt + std::max(this->shared_ctx.interval, K * this->rttvar);
+            const u32 rto = this->srtt + std::max(this->shared_ctx.get_interval(), K * this->rttvar);
 
             // Limiting to IKCP_RTO_MAX is not mentioned in RFC 2988, but is present in the original C implementation
             // TODO: Investigate why it's needed

@@ -32,11 +32,11 @@ namespace imkcpp {
         SegmentTracker segment_tracker{};
         CongestionController congestion_controller{shared_ctx, flusher, segment_tracker};
 
-        ReceiverBuffer receiver_buffer{shared_ctx, congestion_controller, segment_tracker};
-        Receiver receiver{shared_ctx, receiver_buffer, congestion_controller};
+        ReceiverBuffer receiver_buffer{congestion_controller, segment_tracker};
+        Receiver receiver{receiver_buffer, congestion_controller};
 
         SenderBuffer sender_buffer{shared_ctx, segment_tracker};
-        AckController ack_controller{shared_ctx, flusher, rto_calculator, sender_buffer, segment_tracker};
+        AckController ack_controller{flusher, rto_calculator, sender_buffer, segment_tracker};
         Sender sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, ack_controller, segment_tracker};
 
         bool updated = false; // Whether update() was called at least once
@@ -46,7 +46,7 @@ namespace imkcpp {
         [[nodiscard]] auto create_service_segment(const i32 unused_receive_window) const -> Segment {
             Segment seg;
 
-            seg.header.conv = this->shared_ctx.conv;
+            seg.header.conv = this->shared_ctx.get_conv();
             seg.header.cmd = commands::IKCP_CMD_ACK;
             seg.header.frg = 0;
             seg.header.wnd = unused_receive_window;
@@ -60,12 +60,12 @@ namespace imkcpp {
 
     public:
         explicit ImKcpp(const u32 conv) {
-            this->shared_ctx.conv = conv;
+            this->shared_ctx.set_conv(conv);
             this->set_mtu(constants::IKCP_MTU_DEF);
         }
 
         auto set_interval(const u32 interval) -> void {
-            this->shared_ctx.interval = std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000));
+            this->shared_ctx.set_interval(std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000)));
         }
 
         auto set_nodelay(const u32 nodelay) -> void {
@@ -82,8 +82,7 @@ namespace imkcpp {
             }
 
             this->flusher.resize(mtu);
-            this->shared_ctx.mtu = mtu;
-            this->shared_ctx.mss = this->shared_ctx.mtu - constants::IKCP_OVERHEAD;
+            this->shared_ctx.set_mtu(mtu);
 
             return mtu;
         }
@@ -108,7 +107,7 @@ namespace imkcpp {
                 return tl::unexpected(error::less_than_header_size);
             }
 
-            if (data.size() > this->shared_ctx.mtu) {
+            if (data.size() > this->shared_ctx.get_mtu()) {
                 return tl::unexpected(error::more_than_mtu);
             }
 
@@ -125,7 +124,7 @@ namespace imkcpp {
                 SegmentHeader header;
                 header.decode_from(data, offset);
 
-                if (header.conv != this->shared_ctx.conv) {
+                if (header.conv != this->shared_ctx.get_conv()) {
                     return tl::unexpected(error::conv_mismatch);
                 }
 
@@ -215,7 +214,7 @@ namespace imkcpp {
                 minimal = next_flush;
             }
 
-            return current + std::min(this->shared_ctx.interval, minimal);
+            return current + std::min(this->shared_ctx.get_interval(), minimal);
         }
 
         auto update(const u32 current, const output_callback_t& callback) -> FlushResult {
@@ -234,10 +233,13 @@ namespace imkcpp {
             }
 
             if (slap >= 0) {
-                this->ts_flush += this->shared_ctx.interval;
+                const auto interval = this->shared_ctx.get_interval();
+
+                this->ts_flush += interval;
                 if (time_delta(this->current, this->ts_flush) >= 0) {
-                    this->ts_flush = this->current + this->shared_ctx.interval;
+                    this->ts_flush = this->current + interval;
                 }
+
                 return this->flush(callback);
             }
 
@@ -274,10 +276,10 @@ namespace imkcpp {
         }
 
         [[nodiscard]] auto get_mtu() const -> u32 {
-            return this->shared_ctx.mtu;
+            return this->shared_ctx.get_mtu();
         }
         [[nodiscard]] auto get_max_segment_size() const -> u32 {
-            return this->shared_ctx.mss;
+            return this->shared_ctx.get_mss();
         }
 
         [[nodiscard]] auto peek_size() const -> tl::expected<size_t, error> {
@@ -294,7 +296,7 @@ namespace imkcpp {
                 static_cast<size_t>(std::numeric_limits<u8>::max())
                 );
 
-            return this->shared_ctx.mss * max_segments_count;
+            return this->shared_ctx.get_mss() * max_segments_count;
         }
     };
 }

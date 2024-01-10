@@ -40,7 +40,7 @@ namespace imkcpp {
 
         // Flushes the buffer to the given output if it exceeds Max Segment Size
         [[nodiscard]] size_t flush_if_full(const output_callback_t& target) {
-            if (this->offset > this->shared_ctx.mss) {
+            if (this->offset > this->shared_ctx.get_mss()) {
                 return this->flush(target);
             }
 
@@ -49,7 +49,7 @@ namespace imkcpp {
 
         // Flushes the buffer to the given output if adding "size" bytes to the buffer would exceed Max Segment Size
         [[nodiscard]] size_t flush_if_does_not_fit(const output_callback_t& target, const size_t size) {
-            if (this->offset + size > this->shared_ctx.mss) {
+            if (this->offset + size > this->shared_ctx.get_mss()) {
                 return this->flush(target);
             }
 

@@ -11,7 +11,6 @@
 
 namespace imkcpp {
     class Receiver {
-        SharedCtx& shared_ctx;
         ReceiverBuffer& receiver_buffer;
         CongestionController& congestion_controller;
 
@@ -19,8 +18,8 @@ namespace imkcpp {
 
     public:
 
-        explicit Receiver(SharedCtx& shared_ctx, ReceiverBuffer& receiver_buffer, CongestionController& congestion_controller) :
-            shared_ctx(shared_ctx), receiver_buffer(receiver_buffer), congestion_controller(congestion_controller) {}
+        explicit Receiver(ReceiverBuffer& receiver_buffer, CongestionController& congestion_controller) :
+            receiver_buffer(receiver_buffer), congestion_controller(congestion_controller) {}
 
         [[nodiscard]] tl::expected<size_t, error> peek_size() const {
             if (this->rcv_queue.empty()) {

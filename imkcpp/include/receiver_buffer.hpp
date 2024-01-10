@@ -3,22 +3,18 @@
 #include <deque>
 #include "types.hpp"
 #include "segment.hpp"
-#include "shared_ctx.hpp"
 #include "segment_tracker.hpp"
 
 namespace imkcpp {
     class ReceiverBuffer {
-        SharedCtx& shared_ctx;
         CongestionController& congestion_controller;
         SegmentTracker& segment_tracker;
 
         std::deque<Segment> rcv_buf{};
 
     public:
-        explicit ReceiverBuffer(SharedCtx& shared_ctx,
-                                CongestionController& congestion_controller,
+        explicit ReceiverBuffer(CongestionController& congestion_controller,
                                 SegmentTracker& segment_tracker) :
-                                shared_ctx(shared_ctx),
                                 congestion_controller(congestion_controller),
                                 segment_tracker(segment_tracker) {}
 
