@@ -1348,30 +1348,30 @@ void shrink(void);</p>
 <h4 class="members">Members</h4>
 <table class="list"><tbody>
 <tr><th>conv </th>
-</tr>
+<td class="description">Conversation ID</td></tr>
 <tr><th>interval </th>
-</tr>
+<td class="description">Interval.</td></tr>
 <tr><th>mss </th>
-</tr>
+<td class="description">Maximum Segment Size (mtu - header size)</td></tr>
 <tr><th>mtu </th>
-</tr>
+<td class="description">Maximum Transmission Unit</td></tr>
 <tr><th>rcv_nxt </th>
-</tr>
+<td class="description">Sequence number of the next segment to be received.</td></tr>
 <tr><th>snd_nxt </th>
-</tr>
+<td class="description">Sequence number of the next segment to be sent.</td></tr>
 <tr><th>snd_una </th>
-</tr>
+<td class="description">Sequence number of the first unacknowledged segment.</td></tr>
 <tr><th>state </th>
 <td class="description">TODO: Make private and add meaningful getters/setters</td></tr>
 </tbody></table>
 <h4 class="method"><a id="get_state">get_state</a></h4>
-<p class="description"></p>
+<p class="description">Interval.</p>
 <p class="code">
 nodiscard]] State get_state(void);</p>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description">TODO: Make private and add meaningful getters/setters</p>
+<p class="description">Gets the current state of the connection.</p>
 <h4 class="method"><a id="set_state">set_state</a></h4>
-<p class="description"></p>
+<p class="description">Sets the current state of the connection.</p>
 <p class="code">
 void set_state(const State state);</p>
 <h5 class="parameters">Parameters</h5>
