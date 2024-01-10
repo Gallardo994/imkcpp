@@ -258,7 +258,9 @@ span.string {
 <li><a href="#imkcpp::Flusher">imkcpp::Flusher</a></li>
 <li><a href="#imkcpp::ImKcpp">imkcpp::ImKcpp</a></li>
 <li><a href="#imkcpp::Receiver">imkcpp::Receiver</a></li>
+<li><a href="#imkcpp::ReceiverBuffer">imkcpp::ReceiverBuffer</a></li>
 <li><a href="#imkcpp::RtoCalculator">imkcpp::RtoCalculator</a></li>
+<li><a href="#imkcpp::SegmentTracker">imkcpp::SegmentTracker</a></li>
 <li><a href="#imkcpp::Sender">imkcpp::Sender</a></li>
 <li><a href="#imkcpp::SenderBuffer">imkcpp::SenderBuffer</a></li>
 <li><a href="#imkcpp::SharedCtx">imkcpp::SharedCtx</a></li>
@@ -304,8 +306,8 @@ span.string {
 &#160;&#160;private:<br>
 &#160;&#160;&#160;&#160;Flusher &amp; flusher;<br>
 &#160;&#160;&#160;&#160;RtoCalculator &amp; rto_calculator;<br>
+&#160;&#160;&#160;&#160;SegmentTracker &amp; segment_tracker;<br>
 &#160;&#160;&#160;&#160;SenderBuffer &amp; sender_buffer;<br>
-&#160;&#160;&#160;&#160;SharedCtx &amp; shared_ctx;<br>
 };</p>
 <h4 class="members">Members</h4>
 <table class="list"><tbody>
@@ -313,15 +315,15 @@ span.string {
 </tr>
 <tr><th>rto_calculator </th>
 </tr>
-<tr><th>sender_buffer </th>
+<tr><th>segment_tracker </th>
 </tr>
-<tr><th>shared_ctx </th>
+<tr><th>sender_buffer </th>
 </tr>
 </tbody></table>
 <h4 class="method"><a id="AckController">AckController</a></h4>
 <p class="description"></p>
 <p class="code">
-explicit AckController(Flusher &amp; flusher, RtoCalculator &amp; rto_calculator, SenderBuffer &amp; sender_buffer, SharedCtx &amp; shared_ctx, shared_ctx( shared_ctx, rto_calculator( rto_calculator, flusher( flusher, sender_buffer( sender_buffer);</p>
+explicit AckController(Flusher &amp; flusher, RtoCalculator &amp; rto_calculator, SenderBuffer &amp; sender_buffer, SegmentTracker &amp; segment_tracker, flusher( flusher, rto_calculator( rto_calculator, sender_buffer( sender_buffer, segment_tracker( segment_tracker);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>flusher</th>
@@ -330,15 +332,15 @@ explicit AckController(Flusher &amp; flusher, RtoCalculator &amp; rto_calculator
 </tr>
 <tr><th>sender_buffer</th>
 </tr>
-<tr><th>shared_ctx</th>
-</tr>
-<tr><th>shared_ctx</th>
-</tr>
-<tr><th>rto_calculator</th>
+<tr><th>segment_tracker</th>
 </tr>
 <tr><th>flusher</th>
 </tr>
+<tr><th>rto_calculator</th>
+</tr>
 <tr><th>sender_buffer</th>
+</tr>
+<tr><th>segment_tracker</th>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
@@ -419,6 +421,7 @@ void una_received(const u32 una);</p>
 &#160;&#160;&#160;&#160;u32 probe_wait;<br>
 &#160;&#160;&#160;&#160;u32 rcv_wnd;<br>
 &#160;&#160;&#160;&#160;u32 rmt_wnd;<br>
+&#160;&#160;&#160;&#160;SegmentTracker &amp; segment_tracker;<br>
 &#160;&#160;&#160;&#160;SharedCtx &amp; shared_ctx;<br>
 &#160;&#160;&#160;&#160;u32 snd_wnd;<br>
 &#160;&#160;&#160;&#160;u32 ssthresh;<br>
@@ -442,6 +445,8 @@ void una_received(const u32 una);</p>
 <td class="description">Receive Window</td></tr>
 <tr><th>rmt_wnd </th>
 <td class="description">Remote Window (receive window for the other side, advertised by the other side)</td></tr>
+<tr><th>segment_tracker </th>
+</tr>
 <tr><th>shared_ctx </th>
 </tr>
 <tr><th>snd_wnd </th>
@@ -454,16 +459,20 @@ void una_received(const u32 una);</p>
 <h4 class="method"><a id="CongestionController">CongestionController</a></h4>
 <p class="description">Timestamp of the last time we probed the remote window</p>
 <p class="code">
-explicit CongestionController(Flusher &amp; flusher, SharedCtx &amp; shared_ctx, flusher( flusher, shared_ctx( shared_ctx);</p>
+explicit CongestionController(SharedCtx &amp; shared_ctx, Flusher &amp; flusher, SegmentTracker &amp; segment_tracker, shared_ctx( shared_ctx, flusher( flusher, segment_tracker( segment_tracker);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
+<tr><th>shared_ctx</th>
+</tr>
 <tr><th>flusher</th>
+</tr>
+<tr><th>segment_tracker</th>
 </tr>
 <tr><th>shared_ctx</th>
 </tr>
 <tr><th>flusher</th>
 </tr>
-<tr><th>shared_ctx</th>
+<tr><th>segment_tracker</th>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
@@ -544,10 +553,10 @@ nodiscard]] bool has_probe_flag(const u32 flag);</p>
 <p class="description"></p>
 <p class="code">
 void packet_lost(void);</p>
-<h4 class="method"><a id="resent">resent</a></h4>
+<h4 class="method"><a id="packets_resent">packets_resent</a></h4>
 <p class="description"></p>
 <p class="code">
-void resent(const u32 packets_in_flight, const u32 resent);</p>
+void packets_resent(const u32 packets_in_flight, const u32 resent);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>packets_in_flight</th>
@@ -669,7 +678,7 @@ void update(const u32 sn, const u32 ts);</p>
 <h4 class="members">Members</h4>
 <table class="list"><tbody>
 <tr><th>offset </th>
-</tr>
+<td class="description">Flushes the buffer to the given output</td></tr>
 <tr><th>shared_ctx </th>
 </tr>
 </tbody></table>
@@ -686,10 +695,10 @@ explicit Flusher(SharedCtx &amp; shared_ctx, shared_ctx( shared_ctx);</p>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
 <p class="description"></p>
-<h4 class="method"><a id="encode">encode</a></h4>
-<p class="description">Encodes the given segment into the buffer</p>
+<h4 class="method"><a id="emplace_segment">emplace_segment</a></h4>
+<p class="description">Emplaces the given segment into the buffer</p>
 <p class="code">
-void encode(const Segment &amp; segment);</p>
+void emplace_segment(const Segment &amp; segment);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>segment</th>
@@ -990,28 +999,28 @@ auto update(const u32 current, const output_callback_t &amp; callback);</p>
 <p class="code">class imkcpp::Receiver {<br>
 &#160;&#160;private:<br>
 &#160;&#160;&#160;&#160;CongestionController &amp; congestion_controller;<br>
-&#160;&#160;&#160;&#160;SharedCtx &amp; shared_ctx;<br>
+&#160;&#160;&#160;&#160;ReceiverBuffer &amp; receiver_buffer;<br>
 };</p>
 <h4 class="members">Members</h4>
 <table class="list"><tbody>
 <tr><th>congestion_controller </th>
 </tr>
-<tr><th>shared_ctx </th>
+<tr><th>receiver_buffer </th>
 </tr>
 </tbody></table>
 <h4 class="method"><a id="Receiver">Receiver</a></h4>
 <p class="description"></p>
 <p class="code">
-explicit Receiver(CongestionController &amp; congestion_controller, SharedCtx &amp; shared_ctx, congestion_controller( congestion_controller, shared_ctx( shared_ctx);</p>
+explicit Receiver(ReceiverBuffer &amp; receiver_buffer, CongestionController &amp; congestion_controller, receiver_buffer( receiver_buffer, congestion_controller( congestion_controller);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
-<tr><th>congestion_controller</th>
-</tr>
-<tr><th>shared_ctx</th>
+<tr><th>receiver_buffer</th>
 </tr>
 <tr><th>congestion_controller</th>
 </tr>
-<tr><th>shared_ctx</th>
+<tr><th>receiver_buffer</th>
+</tr>
+<tr><th>congestion_controller</th>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
@@ -1026,15 +1035,6 @@ nodiscard]] i32 get_unused_receive_window(void);</p>
 <p class="description"></p>
 <p class="code">
 void move_receive_buffer_to_queue(void);</p>
-<h4 class="method"><a id="parse_data">parse_data</a></h4>
-<p class="description"></p>
-<p class="code">
-void parse_data(const Segment &amp; newseg);</p>
-<h5 class="parameters">Parameters</h5>
-<table class="list"><tbody>
-<tr><th>newseg</th>
-</tr>
-</tbody></table>
 <h4 class="method"><a id="peek_size">peek_size</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -1052,6 +1052,55 @@ tl::expected size_t, error recv(const std::span std::byte buffer);</p>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
 <p class="description"></p>
+<h3 class="class"><a id="imkcpp::ReceiverBuffer">imkcpp::ReceiverBuffer</a></h3>
+<p class="description"></p>
+<p class="code">class imkcpp::ReceiverBuffer {<br>
+&#160;&#160;private:<br>
+&#160;&#160;&#160;&#160;CongestionController &amp; congestion_controller;<br>
+&#160;&#160;&#160;&#160;SegmentTracker &amp; segment_tracker;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>congestion_controller </th>
+</tr>
+<tr><th>segment_tracker </th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="ReceiverBuffer">ReceiverBuffer</a></h4>
+<p class="description"></p>
+<p class="code">
+explicit ReceiverBuffer(CongestionController &amp; congestion_controller, SegmentTracker &amp; segment_tracker, congestion_controller( congestion_controller, segment_tracker( segment_tracker);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>congestion_controller</th>
+</tr>
+<tr><th>segment_tracker</th>
+</tr>
+<tr><th>congestion_controller</th>
+</tr>
+<tr><th>segment_tracker</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="emplace_segment">emplace_segment</a></h4>
+<p class="description"></p>
+<p class="code">
+void emplace_segment(const Segment &amp; newseg);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>newseg</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="move_receive_buffer_to_queue">move_receive_buffer_to_queue</a></h4>
+<p class="description"></p>
+<p class="code">
+void move_receive_buffer_to_queue(std::deque Segment &amp; rcv_queue);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>rcv_queue</th>
+</tr>
+</tbody></table>
 <h3 class="class"><a id="imkcpp::RtoCalculator">imkcpp::RtoCalculator</a></h3>
 <p class="description">https://datatracker.ietf.org/doc/html/rfc2988.html#section-2</p>
 <p class="code">class imkcpp::RtoCalculator {<br>
@@ -1119,8 +1168,72 @@ void update_rtt(const i32 rtt);</p>
 <tr><th>rtt</th>
 </tr>
 </tbody></table>
+<h3 class="class"><a id="imkcpp::SegmentTracker">imkcpp::SegmentTracker</a></h3>
+<p class="description"></p>
+<p class="code">class imkcpp::SegmentTracker {<br>
+&#160;&#160;private:<br>
+&#160;&#160;&#160;&#160;u32 rcv_nxt;<br>
+&#160;&#160;&#160;&#160;u32 snd_nxt;<br>
+&#160;&#160;&#160;&#160;u32 snd_una;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>rcv_nxt </th>
+<td class="description">Sequence number of the next segment to be received.</td></tr>
+<tr><th>snd_nxt </th>
+<td class="description">Sequence number of the next segment to be sent.</td></tr>
+<tr><th>snd_una </th>
+<td class="description">Sequence number of the first unacknowledged segment.</td></tr>
+</tbody></table>
+<h4 class="method"><a id="get_and_increment_snd_nxt">get_and_increment_snd_nxt</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] u32 get_and_increment_snd_nxt(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="get_packets_in_flight">get_packets_in_flight</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] u32 get_packets_in_flight(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="get_rcv_nxt">get_rcv_nxt</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] u32 get_rcv_nxt(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="get_snd_nxt">get_snd_nxt</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] u32 get_snd_nxt(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="get_snd_una">get_snd_una</a></h4>
+<p class="description">Sequence number of the next segment to be sent.</p>
+<p class="code">
+nodiscard]] u32 get_snd_una(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">Sequence number of the next segment to be received.</p>
+<h4 class="method"><a id="increment_rcv_nxt">increment_rcv_nxt</a></h4>
+<p class="description"></p>
+<p class="code">
+void increment_rcv_nxt(void);</p>
+<h4 class="method"><a id="reset_snd_una">reset_snd_una</a></h4>
+<p class="description"></p>
+<p class="code">
+void reset_snd_una(void);</p>
+<h4 class="method"><a id="set_snd_una">set_snd_una</a></h4>
+<p class="description"></p>
+<p class="code">
+void set_snd_una(const u32 snd_una);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>snd_una</th>
+</tr>
+</tbody></table>
 <h3 class="class"><a id="imkcpp::Sender">imkcpp::Sender</a></h3>
-<p class="description">TODO: Move snd_buf to AckController as it is generally used there for ACKs information</p>
+<p class="description"></p>
 <p class="code">class imkcpp::Sender {<br>
 &#160;&#160;private:<br>
 &#160;&#160;&#160;&#160;AckController &amp; ack_controller;<br>
@@ -1131,6 +1244,7 @@ void update_rtt(const i32 rtt);</p>
 &#160;&#160;&#160;&#160;Flusher &amp; flusher;<br>
 &#160;&#160;&#160;&#160;u32 nodelay;<br>
 &#160;&#160;&#160;&#160;RtoCalculator &amp; rto_calculator;<br>
+&#160;&#160;&#160;&#160;SegmentTracker &amp; segment_tracker;<br>
 &#160;&#160;&#160;&#160;SenderBuffer &amp; sender_buffer;<br>
 &#160;&#160;&#160;&#160;SharedCtx &amp; shared_ctx;<br>
 &#160;&#160;&#160;&#160;u32 xmit;<br>
@@ -1153,6 +1267,8 @@ void update_rtt(const i32 rtt);</p>
 </tr>
 <tr><th>rto_calculator </th>
 </tr>
+<tr><th>segment_tracker </th>
+</tr>
 <tr><th>sender_buffer </th>
 </tr>
 <tr><th>shared_ctx </th>
@@ -1163,9 +1279,11 @@ void update_rtt(const i32 rtt);</p>
 <h4 class="method"><a id="Sender">Sender</a></h4>
 <p class="description"></p>
 <p class="code">
-explicit Sender(CongestionController &amp; congestion_controller, RtoCalculator &amp; rto_calculator, Flusher &amp; flusher, SenderBuffer &amp; sender_buffer, AckController &amp; ack_controller, SharedCtx &amp; shared_ctx, congestion_controller( congestion_controller, rto_calculator( rto_calculator, flusher( flusher, sender_buffer( sender_buffer, ack_controller( ack_controller, shared_ctx( shared_ctx);</p>
+explicit Sender(SharedCtx &amp; shared_ctx, CongestionController &amp; congestion_controller, RtoCalculator &amp; rto_calculator, Flusher &amp; flusher, SenderBuffer &amp; sender_buffer, AckController &amp; ack_controller, SegmentTracker &amp; segment_tracker, shared_ctx( shared_ctx, congestion_controller( congestion_controller, rto_calculator( rto_calculator, flusher( flusher, sender_buffer( sender_buffer, ack_controller( ack_controller, segment_tracker( segment_tracker);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
+<tr><th>shared_ctx</th>
+</tr>
 <tr><th>congestion_controller</th>
 </tr>
 <tr><th>rto_calculator</th>
@@ -1175,6 +1293,8 @@ explicit Sender(CongestionController &amp; congestion_controller, RtoCalculator 
 <tr><th>sender_buffer</th>
 </tr>
 <tr><th>ack_controller</th>
+</tr>
+<tr><th>segment_tracker</th>
 </tr>
 <tr><th>shared_ctx</th>
 </tr>
@@ -1188,7 +1308,7 @@ explicit Sender(CongestionController &amp; congestion_controller, RtoCalculator 
 </tr>
 <tr><th>ack_controller</th>
 </tr>
-<tr><th>shared_ctx</th>
+<tr><th>segment_tracker</th>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
@@ -1217,17 +1337,6 @@ void flush_data_segments(const output_callback_t &amp; output, const u32 current
 <tr><th>unused_receive_window</th>
 </tr>
 </tbody></table>
-<h4 class="method"><a id="get_earliest_transmit_delta">get_earliest_transmit_delta</a></h4>
-<p class="description">Returns nearest delta from current time to the earliest resend time of a segment in the buffer.</p>
-<p class="code">
-nodiscard]] std::optional u32 get_earliest_transmit_delta(const u32 current);</p>
-<h5 class="parameters">Parameters</h5>
-<table class="list"><tbody>
-<tr><th>current</th>
-</tr>
-</tbody></table>
-<h5 class="returnvalue">Return Value</h5>
-<p class="description">If there are no segments in the buffer, returns std::nullopt</p>
 <h4 class="method"><a id="move_send_queue_to_buffer">move_send_queue_to_buffer</a></h4>
 <p class="description">Flushes data segments from the send queue to the sender buffer.</p>
 <p class="code">
@@ -1274,22 +1383,29 @@ void set_nodelay(const u32 value);</p>
 <p class="description"></p>
 <p class="code">class imkcpp::SenderBuffer {<br>
 &#160;&#160;private:<br>
+&#160;&#160;&#160;&#160;SegmentTracker &amp; segment_tracker;<br>
 &#160;&#160;&#160;&#160;SharedCtx &amp; shared_ctx;<br>
 };</p>
 <h4 class="members">Members</h4>
 <table class="list"><tbody>
+<tr><th>segment_tracker </th>
+</tr>
 <tr><th>shared_ctx </th>
 </tr>
 </tbody></table>
 <h4 class="method"><a id="SenderBuffer">SenderBuffer</a></h4>
 <p class="description"></p>
 <p class="code">
-explicit SenderBuffer(SharedCtx &amp; shared_ctx, shared_ctx( shared_ctx);</p>
+explicit SenderBuffer(SharedCtx &amp; shared_ctx, SegmentTracker &amp; segment_tracker, shared_ctx( shared_ctx, segment_tracker( segment_tracker);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>shared_ctx</th>
 </tr>
+<tr><th>segment_tracker</th>
+</tr>
 <tr><th>shared_ctx</th>
+</tr>
+<tr><th>segment_tracker</th>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
@@ -1323,7 +1439,27 @@ void erase_before(const u32 sn);</p>
 <p class="code">
 std::deque Segment &amp; get(void);</p>
 <h5 class="returnvalue">Return Value</h5>
+<p class="description">TODO: Get rid of this</p>
+<h4 class="method"><a id="get_earliest_transmit_delta">get_earliest_transmit_delta</a></h4>
+<p class="description">Returns nearest delta from current time to the earliest resend time of a segment in the buffer.</p>
+<p class="code">
+nodiscard]] std::optional u32 get_earliest_transmit_delta(const u32 current);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>current</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">If there are no segments in the buffer, returns std::nullopt</p>
+<h4 class="method"><a id="increment_fastack_before">increment_fastack_before</a></h4>
 <p class="description"></p>
+<p class="code">
+void increment_fastack_before(const u32 sn);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>sn</th>
+</tr>
+</tbody></table>
 <h4 class="method"><a id="push_segment">push_segment</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -1341,15 +1477,11 @@ void shrink(void);</p>
 <p class="description"></p>
 <p class="code">class imkcpp::SharedCtx {<br>
 &#160;&#160;private:<br>
-&#160;&#160;&#160;&#160;State state;<br>
-&#160;&#160;public:<br>
 &#160;&#160;&#160;&#160;u32 conv;<br>
 &#160;&#160;&#160;&#160;u32 interval;<br>
 &#160;&#160;&#160;&#160;size_t mss;<br>
 &#160;&#160;&#160;&#160;size_t mtu;<br>
-&#160;&#160;&#160;&#160;u32 rcv_nxt;<br>
-&#160;&#160;&#160;&#160;u32 snd_nxt;<br>
-&#160;&#160;&#160;&#160;u32 snd_una;<br>
+&#160;&#160;&#160;&#160;State state;<br>
 };</p>
 <h4 class="members">Members</h4>
 <table class="list"><tbody>
@@ -1361,21 +1493,66 @@ void shrink(void);</p>
 <td class="description">Maximum Segment Size (mtu - header size)</td></tr>
 <tr><th>mtu </th>
 <td class="description">Maximum Transmission Unit</td></tr>
-<tr><th>rcv_nxt </th>
-<td class="description">Sequence number of the next segment to be received.</td></tr>
-<tr><th>snd_nxt </th>
-<td class="description">Sequence number of the next segment to be sent.</td></tr>
-<tr><th>snd_una </th>
-<td class="description">Sequence number of the first unacknowledged segment.</td></tr>
 <tr><th>state </th>
-<td class="description">TODO: Make private and add meaningful getters/setters</td></tr>
+<td class="description">Current state of the connection.</td></tr>
 </tbody></table>
+<h4 class="method"><a id="get_conv">get_conv</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] u32 get_conv(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="get_interval">get_interval</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] u32 get_interval(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="get_mss">get_mss</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] size_t get_mss(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="get_mtu">get_mtu</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] size_t get_mtu(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
 <h4 class="method"><a id="get_state">get_state</a></h4>
 <p class="description">Interval.</p>
 <p class="code">
 nodiscard]] State get_state(void);</p>
 <h5 class="returnvalue">Return Value</h5>
 <p class="description">Gets the current state of the connection.</p>
+<h4 class="method"><a id="set_conv">set_conv</a></h4>
+<p class="description"></p>
+<p class="code">
+void set_conv(const u32 conv);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>conv</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="set_interval">set_interval</a></h4>
+<p class="description"></p>
+<p class="code">
+void set_interval(const u32 interval);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>interval</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="set_mtu">set_mtu</a></h4>
+<p class="description"></p>
+<p class="code">
+void set_mtu(const size_t mtu);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>mtu</th>
+</tr>
+</tbody></table>
 <h4 class="method"><a id="set_state">set_state</a></h4>
 <p class="description">Sets the current state of the connection.</p>
 <p class="code">
