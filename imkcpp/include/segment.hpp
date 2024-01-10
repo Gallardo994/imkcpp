@@ -45,10 +45,10 @@ namespace imkcpp {
     };
 
     struct SegmentMetadata {
-        u32 resendts = 0;
-        u32 rto = 0;
-        u32 fastack = 0;
-        u32 xmit = 0;
+        u32 resendts = 0; // Timestamp for retransmission.
+        u32 rto = 0; // Retransmission timeout.
+        u32 fastack = 0; // Number of times this segment has been acknowledged without any intervening segments being acknowledged.
+        u32 xmit = 0; // Number of times this segment has been transmitted.
     };
 
     struct SegmentData {

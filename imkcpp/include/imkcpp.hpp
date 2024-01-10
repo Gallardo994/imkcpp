@@ -1,6 +1,5 @@
 #pragma once
 
-#include <functional>
 #include <span>
 #include <queue>
 #include <optional>
@@ -59,24 +58,24 @@ namespace imkcpp {
         }
 
     public:
-        explicit ImKcpp(u32 conv) {
+        explicit ImKcpp(const u32 conv) {
             this->shared_ctx.conv = conv;
             this->set_mtu(constants::IKCP_MTU_DEF);
         }
 
-        auto set_interval(u32 interval) -> void {
+        auto set_interval(const u32 interval) -> void {
             this->shared_ctx.interval = std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000));
         }
 
-        auto set_nodelay(i32 nodelay) -> void {
+        auto set_nodelay(const u32 nodelay) -> void {
             this->sender.set_nodelay(nodelay);
         }
 
-        auto set_resend(i32 resend) -> void {
+        auto set_resend(const u32 resend) -> void {
             this->sender.set_fastresend(resend);
         }
 
-        auto set_mtu(u32 mtu) -> tl::expected<size_t, error> {
+        auto set_mtu(const u32 mtu) -> tl::expected<size_t, error> {
             if (mtu <= constants::IKCP_OVERHEAD) {
                 return tl::unexpected(error::less_than_header_size);
             }
@@ -89,7 +88,7 @@ namespace imkcpp {
             return mtu;
         }
 
-        auto set_wndsize(u32 sndwnd, u32 rcvwnd) -> void {
+        auto set_wndsize(const u32 sndwnd, const u32 rcvwnd) -> void {
             if (sndwnd > 0) {
                 this->congestion_controller.set_send_window(sndwnd);
                 this->congestion_controller.set_remote_window(sndwnd);
@@ -100,11 +99,11 @@ namespace imkcpp {
             }
         }
 
-        auto set_congestion_window_enabled(bool state) -> void {
+        auto set_congestion_window_enabled(const bool state) -> void {
             this->congestion_controller.set_congestion_window_enabled(state);
         }
 
-        auto input(std::span<const std::byte> data) -> tl::expected<size_t, error> {
+        auto input(const std::span<const std::byte> data) -> tl::expected<size_t, error> {
             if (data.size() < constants::IKCP_OVERHEAD) {
                 return tl::unexpected(error::less_than_header_size);
             }
@@ -154,9 +153,7 @@ namespace imkcpp {
 
                         this->ack_controller.schedule_ack(header.sn, header.ts);
 
-                        // TODO: This could probably be in fits_receive_window check,
-                        // TODO: but I'm not sure if it's correct because
-                        // TODO: the original code does it after schedling ack
+                        // TODO: This is half-duplicate of what's in receiver.hpp. Refactor it.
                         if (header.sn >= shared_ctx.rcv_nxt) {
                             Segment seg;
                             seg.header = header; // TODO: Remove this copy
@@ -185,15 +182,15 @@ namespace imkcpp {
             return offset;
         }
 
-        auto recv(std::span<std::byte> buffer) -> tl::expected<size_t, error> {
+        auto recv(const std::span<std::byte> buffer) -> tl::expected<size_t, error> {
             return this->receiver.recv(buffer);
         }
 
-        auto send(std::span<const std::byte> buffer) -> tl::expected<size_t, error> {
+        auto send(const std::span<const std::byte> buffer) -> tl::expected<size_t, error> {
             return this->sender.send(buffer);
         }
 
-        auto check(u32 current) -> u32 {
+        auto check(const u32 current) -> u32 {
             if (!this->updated) {
                 return current;
             }
@@ -220,7 +217,7 @@ namespace imkcpp {
             return current + std::min(this->shared_ctx.interval, minimal);
         }
 
-        auto update(u32 current, const output_callback_t& callback) -> FlushResult {
+        auto update(const u32 current, const output_callback_t& callback) -> FlushResult {
             this->current = current;
 
             if (!this->updated) {
@@ -286,7 +283,7 @@ namespace imkcpp {
             return this->receiver.peek_size();
         }
 
-        [[nodiscard]] auto estimate_segments_count(size_t size) const -> size_t {
+        [[nodiscard]] auto estimate_segments_count(const size_t size) const -> size_t {
             return this->sender.estimate_segments_count(size);
         }
     };

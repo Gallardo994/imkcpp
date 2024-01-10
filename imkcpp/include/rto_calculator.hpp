@@ -20,9 +20,13 @@ namespace imkcpp {
         u32 maxrto = constants::IKCP_RTO_MAX; // Maximum retransmission timeout
 
     public:
+        u32 last_rtt = 0;
+
         explicit RtoCalculator(SharedCtx& shared_ctx) : shared_ctx(shared_ctx) {}
 
         void update_rtt(const i32 rtt) {
+            this->last_rtt = rtt;
+
             if (this->srtt == 0) {
                 // First measurement
                 this->srtt = rtt;

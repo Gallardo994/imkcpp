@@ -22,8 +22,8 @@ namespace imkcpp {
 
         std::deque<Segment> snd_queue{};
 
-        i32 fastresend = 0;
-        i32 fastlimit = constants::IKCP_FASTACK_LIMIT;
+        u32 fastresend = 0;
+        u32 fastlimit = constants::IKCP_FASTACK_LIMIT;
         u32 nodelay = 0;
 
         u32 xmit = 0;
@@ -43,6 +43,7 @@ namespace imkcpp {
                         ack_controller(ack_controller),
                         shared_ctx(shared_ctx) {}
 
+        // Takes the payload, splits it into segments and puts them into the send queue.
         [[nodiscard]] tl::expected<size_t, error> send(const std::span<const std::byte> buffer) {
             if (buffer.empty()) {
                 return tl::unexpected(error::buffer_too_small);
@@ -76,6 +77,7 @@ namespace imkcpp {
             return offset;
         }
 
+        // Flushes data segments from the send queue to the sender buffer.
         void move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window) {
             while (!snd_queue.empty() && shared_ctx.snd_nxt < shared_ctx.snd_una + cwnd) {
                 Segment& newseg = snd_queue.front();
@@ -97,14 +99,13 @@ namespace imkcpp {
             }
         }
 
+        // Given current max segment size, estimates the number of segments needed to fit the payload.
         [[nodiscard]] size_t estimate_segments_count(const size_t size) const {
             return std::max(static_cast<size_t>(1), (size + this->shared_ctx.mss - 1) / this->shared_ctx.mss);
         }
 
-        void set_fastresend(const i32 value) {
-            if (value >= 0) {
-                this->fastresend = value;
-            }
+        void set_fastresend(const u32 value) {
+            this->fastresend = value;
         }
 
         void set_nodelay(const u32 value) {
@@ -112,6 +113,7 @@ namespace imkcpp {
             this->rto_calculator.set_min_rto(value > 0 ? constants::IKCP_RTO_NDL : constants::IKCP_RTO_MIN);
         }
 
+        // Flushes data segments from the send queue to the output callback.
         void flush_data_segments(const output_callback_t& output, const u32 current, const i32 unused_receive_window) {
             // TODO: Return information back to the caller
             const u32 cwnd = this->congestion_controller.calculate_congestion_window();
@@ -149,7 +151,7 @@ namespace imkcpp {
                     lost = true;
                 } else if (segment.metadata.fastack >= resent) {
                     // TODO: The second check is probably redundant
-                    if (segment.metadata.xmit <= this->fastlimit || this->fastlimit <= 0) {
+                    if (segment.metadata.xmit <= this->fastlimit || this->fastlimit == 0) {
                         // TODO: Why isn't this->xmit incremented here?
                         needsend = true;
                         change = true;
@@ -188,6 +190,8 @@ namespace imkcpp {
             this->congestion_controller.ensure_at_least_one_packet_in_flight();
         }
 
+        // Returns nearest delta from current time to the earliest resend time of a segment in the buffer.
+        // If there are no segments in the buffer, returns std::nullopt
         [[nodiscard]] std::optional<u32> get_earliest_transmit_delta(const u32 current) const {
             if (this->sender_buffer.empty()) {
                 return std::nullopt;

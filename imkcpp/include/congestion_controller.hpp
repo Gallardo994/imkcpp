@@ -44,7 +44,7 @@ namespace imkcpp {
             return this->rcv_wnd;
         }
 
-        bool fits_receive_window(const u32 sn) const {
+        [[nodiscard]] bool fits_receive_window(const u32 sn) const {
             return sn < this->shared_ctx.rcv_nxt + this->get_receive_window();
         }
 

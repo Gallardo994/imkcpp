@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <functional>
-#include <optional>
 #include <span>
 
 namespace imkcpp {

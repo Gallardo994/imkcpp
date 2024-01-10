@@ -492,7 +492,7 @@ void ensure_at_least_one_packet_in_flight(void);</p>
 <h4 class="method"><a id="fits_receive_window">fits_receive_window</a></h4>
 <p class="description"></p>
 <p class="code">
-bool fits_receive_window(const u32 sn);</p>
+nodiscard]] bool fits_receive_window(const u32 sn);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>sn</th>
@@ -776,7 +776,7 @@ void resize(const size_t size);</p>
 <h4 class="method"><a id="ImKcpp">ImKcpp</a></h4>
 <p class="description"></p>
 <p class="code">
-explicit ImKcpp(u32 conv);</p>
+explicit ImKcpp(const u32 conv);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>conv</th>
@@ -787,7 +787,7 @@ explicit ImKcpp(u32 conv);</p>
 <h4 class="method"><a id="check">check</a></h4>
 <p class="description"></p>
 <p class="code">
-auto check(u32 current);</p>
+auto check(const u32 current);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>current</th>
@@ -809,7 +809,7 @@ nodiscard]] auto create_service_segment(i32 unused_receive_window);</p>
 <h4 class="method"><a id="estimate_segments_count">estimate_segments_count</a></h4>
 <p class="description"></p>
 <p class="code">
-nodiscard]] auto estimate_segments_count(size_t size);</p>
+nodiscard]] auto estimate_segments_count(const size_t size);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>size</th>
@@ -849,7 +849,7 @@ nodiscard]] auto get_state(void);</p>
 <h4 class="method"><a id="input">input</a></h4>
 <p class="description"></p>
 <p class="code">
-auto input(std::span const std::byte data, tl::expected size_t);</p>
+auto input(const std::span const std::byte data, tl::expected size_t);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>data</th>
@@ -873,7 +873,7 @@ nodiscard]] auto peek_size(const - tl::expected size_t);</p>
 <h4 class="method"><a id="recv">recv</a></h4>
 <p class="description"></p>
 <p class="code">
-auto recv(std::span std::byte buffer, tl::expected size_t);</p>
+auto recv(const std::span std::byte buffer, tl::expected size_t);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>buffer</th>
@@ -886,7 +886,7 @@ auto recv(std::span std::byte buffer, tl::expected size_t);</p>
 <h4 class="method"><a id="send">send</a></h4>
 <p class="description"></p>
 <p class="code">
-auto send(std::span const std::byte buffer, tl::expected size_t);</p>
+auto send(const std::span const std::byte buffer, tl::expected size_t);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>buffer</th>
@@ -899,7 +899,7 @@ auto send(std::span const std::byte buffer, tl::expected size_t);</p>
 <h4 class="method"><a id="set_congestion_window_enabled">set_congestion_window_enabled</a></h4>
 <p class="description"></p>
 <p class="code">
-auto set_congestion_window_enabled(bool state);</p>
+auto set_congestion_window_enabled(const bool state);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>state</th>
@@ -910,7 +910,7 @@ auto set_congestion_window_enabled(bool state);</p>
 <h4 class="method"><a id="set_interval">set_interval</a></h4>
 <p class="description"></p>
 <p class="code">
-auto set_interval(u32 interval);</p>
+auto set_interval(const u32 interval);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>interval</th>
@@ -921,7 +921,7 @@ auto set_interval(u32 interval);</p>
 <h4 class="method"><a id="set_mtu">set_mtu</a></h4>
 <p class="description"></p>
 <p class="code">
-auto set_mtu(u32 mtu, tl::expected size_t);</p>
+auto set_mtu(const u32 mtu, tl::expected size_t);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>mtu</th>
@@ -934,7 +934,7 @@ auto set_mtu(u32 mtu, tl::expected size_t);</p>
 <h4 class="method"><a id="set_nodelay">set_nodelay</a></h4>
 <p class="description"></p>
 <p class="code">
-auto set_nodelay(i32 nodelay);</p>
+auto set_nodelay(const u32 nodelay);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>nodelay</th>
@@ -945,7 +945,7 @@ auto set_nodelay(i32 nodelay);</p>
 <h4 class="method"><a id="set_resend">set_resend</a></h4>
 <p class="description"></p>
 <p class="code">
-auto set_resend(i32 resend);</p>
+auto set_resend(const u32 resend);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>resend</th>
@@ -956,7 +956,7 @@ auto set_resend(i32 resend);</p>
 <h4 class="method"><a id="set_wndsize">set_wndsize</a></h4>
 <p class="description"></p>
 <p class="code">
-auto set_wndsize(u32 sndwnd, u32 rcvwnd);</p>
+auto set_wndsize(const u32 sndwnd, const u32 rcvwnd);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>sndwnd</th>
@@ -969,7 +969,7 @@ auto set_wndsize(u32 sndwnd, u32 rcvwnd);</p>
 <h4 class="method"><a id="update">update</a></h4>
 <p class="description"></p>
 <p class="code">
-auto update(u32 current, const output_callback_t &amp; callback);</p>
+auto update(const u32 current, const output_callback_t &amp; callback);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>current</th>
@@ -1056,9 +1056,13 @@ tl::expected size_t, error recv(const std::span std::byte buffer);</p>
 &#160;&#160;&#160;&#160;u32 rttvar;<br>
 &#160;&#160;&#160;&#160;SharedCtx &amp; shared_ctx;<br>
 &#160;&#160;&#160;&#160;u32 srtt;<br>
+&#160;&#160;public:<br>
+&#160;&#160;&#160;&#160;u32 last_rtt;<br>
 };</p>
 <h4 class="members">Members</h4>
 <table class="list"><tbody>
+<tr><th>last_rtt </th>
+</tr>
 <tr><th>maxrto </th>
 <td class="description">Maximum retransmission timeout</td></tr>
 <tr><th>minrto </th>
@@ -1116,8 +1120,8 @@ void update_rtt(const i32 rtt);</p>
 &#160;&#160;&#160;&#160;AckController &amp; ack_controller;<br>
 &#160;&#160;&#160;&#160;CongestionController &amp; congestion_controller;<br>
 &#160;&#160;&#160;&#160;u32 dead_link;<br>
-&#160;&#160;&#160;&#160;i32 fastlimit;<br>
-&#160;&#160;&#160;&#160;i32 fastresend;<br>
+&#160;&#160;&#160;&#160;u32 fastlimit;<br>
+&#160;&#160;&#160;&#160;u32 fastresend;<br>
 &#160;&#160;&#160;&#160;Flusher &amp; flusher;<br>
 &#160;&#160;&#160;&#160;u32 nodelay;<br>
 &#160;&#160;&#160;&#160;RtoCalculator &amp; rto_calculator;<br>
@@ -1193,9 +1197,9 @@ nodiscard]] size_t estimate_segments_count(const size_t size);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Given current max segment size, estimates the number of segments needed to fit the payload.</p>
 <h4 class="method"><a id="flush_data_segments">flush_data_segments</a></h4>
-<p class="description"></p>
+<p class="description">Flushes data segments from the send queue to the output callback.</p>
 <p class="code">
 void flush_data_segments(const output_callback_t &amp; output, const u32 current, const i32 unused_receive_window);</p>
 <h5 class="parameters">Parameters</h5>
@@ -1208,7 +1212,7 @@ void flush_data_segments(const output_callback_t &amp; output, const u32 current
 </tr>
 </tbody></table>
 <h4 class="method"><a id="get_earliest_transmit_delta">get_earliest_transmit_delta</a></h4>
-<p class="description"></p>
+<p class="description">Returns nearest delta from current time to the earliest resend time of a segment in the buffer.</p>
 <p class="code">
 nodiscard]] std::optional u32 get_earliest_transmit_delta(const u32 current);</p>
 <h5 class="parameters">Parameters</h5>
@@ -1217,9 +1221,9 @@ nodiscard]] std::optional u32 get_earliest_transmit_delta(const u32 current);</p
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">If there are no segments in the buffer, returns std::nullopt</p>
 <h4 class="method"><a id="move_send_queue_to_buffer">move_send_queue_to_buffer</a></h4>
-<p class="description"></p>
+<p class="description">Flushes data segments from the send queue to the sender buffer.</p>
 <p class="code">
 void move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window);</p>
 <h5 class="parameters">Parameters</h5>
@@ -1241,11 +1245,11 @@ nodiscard]] tl::expected size_t, error send(const std::span const std::byte buff
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Takes the payload, splits it into segments and puts them into the send queue.</p>
 <h4 class="method"><a id="set_fastresend">set_fastresend</a></h4>
 <p class="description"></p>
 <p class="code">
-void set_fastresend(const i32 value);</p>
+void set_fastresend(const u32 value);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>value</th>
@@ -1429,7 +1433,7 @@ void imkcpp::encoder::decode8u(const std::span const std::byte &amp; buf, size_t
 <h3 class="function"><a id="imkcpp::encoder::encode16u">imkcpp::encoder::encode16u</a></h3>
 <p class="description">Encodes a u16 value into the buffer at the given offset and increments the offset by sizeof(u16).</p>
 <p class="code">
-void imkcpp::encoder::encode16u(std::span std::byte &amp; buf, size_t &amp; offset, u16 value);</p>
+void imkcpp::encoder::encode16u(std::span std::byte &amp; buf, size_t &amp; offset, const u16 value);</p>
 <h4 class="parameters">Parameters</h4>
 <table class="list"><tbody>
 <tr><th>buf</th>
@@ -1442,7 +1446,7 @@ void imkcpp::encoder::encode16u(std::span std::byte &amp; buf, size_t &amp; offs
 <h3 class="function"><a id="imkcpp::encoder::encode32u">imkcpp::encoder::encode32u</a></h3>
 <p class="description">Encodes a u32 value into the buffer at the given offset and increments the offset by sizeof(u32).</p>
 <p class="code">
-void imkcpp::encoder::encode32u(std::span std::byte &amp; buf, size_t &amp; offset, u32 value);</p>
+void imkcpp::encoder::encode32u(std::span std::byte &amp; buf, size_t &amp; offset, const u32 value);</p>
 <h4 class="parameters">Parameters</h4>
 <table class="list"><tbody>
 <tr><th>buf</th>
@@ -1455,7 +1459,7 @@ void imkcpp::encoder::encode32u(std::span std::byte &amp; buf, size_t &amp; offs
 <h3 class="function"><a id="imkcpp::encoder::encode8u">imkcpp::encoder::encode8u</a></h3>
 <p class="description">Encodes a u8 value into the buffer at the given offset and increments the offset by sizeof(u8).</p>
 <p class="code">
-void imkcpp::encoder::encode8u(std::span std::byte &amp; buf, size_t &amp; offset, u8 value);</p>
+void imkcpp::encoder::encode8u(std::span std::byte &amp; buf, size_t &amp; offset, const u8 value);</p>
 <h4 class="parameters">Parameters</h4>
 <table class="list"><tbody>
 <tr><th>buf</th>
@@ -1682,13 +1686,13 @@ void encode_to(std::span std::byte buf, size_t &amp; offset);</p>
 <h4 class="members">Members</h4>
 <table class="list"><tbody>
 <tr><th>fastack </th>
-</tr>
+<td class="description">Number of times this segment has been acknowledged without any intervening segments being acknowledged.</td></tr>
 <tr><th>resendts </th>
-</tr>
+<td class="description">Timestamp for retransmission.</td></tr>
 <tr><th>rto </th>
-</tr>
+<td class="description">Retransmission timeout.</td></tr>
 <tr><th>xmit </th>
-</tr>
+<td class="description">Number of times this segment has been transmitted.</td></tr>
 </tbody></table>
 <h2 class="title"><a id="VARIABLES">Variables</a></h2>
 <h3 class="variable"><a id="IKCP_ASK_SEND">IKCP_ASK_SEND</a></h3>

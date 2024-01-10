@@ -106,7 +106,8 @@ namespace imkcpp {
             u32 sn = newseg.header.sn;
             bool repeat = false;
 
-            if (time_delta(sn, shared_ctx.rcv_nxt + this->congestion_controller.get_receive_window()) >= 0 || time_delta(sn, shared_ctx.rcv_nxt) < 0) {
+            // TODO: Partially duplicates logic in imkcpp.hpp. Should probably stay here
+            if (sn >= shared_ctx.rcv_nxt + this->congestion_controller.get_receive_window() || sn < shared_ctx.rcv_nxt) {
                 return;
             }
 

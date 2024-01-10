@@ -7,7 +7,7 @@
 
 namespace imkcpp::encoder {
     // Encodes a u8 value into the buffer at the given offset and increments the offset by sizeof(u8).
-    inline void encode8u(std::span<std::byte>& buf, size_t& offset, u8 value) {
+    inline void encode8u(std::span<std::byte>& buf, size_t& offset, const u8 value) {
         assert(buf.size() >= offset + sizeof(u8));
         std::memcpy(buf.data() + offset, &value, sizeof(u8));
         offset += sizeof(u8);
@@ -21,7 +21,7 @@ namespace imkcpp::encoder {
     }
 
     // Encodes a u16 value into the buffer at the given offset and increments the offset by sizeof(u16).
-    inline void encode16u(std::span<std::byte>& buf, size_t& offset, u16 value) {
+    inline void encode16u(std::span<std::byte>& buf, size_t& offset, const u16 value) {
         assert(buf.size() >= offset + sizeof(u16));
         std::memcpy(buf.data() + offset, &value, sizeof(u16));
         offset += sizeof(u16);
@@ -35,7 +35,7 @@ namespace imkcpp::encoder {
     }
 
     // Encodes a u32 value into the buffer at the given offset and increments the offset by sizeof(u32).
-    inline void encode32u(std::span<std::byte>& buf, size_t& offset, u32 value) {
+    inline void encode32u(std::span<std::byte>& buf, size_t& offset, const u32 value) {
         assert(buf.size() >= offset + sizeof(u32));
         std::memcpy(buf.data() + offset, &value, sizeof(u32));
         offset += sizeof(u32);

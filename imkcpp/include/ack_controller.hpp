@@ -59,6 +59,14 @@ namespace imkcpp {
 
         std::vector<Ack> acklist{};
 
+        [[nodiscard]] bool should_acknowledge(const u32 sn) const {
+            if (sn < shared_ctx.snd_una || sn >= shared_ctx.snd_nxt) {
+                return false;
+            }
+
+            return true;
+        }
+
     public:
         explicit AckController(Flusher& flusher,
                                RtoCalculator& rto_calculator,
@@ -68,14 +76,6 @@ namespace imkcpp {
                                rto_calculator(rto_calculator),
                                flusher(flusher),
                                sender_buffer(sender_buffer) {}
-
-        [[nodiscard]] bool should_acknowledge(const u32 sn) const {
-            if (sn < shared_ctx.snd_una || sn >= shared_ctx.snd_nxt) {
-                return false;
-            }
-
-            return true;
-        }
 
         void acknowledge_fastack(const FastAckCtx& fast_ack_ctx) {
             if (!fast_ack_ctx.is_valid()) {
