@@ -1,5 +1,5 @@
 # imkcpp
-C++20 implementation of KCP protocol with improvements ontop
+C++20 header-only implementation of KCP protocol with improvements ontop
 
 # Why?
 - Upstream implementation is written in C and is hard to read and modify
