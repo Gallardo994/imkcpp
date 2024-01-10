@@ -188,30 +188,5 @@ namespace imkcpp {
 
             this->congestion_controller.ensure_at_least_one_packet_in_flight();
         }
-
-        // Returns nearest delta from current time to the earliest resend time of a segment in the buffer.
-        // If there are no segments in the buffer, returns std::nullopt
-        [[nodiscard]] std::optional<u32> get_earliest_transmit_delta(const u32 current) const {
-            if (this->sender_buffer.empty()) {
-                return std::nullopt;
-            }
-
-            constexpr u32 default_value = std::numeric_limits<u32>::max();
-            u32 tm_packet = default_value;
-
-            for (const Segment& seg : this->sender_buffer.get()) {
-                if (seg.metadata.resendts <= current) {
-                    return 0;
-                }
-
-                tm_packet = std::min<u32>(tm_packet, seg.metadata.resendts - current);
-            }
-
-            if (tm_packet == default_value) {
-                return std::nullopt;
-            }
-
-            return tm_packet;
-        }
     };
 }

@@ -205,7 +205,7 @@ namespace imkcpp {
             }
 
             const u32 next_flush = static_cast<u32>(std::max(0, time_delta(this->ts_flush, current)));
-            const std::optional<u32> earliest_transmit = this->sender.get_earliest_transmit_delta(current);
+            const std::optional<u32> earliest_transmit = this->sender_buffer.get_earliest_transmit_delta(current);
 
             u32 minimal = 0;
 
