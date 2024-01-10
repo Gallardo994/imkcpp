@@ -5,12 +5,12 @@
 #include <queue>
 #include <optional>
 #include <cstddef>
+#include "third_party/expected.hpp"
 
 #include "types.hpp"
 #include "constants.hpp"
 #include "segment.hpp"
 #include "state.hpp"
-#include "expected.hpp"
 #include "errors.hpp"
 #include "results.hpp"
 #include "rto_calculator.hpp"
