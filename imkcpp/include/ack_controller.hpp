@@ -88,18 +88,7 @@ namespace imkcpp {
                 return;
             }
 
-            // TODO: Move to SenderBuffer method
-            auto& snd_buf = this->sender_buffer.get();
-
-            for (Segment& seg : snd_buf) {
-                if (maxack < seg.header.sn) {
-                    break;
-                }
-
-                if (maxack != seg.header.sn) {
-                    seg.metadata.fastack++;
-                }
-            }
+            this->sender_buffer.increment_fastack_before(maxack);
         }
 
         // Updates the RTO and removes acknowledged segments from the sender buffer.
