@@ -16,10 +16,6 @@ namespace imkcpp {
             return this->valid;
         }
 
-        void invalidate() {
-            this->valid = false;
-        }
-
         void update(const u32 sn, const u32 ts) {
             if (this->valid) {
                 if (sn > this->maxack) {
