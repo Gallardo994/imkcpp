@@ -86,8 +86,6 @@ namespace imkcpp {
             this->shared_ctx.mtu = mtu;
             this->shared_ctx.mss = this->shared_ctx.mtu - constants::IKCP_OVERHEAD;
 
-            this->congestion_controller.set_mss(this->shared_ctx.mss);
-
             return mtu;
         }
 

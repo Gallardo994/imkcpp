@@ -6,16 +6,19 @@
 #include "sender_buffer.hpp"
 
 namespace imkcpp {
+    // FastAckCtx is used to track the latest received segment and its timestamp.
     class FastAckCtx {
-        bool valid = false;
-        u32 maxack = 0;
-        u32 latest_ts = 0;
+        bool valid = false; // At least one ack has been received
+        u32 maxack = 0; // The latest received segment number
+        u32 latest_ts = 0; // The timestamp of the latest received segment
 
     public:
+        // Returns true if at least one ack has been received.
         [[nodiscard]] bool is_valid() const {
             return this->valid;
         }
 
+        // Updates the latest received segment number and its timestamp.
         void update(const u32 sn, const u32 ts) {
             if (this->valid) {
                 if (sn > this->maxack) {
@@ -29,10 +32,12 @@ namespace imkcpp {
             }
         }
 
+        // Returns the latest received segment number.
         [[nodiscard]] u32 get_maxack() const {
             return this->maxack;
         }
 
+        // Returns the timestamp of the latest received segment.
         [[nodiscard]] u32 get_latest_ts() const {
             return this->latest_ts;
         }
@@ -40,7 +45,8 @@ namespace imkcpp {
 
     class AckController {
         struct Ack {
-            u32 sn, ts;
+            u32 sn; // Segment number
+            u32 ts; // Timestamp
 
             explicit Ack() : sn(0), ts(0) { }
             explicit Ack(const u32 sn, const u32 ts) : sn(sn), ts(ts) { }
@@ -82,6 +88,7 @@ namespace imkcpp {
                 return;
             }
 
+            // TODO: Move to SenderBuffer method
             auto& snd_buf = this->sender_buffer.get();
 
             for (Segment& seg : snd_buf) {
@@ -95,6 +102,7 @@ namespace imkcpp {
             }
         }
 
+        // Updates the RTO and removes acknowledged segments from the sender buffer.
         void ack_received(const u32 current, const u32 sn, const u32 ts) {
             if (const i32 rtt = time_delta(current, ts); rtt >= 0) {
                 this->rto_calculator.update_rtt(rtt);
@@ -107,15 +115,19 @@ namespace imkcpp {
             this->sender_buffer.shrink();
         }
 
+        // Removes acknowledged segments from the sender buffer according to
+        // remote una (unacknowledged segment number).
         void una_received(const u32 una) {
             this->sender_buffer.erase_before(una);
             this->sender_buffer.shrink();
         }
 
+        // Adds a segment to the acknowledgement list to be sent later.
         void schedule_ack(const u32 sn, const u32 ts) {
             this->acklist.emplace_back(sn, ts);
         }
 
+        // Sends all scheduled acknowledgements and clears the acknowledgement list.
         void flush_acks(const output_callback_t& output, Segment& base_segment) {
             // TODO: This is not optimal to send IKCP_OVERHEAD per ack, should be optimized
 

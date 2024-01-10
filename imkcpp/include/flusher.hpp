@@ -16,18 +16,17 @@ namespace imkcpp {
     public:
         explicit Flusher(SharedCtx& shared_ctx) : shared_ctx(shared_ctx) {}
 
-        [[nodiscard]] bool has(const size_t size) const {
-            return this->offset >= size;
-        }
-
+        // Returns true if the buffer is empty.
         [[nodiscard]] bool is_empty() const {
             return this->offset == 0;
         }
 
+        // Resizes the buffer to the given size.
         void resize(const size_t size) {
             this->buffer.resize(size);
         }
 
+        // Flushes the buffer to the given output if it exceeds Max Segment Size
         [[nodiscard]] size_t flush_if_full(const output_callback_t& target) {
             if (this->offset > shared_ctx.mss) {
                 return this->flush(target);
@@ -36,6 +35,7 @@ namespace imkcpp {
             return 0;
         }
 
+        // Flushes the buffer to the given output if adding "size" bytes to the buffer would exceed Max Segment Size
         [[nodiscard]] size_t flush_if_does_not_fit(const output_callback_t& target, const size_t size) {
             if (this->offset + size > shared_ctx.mss) {
                 return this->flush(target);
@@ -44,6 +44,7 @@ namespace imkcpp {
             return 0;
         }
 
+        // Flushes the buffer to the given output if it's not empty
         [[nodiscard]] size_t flush_if_not_empty(const output_callback_t& target) {
             if (!this->is_empty()) {
                 return this->flush(target);
@@ -52,6 +53,7 @@ namespace imkcpp {
             return 0;
         }
 
+        // Flushes the buffer to the given output
         [[nodiscard]] size_t flush(const output_callback_t& callback) {
             const auto size = this->offset;
 
@@ -63,6 +65,7 @@ namespace imkcpp {
             return size;
         }
 
+        // Encodes the given segment into the buffer
         void encode(const Segment& segment) {
             assert(this->offset + segment.size() <= this->buffer.size());
 

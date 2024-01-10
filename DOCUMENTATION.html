@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<title>Documentation</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta name="generator" content="codedoc v3.6">
+<meta name="author" content="Unknown">
+<meta name="language" content="en-US">
+<meta name="copyright" content="Unknown">
+<meta name="version" content="0.0">
+<style type="text/css"><!--
+body {
+  background: white;
+  color: black;
+  font-family: sans-serif;
+  font-size: 12pt;
+}
+a {
+  color: black;
+}
+a:link, a:visited {
+  color: #00f;
+}
+a:link:hover, a:visited:hover, a:active {
+  color: #c0c;
+}
+body, p, h1, h2, h3, h4, h5, h6 {
+  font-family: sans-serif;
+  line-height: 1.4;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  page-break-inside: avoid;
+}
+h1 {
+  font-size: 250%;
+  margin: 0;
+}
+h2 {
+  font-size: 250%;
+  margin-top: 1.5em;
+}
+h3 {
+  font-size: 200%;
+  margin-bottom: 0.5em;
+  margin-top: 1.5em;
+}
+h4 {
+  font-size: 150%;
+  margin-bottom: 0.5em;
+  margin-top: 1.5em;
+}
+h5 {
+  font-size: 125%;
+  margin-bottom: 0.5em;
+  margin-top: 1.5em;
+}
+h6 {
+  font-size: 110%;
+  margin-bottom: 0.5em;
+  margin-top: 1.5em;
+}
+img.title {
+  width: 256px;
+}
+div.header h1, div.header p {
+  text-align: center;
+}
+div.contents, div.body, div.footer {
+  page-break-before: always;
+}
+.class, .enumeration, .function, .struct, .typedef, .union {
+  border-bottom: solid 2px gray;
+}
+.description {
+  margin-top: 0.5em;
+}
+.function {
+  margin-bottom: 0;
+}
+blockquote {
+  border: solid thin gray;
+  box-shadow: 3px 3px 5px rgba(127,127,127,0.25);
+  margin: 1em 0;
+  padding: 10px;
+  page-break-inside: avoid;
+}
+p code, li code, p.code, pre, ul.code li {
+  font-family: monospace;
+  hyphens: manual;
+  -webkit-hyphens: manual;
+}
+p.code, pre, ul.code li {
+  background: rgba(127,127,127,0.25);
+  border: thin dotted gray;
+  padding: 10px;
+  page-break-inside: avoid;
+}
+pre {
+  white-space: pre-wrap;
+}
+a:link, a:visited {
+  text-decoration: none;
+}
+span.info {
+  background: black;
+  border: solid thin black;
+  color: white;
+  font-size: 80%;
+  font-style: italic;
+  font-weight: bold;
+  white-space: nowrap;
+}
+h1 span.info, h2 span.info, h3 span.info, h4 span.info {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  float: right;
+  padding: 3px 6px;
+}
+ul.code, ul.contents, ul.subcontents {
+  list-style-type: none;
+  margin: 0;
+  padding-left: 0;
+}
+ul.code li {
+  margin: 0;
+}
+ul.contents > li {
+  margin-top: 1em;
+}
+ul.contents li ul.code, ul.contents li ul.subcontents {
+  padding-left: 2em;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+td {
+  border: solid 1px gray;
+  padding: 5px 10px;
+  vertical-align: top;
+}
+td.left {
+  text-align: left;
+}
+td.center {
+  text-align: center;
+}
+td.right {
+  text-align: right;
+}
+th {
+  border-bottom: solid 2px gray;
+  padding: 1px 5px;
+  text-align: center;
+  vertical-align: bottom;
+}
+tr:nth-child(even) {
+  background: rgba(127,127,127,0.25);
+}
+table.list {
+  border-collapse: collapse;
+  width: 100%;
+}
+table.list th {
+  border-bottom: none;
+  border-right: 2px solid gray;
+  font-family: monospace;
+  font-weight: normal;
+  padding: 5px 10px 5px 2px;
+  text-align: right;
+  vertical-align: top;
+}
+table.list td {
+  border: none;
+  padding: 5px 2px 5px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+h2.title, h3.title {
+  border-bottom: solid 2px gray;
+}
+/* Syntax highlighting */
+span.comment {
+  color: darkgreen;
+}
+span.directive {
+  color: purple;
+}
+span.number {
+  color: brown;
+}
+span.reserved {
+  color: darkcyan;
+}
+span.string {
+  color: magenta;
+}
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: black;
+    color: #ccc;
+  }
+  a {
+    color: #ccc;
+  }
+  a:link, a:visited {
+    color: #66f;
+  }
+  a:link:hover, a:visited:hover, a:active {
+    color: #f06;
+  }
+}
+/* Show contents on left side in web browser */
+@media screen and (min-width: 800px) {
+  div.contents {
+    border-right: solid thin gray;
+    bottom: 0px;
+    box-shadow: 3px 3px 5px rgba(127,127,127,0.5);
+    font-size: 10pt;
+    left: 0px;
+    overflow: scroll;
+    padding: 1%;
+    position: fixed;
+    top: 0px;
+    width: 18%;
+  }
+  div.contents h2.title {
+    margin-top: 0px;
+  }
+  div.header, div.body, div.footer {
+    margin-left: 20%;
+    padding: 1% 2%;
+  }
+}
+/* Center title page content vertically */
+@media print {
+  div.header {
+    padding-top: 33%;
+  }
+}
+--></style>
+</head>
+<body>
+<div class="header">
+<h1 class="title">Documentation</h1>
+<p>Unknown</p>
+<p>Unknown</p>
+</div>
+<div class="contents">
+<h2 class="title">Contents</h2>
+<ul class="contents">
+<li><a href="#CLASSES">Classes</a><ul class="subcontents">
+<li><a href="#imkcpp::AckController">imkcpp::AckController</a></li>
+<li><a href="#imkcpp::CongestionController">imkcpp::CongestionController</a></li>
+<li><a href="#imkcpp::FastAckCtx">imkcpp::FastAckCtx</a></li>
+<li><a href="#imkcpp::Flusher">imkcpp::Flusher</a></li>
+<li><a href="#imkcpp::ImKcpp">imkcpp::ImKcpp</a></li>
+<li><a href="#imkcpp::Receiver">imkcpp::Receiver</a></li>
+<li><a href="#imkcpp::RtoCalculator">imkcpp::RtoCalculator</a></li>
+<li><a href="#imkcpp::Sender">imkcpp::Sender</a></li>
+<li><a href="#imkcpp::SenderBuffer">imkcpp::SenderBuffer</a></li>
+<li><a href="#imkcpp::SharedCtx">imkcpp::SharedCtx</a></li>
+</ul></li>
+<li><a href="#FUNCTIONS">Functions</a><ul class="subcontents">
+<li><a href="#imkcpp::commands::is_valid">imkcpp::commands::is_valid</a></li>
+<li><a href="#imkcpp::encoder::decode16u">imkcpp::encoder::decode16u</a></li>
+<li><a href="#imkcpp::encoder::decode32u">imkcpp::encoder::decode32u</a></li>
+<li><a href="#imkcpp::encoder::decode8u">imkcpp::encoder::decode8u</a></li>
+<li><a href="#imkcpp::encoder::encode16u">imkcpp::encoder::encode16u</a></li>
+<li><a href="#imkcpp::encoder::encode32u">imkcpp::encoder::encode32u</a></li>
+<li><a href="#imkcpp::encoder::encode8u">imkcpp::encoder::encode8u</a></li>
+<li><a href="#imkcpp::err_to_str">imkcpp::err_to_str</a></li>
+</ul></li>
+<li><a href="#STRUCTURES">Structures</a><ul class="subcontents">
+<li><a href="#imkcpp::FlushResult">imkcpp::FlushResult</a></li>
+<li><a href="#imkcpp::Segment">imkcpp::Segment</a></li>
+<li><a href="#imkcpp::SegmentData">imkcpp::SegmentData</a></li>
+<li><a href="#imkcpp::SegmentHeader">imkcpp::SegmentHeader</a></li>
+<li><a href="#imkcpp::SegmentMetadata">imkcpp::SegmentMetadata</a></li>
+</ul></li>
+<li><a href="#VARIABLES">Variables</a><ul class="subcontents">
+<li><a href="#IKCP_ASK_SEND">IKCP_ASK_SEND</a></li>
+<li><a href="#IKCP_ASK_TELL">IKCP_ASK_TELL</a></li>
+<li><a href="#IKCP_CMD_WINS">IKCP_CMD_WINS</a></li>
+<li><a href="#IKCP_FASTACK_LIMIT">IKCP_FASTACK_LIMIT</a></li>
+<li><a href="#IKCP_PROBE_INIT">IKCP_PROBE_INIT</a></li>
+<li><a href="#IKCP_PROBE_LIMIT">IKCP_PROBE_LIMIT</a></li>
+<li><a href="#IKCP_RTO_MIN">IKCP_RTO_MIN</a></li>
+<li><a href="#IKCP_RTO_NDL">IKCP_RTO_NDL</a></li>
+<li><a href="#IKCP_WND_RCV">IKCP_WND_RCV</a></li>
+</ul></li>
+<li><a href="#ENUMERATIONS">Enumerations</a><ul class="subcontents">
+<li><a href="#imkcpp::class">imkcpp::class</a></li>
+</ul></li>
+</ul>
+</div>
+<div class="body">
+<h2 class="title"><a id="CLASSES">Classes</a></h2>
+<h3 class="class"><a id="imkcpp::AckController">imkcpp::AckController</a></h3>
+<p class="description"></p>
+<p class="code">class imkcpp::AckController {<br>
+&#160;&#160;private:<br>
+&#160;&#160;&#160;&#160;Flusher &amp; flusher;<br>
+&#160;&#160;&#160;&#160;RtoCalculator &amp; rto_calculator;<br>
+&#160;&#160;&#160;&#160;SenderBuffer &amp; sender_buffer;<br>
+&#160;&#160;&#160;&#160;SharedCtx &amp; shared_ctx;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>flusher </th>
+</tr>
+<tr><th>rto_calculator </th>
+</tr>
+<tr><th>sender_buffer </th>
+</tr>
+<tr><th>shared_ctx </th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="AckController">AckController</a></h4>
+<p class="description"></p>
+<p class="code">
+explicit AckController(Flusher &amp; flusher, RtoCalculator &amp; rto_calculator, SenderBuffer &amp; sender_buffer, SharedCtx &amp; shared_ctx, shared_ctx( shared_ctx, rto_calculator( rto_calculator, flusher( flusher, sender_buffer( sender_buffer);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>flusher</th>
+</tr>
+<tr><th>rto_calculator</th>
+</tr>
+<tr><th>sender_buffer</th>
+</tr>
+<tr><th>shared_ctx</th>
+</tr>
+<tr><th>shared_ctx</th>
+</tr>
+<tr><th>rto_calculator</th>
+</tr>
+<tr><th>flusher</th>
+</tr>
+<tr><th>sender_buffer</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="ack_received">ack_received</a></h4>
+<p class="description">Updates the RTO and removes acknowledged segments from the sender buffer.</p>
+<p class="code">
+void ack_received(const u32 current, const u32 sn, const u32 ts);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>current</th>
+</tr>
+<tr><th>sn</th>
+</tr>
+<tr><th>ts</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="acknowledge_fastack">acknowledge_fastack</a></h4>
+<p class="description"></p>
+<p class="code">
+void acknowledge_fastack(const FastAckCtx &amp; fast_ack_ctx);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>fast_ack_ctx</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="flush_acks">flush_acks</a></h4>
+<p class="description">Sends all scheduled acknowledgements and clears the acknowledgement list.</p>
+<p class="code">
+void flush_acks(const output_callback_t &amp; output, Segment &amp; base_segment);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>output</th>
+</tr>
+<tr><th>base_segment</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="schedule_ack">schedule_ack</a></h4>
+<p class="description">Adds a segment to the acknowledgement list to be sent later.</p>
+<p class="code">
+void schedule_ack(const u32 sn, const u32 ts);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>sn</th>
+</tr>
+<tr><th>ts</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="should_acknowledge">should_acknowledge</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] bool should_acknowledge(const u32 sn);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>sn</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="una_received">una_received</a></h4>
+<p class="description">remote una (unacknowledged segment number).</p>
+<p class="code">
+void una_received(const u32 una);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>una</th>
+</tr>
+</tbody></table>
+<h3 class="class"><a id="imkcpp::CongestionController">imkcpp::CongestionController</a></h3>
+<p class="description"></p>
+<p class="code">class imkcpp::CongestionController {<br>
+&#160;&#160;private:<br>
+&#160;&#160;&#160;&#160;bool congestion_window;<br>
+&#160;&#160;&#160;&#160;u32 cwnd;<br>
+&#160;&#160;&#160;&#160;Flusher &amp; flusher;<br>
+&#160;&#160;&#160;&#160;u32 incr;<br>
+&#160;&#160;&#160;&#160;u32 probe;<br>
+&#160;&#160;&#160;&#160;u32 probe_wait;<br>
+&#160;&#160;&#160;&#160;u32 rcv_wnd;<br>
+&#160;&#160;&#160;&#160;u32 rmt_wnd;<br>
+&#160;&#160;&#160;&#160;SharedCtx &amp; shared_ctx;<br>
+&#160;&#160;&#160;&#160;u32 snd_wnd;<br>
+&#160;&#160;&#160;&#160;u32 ssthresh;<br>
+&#160;&#160;&#160;&#160;u32 ts_probe;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>congestion_window </th>
+<td class="description">Congestion Window Enabled</td></tr>
+<tr><th>cwnd </th>
+<td class="description">Congestion Window</td></tr>
+<tr><th>flusher </th>
+</tr>
+<tr><th>incr </th>
+<td class="description">Increment</td></tr>
+<tr><th>probe </th>
+<td class="description">Probe flags</td></tr>
+<tr><th>probe_wait </th>
+<td class="description">How long we should wait before probing again</td></tr>
+<tr><th>rcv_wnd </th>
+<td class="description">Receive Window</td></tr>
+<tr><th>rmt_wnd </th>
+<td class="description">Remote Window (receive window for the other side, advertised by the other side)</td></tr>
+<tr><th>shared_ctx </th>
+</tr>
+<tr><th>snd_wnd </th>
+<td class="description">Send Window</td></tr>
+<tr><th>ssthresh </th>
+<td class="description">Slow Start Threshold</td></tr>
+<tr><th>ts_probe </th>
+<td class="description">Timestamp of the last time we probed the remote window</td></tr>
+</tbody></table>
+<h4 class="method"><a id="CongestionController">CongestionController</a></h4>
+<p class="description">Timestamp of the last time we probed the remote window</p>
+<p class="code">
+explicit CongestionController(Flusher &amp; flusher, SharedCtx &amp; shared_ctx, flusher( flusher, shared_ctx( shared_ctx);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>flusher</th>
+</tr>
+<tr><th>shared_ctx</th>
+</tr>
+<tr><th>flusher</th>
+</tr>
+<tr><th>shared_ctx</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">How long we should wait before probing again</p>
+<h4 class="method"><a id="adjust_parameters">adjust_parameters</a></h4>
+<p class="description"></p>
+<p class="code">
+void adjust_parameters(const u32 latest_una, const u32 prev_una);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>latest_una</th>
+</tr>
+<tr><th>prev_una</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="calculate_congestion_window">calculate_congestion_window</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] u32 calculate_congestion_window(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="ensure_at_least_one_packet_in_flight">ensure_at_least_one_packet_in_flight</a></h4>
+<p class="description"></p>
+<p class="code">
+void ensure_at_least_one_packet_in_flight(void);</p>
+<h4 class="method"><a id="fits_receive_window">fits_receive_window</a></h4>
+<p class="description"></p>
+<p class="code">
+bool fits_receive_window(const u32 sn);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>sn</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="flush_probes">flush_probes</a></h4>
+<p class="description"></p>
+<p class="code">
+void flush_probes(const output_callback_t &amp; output, Segment &amp; base_segment);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>output</th>
+</tr>
+<tr><th>base_segment</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="get_receive_window">get_receive_window</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] u32 get_receive_window(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="get_remote_window">get_remote_window</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] u32 get_remote_window(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="get_send_window">get_send_window</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] u32 get_send_window(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="has_probe_flag">has_probe_flag</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] bool has_probe_flag(const u32 flag);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>flag</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="packet_lost">packet_lost</a></h4>
+<p class="description"></p>
+<p class="code">
+void packet_lost(void);</p>
+<h4 class="method"><a id="resent">resent</a></h4>
+<p class="description"></p>
+<p class="code">
+void resent(const u32 packets_in_flight, const u32 resent);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>packets_in_flight</th>
+</tr>
+<tr><th>resent</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="reset_probe_flags">reset_probe_flags</a></h4>
+<p class="description"></p>
+<p class="code">
+void reset_probe_flags(void);</p>
+<h4 class="method"><a id="set_congestion_window_enabled">set_congestion_window_enabled</a></h4>
+<p class="description"></p>
+<p class="code">
+void set_congestion_window_enabled(const bool state);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>state</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="set_probe_flag">set_probe_flag</a></h4>
+<p class="description"></p>
+<p class="code">
+void set_probe_flag(const u32 flag);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>flag</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="set_receive_window">set_receive_window</a></h4>
+<p class="description"></p>
+<p class="code">
+void set_receive_window(const u32 rcv_wnd);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>rcv_wnd</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="set_remote_window">set_remote_window</a></h4>
+<p class="description"></p>
+<p class="code">
+void set_remote_window(const u32 rmt_wnd);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>rmt_wnd</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="set_send_window">set_send_window</a></h4>
+<p class="description"></p>
+<p class="code">
+void set_send_window(const u32 snd_wnd);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>snd_wnd</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="update_probe_request">update_probe_request</a></h4>
+<p class="description">Flow control mechanism</p>
+<p class="code">
+void update_probe_request(const u32 current);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>current</th>
+</tr>
+</tbody></table>
+<h3 class="class"><a id="imkcpp::FastAckCtx">imkcpp::FastAckCtx</a></h3>
+<p class="description">FastAckCtx is used to track the latest received segment and its timestamp.</p>
+<p class="code">class imkcpp::FastAckCtx {<br>
+&#160;&#160;private:<br>
+&#160;&#160;&#160;&#160;u32 latest_ts;<br>
+&#160;&#160;&#160;&#160;u32 maxack;<br>
+&#160;&#160;&#160;&#160;bool valid;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>latest_ts </th>
+<td class="description">The timestamp of the latest received segment</td></tr>
+<tr><th>maxack </th>
+<td class="description">The latest received segment number</td></tr>
+<tr><th>valid </th>
+<td class="description">At least one ack has been received</td></tr>
+</tbody></table>
+<h4 class="method"><a id="get_latest_ts">get_latest_ts</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] u32 get_latest_ts(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">Returns the timestamp of the latest received segment.</p>
+<h4 class="method"><a id="get_maxack">get_maxack</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] u32 get_maxack(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">Returns the latest received segment number.</p>
+<h4 class="method"><a id="is_valid">is_valid</a></h4>
+<p class="description">The timestamp of the latest received segment</p>
+<p class="code">
+nodiscard]] bool is_valid(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">Returns true if at least one ack has been received.</p>
+<h4 class="method"><a id="update">update</a></h4>
+<p class="description">Updates the latest received segment number and its timestamp.</p>
+<p class="code">
+void update(const u32 sn, const u32 ts);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>sn</th>
+</tr>
+<tr><th>ts</th>
+</tr>
+</tbody></table>
+<h3 class="class"><a id="imkcpp::Flusher">imkcpp::Flusher</a></h3>
+<p class="description"></p>
+<p class="code">class imkcpp::Flusher {<br>
+&#160;&#160;private:<br>
+&#160;&#160;&#160;&#160;size_t offset;<br>
+&#160;&#160;&#160;&#160;SharedCtx &amp; shared_ctx;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>offset </th>
+</tr>
+<tr><th>shared_ctx </th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="Flusher">Flusher</a></h4>
+<p class="description"></p>
+<p class="code">
+explicit Flusher(SharedCtx &amp; shared_ctx, shared_ctx( shared_ctx);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>shared_ctx</th>
+</tr>
+<tr><th>shared_ctx</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="encode">encode</a></h4>
+<p class="description">Encodes the given segment into the buffer</p>
+<p class="code">
+void encode(const Segment &amp; segment);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>segment</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="flush">flush</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] size_t flush(const output_callback_t &amp; callback);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>callback</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">Flushes the buffer to the given output</p>
+<h4 class="method"><a id="flush_if_does_not_fit">flush_if_does_not_fit</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] size_t flush_if_does_not_fit(const output_callback_t &amp; target, const size_t size);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>target</th>
+</tr>
+<tr><th>size</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">Flushes the buffer to the given output if adding &quot;size&quot; bytes to the buffer would exceed Max Segment Size</p>
+<h4 class="method"><a id="flush_if_full">flush_if_full</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] size_t flush_if_full(const output_callback_t &amp; target);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>target</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">Flushes the buffer to the given output if it exceeds Max Segment Size</p>
+<h4 class="method"><a id="flush_if_not_empty">flush_if_not_empty</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] size_t flush_if_not_empty(const output_callback_t &amp; target);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>target</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">Flushes the buffer to the given output if it's not empty</p>
+<h4 class="method"><a id="is_empty">is_empty</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] bool is_empty(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">Returns true if the buffer is empty.</p>
+<h4 class="method"><a id="resize">resize</a></h4>
+<p class="description">Resizes the buffer to the given size.</p>
+<p class="code">
+void resize(const size_t size);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>size</th>
+</tr>
+</tbody></table>
+<h3 class="class"><a id="imkcpp::ImKcpp">imkcpp::ImKcpp</a></h3>
+<p class="description">TODO: Additionally, this will allow more compile-time optimizations.</p>
+<p class="code">class imkcpp::ImKcpp final {<br>
+&#160;&#160;private:<br>
+&#160;&#160;&#160;&#160;u32 current;<br>
+&#160;&#160;&#160;&#160;u32 ts_flush;<br>
+&#160;&#160;&#160;&#160;bool updated;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>current </th>
+<td class="description">TODO: Should probably move to shared_ctx as well, but idk</td></tr>
+<tr><th>ts_flush </th>
+</tr>
+<tr><th>updated </th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="ImKcpp">ImKcpp</a></h4>
+<p class="description"></p>
+<p class="code">
+explicit ImKcpp(u32 conv);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>conv</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="check">check</a></h4>
+<p class="description"></p>
+<p class="code">
+auto check(u32 current);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>current</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="create_service_segment">create_service_segment</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] auto create_service_segment(i32 unused_receive_window);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>unused_receive_window</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">TODO: Should probably move to shared_ctx as well, but idk</p>
+<h4 class="method"><a id="estimate_segments_count">estimate_segments_count</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] auto estimate_segments_count(size_t size);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>size</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="flush">flush</a></h4>
+<p class="description"></p>
+<p class="code">
+auto flush(const output_callback_t &amp; callback);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>callback</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="get_max_segment_size">get_max_segment_size</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] auto get_max_segment_size(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="get_mtu">get_mtu</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] auto get_mtu(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="get_state">get_state</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] auto get_state(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="input">input</a></h4>
+<p class="description"></p>
+<p class="code">
+auto input(std::span const std::byte data, tl::expected size_t);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>data</th>
+</tr>
+<tr><th>size_t</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="peek_size">peek_size</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] auto peek_size(const - tl::expected size_t);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>size_t</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="recv">recv</a></h4>
+<p class="description"></p>
+<p class="code">
+auto recv(std::span std::byte buffer, tl::expected size_t);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>buffer</th>
+</tr>
+<tr><th>size_t</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="send">send</a></h4>
+<p class="description"></p>
+<p class="code">
+auto send(std::span const std::byte buffer, tl::expected size_t);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>buffer</th>
+</tr>
+<tr><th>size_t</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="set_congestion_window_enabled">set_congestion_window_enabled</a></h4>
+<p class="description"></p>
+<p class="code">
+auto set_congestion_window_enabled(bool state);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>state</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="set_interval">set_interval</a></h4>
+<p class="description"></p>
+<p class="code">
+auto set_interval(u32 interval);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>interval</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="set_mtu">set_mtu</a></h4>
+<p class="description"></p>
+<p class="code">
+auto set_mtu(u32 mtu, tl::expected size_t);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>mtu</th>
+</tr>
+<tr><th>size_t</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="set_nodelay">set_nodelay</a></h4>
+<p class="description"></p>
+<p class="code">
+auto set_nodelay(i32 nodelay);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>nodelay</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="set_resend">set_resend</a></h4>
+<p class="description"></p>
+<p class="code">
+auto set_resend(i32 resend);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>resend</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="set_wndsize">set_wndsize</a></h4>
+<p class="description"></p>
+<p class="code">
+auto set_wndsize(u32 sndwnd, u32 rcvwnd);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>sndwnd</th>
+</tr>
+<tr><th>rcvwnd</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="update">update</a></h4>
+<p class="description"></p>
+<p class="code">
+auto update(u32 current, const output_callback_t &amp; callback);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>current</th>
+</tr>
+<tr><th>callback</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h3 class="class"><a id="imkcpp::Receiver">imkcpp::Receiver</a></h3>
+<p class="description"></p>
+<p class="code">class imkcpp::Receiver {<br>
+&#160;&#160;private:<br>
+&#160;&#160;&#160;&#160;CongestionController &amp; congestion_controller;<br>
+&#160;&#160;&#160;&#160;SharedCtx &amp; shared_ctx;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>congestion_controller </th>
+</tr>
+<tr><th>shared_ctx </th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="Receiver">Receiver</a></h4>
+<p class="description"></p>
+<p class="code">
+explicit Receiver(CongestionController &amp; congestion_controller, SharedCtx &amp; shared_ctx, congestion_controller( congestion_controller, shared_ctx( shared_ctx);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>congestion_controller</th>
+</tr>
+<tr><th>shared_ctx</th>
+</tr>
+<tr><th>congestion_controller</th>
+</tr>
+<tr><th>shared_ctx</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="get_unused_receive_window">get_unused_receive_window</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] i32 get_unused_receive_window(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="move_receive_buffer_to_queue">move_receive_buffer_to_queue</a></h4>
+<p class="description"></p>
+<p class="code">
+void move_receive_buffer_to_queue(void);</p>
+<h4 class="method"><a id="parse_data">parse_data</a></h4>
+<p class="description"></p>
+<p class="code">
+void parse_data(const Segment &amp; newseg);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>newseg</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="peek_size">peek_size</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] tl::expected size_t, error peek_size(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="recv">recv</a></h4>
+<p class="description"></p>
+<p class="code">
+tl::expected size_t, error recv(const std::span std::byte buffer);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>buffer</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h3 class="class"><a id="imkcpp::RtoCalculator">imkcpp::RtoCalculator</a></h3>
+<p class="description">https://datatracker.ietf.org/doc/html/rfc2988.html#section-2</p>
+<p class="code">class imkcpp::RtoCalculator {<br>
+&#160;&#160;private:<br>
+&#160;&#160;&#160;&#160;u32 maxrto;<br>
+&#160;&#160;&#160;&#160;u32 minrto;<br>
+&#160;&#160;&#160;&#160;u32 rto;<br>
+&#160;&#160;&#160;&#160;u32 rttvar;<br>
+&#160;&#160;&#160;&#160;SharedCtx &amp; shared_ctx;<br>
+&#160;&#160;&#160;&#160;u32 srtt;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>maxrto </th>
+<td class="description">Maximum retransmission timeout</td></tr>
+<tr><th>minrto </th>
+<td class="description">Minimum retransmission timeout</td></tr>
+<tr><th>rto </th>
+<td class="description">Retransmission timeout</td></tr>
+<tr><th>rttvar </th>
+<td class="description">Round trip time variation</td></tr>
+<tr><th>shared_ctx </th>
+</tr>
+<tr><th>srtt </th>
+<td class="description">Smoothed round trip time</td></tr>
+</tbody></table>
+<h4 class="method"><a id="RtoCalculator">RtoCalculator</a></h4>
+<p class="description">Minimum retransmission timeout</p>
+<p class="code">
+explicit RtoCalculator(SharedCtx &amp; shared_ctx, shared_ctx( shared_ctx);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>shared_ctx</th>
+</tr>
+<tr><th>shared_ctx</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">Maximum retransmission timeout</p>
+<h4 class="method"><a id="get_rto">get_rto</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] u32 get_rto(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="set_min_rto">set_min_rto</a></h4>
+<p class="description"></p>
+<p class="code">
+void set_min_rto(const u32 minrto);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>minrto</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="update_rtt">update_rtt</a></h4>
+<p class="description"></p>
+<p class="code">
+void update_rtt(const i32 rtt);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>rtt</th>
+</tr>
+</tbody></table>
+<h3 class="class"><a id="imkcpp::Sender">imkcpp::Sender</a></h3>
+<p class="description">TODO: Move snd_buf to AckController as it is generally used there for ACKs information</p>
+<p class="code">class imkcpp::Sender {<br>
+&#160;&#160;private:<br>
+&#160;&#160;&#160;&#160;AckController &amp; ack_controller;<br>
+&#160;&#160;&#160;&#160;CongestionController &amp; congestion_controller;<br>
+&#160;&#160;&#160;&#160;u32 dead_link;<br>
+&#160;&#160;&#160;&#160;i32 fastlimit;<br>
+&#160;&#160;&#160;&#160;i32 fastresend;<br>
+&#160;&#160;&#160;&#160;Flusher &amp; flusher;<br>
+&#160;&#160;&#160;&#160;u32 nodelay;<br>
+&#160;&#160;&#160;&#160;RtoCalculator &amp; rto_calculator;<br>
+&#160;&#160;&#160;&#160;SenderBuffer &amp; sender_buffer;<br>
+&#160;&#160;&#160;&#160;SharedCtx &amp; shared_ctx;<br>
+&#160;&#160;&#160;&#160;u32 xmit;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>ack_controller </th>
+</tr>
+<tr><th>congestion_controller </th>
+</tr>
+<tr><th>dead_link </th>
+</tr>
+<tr><th>fastlimit </th>
+</tr>
+<tr><th>fastresend </th>
+</tr>
+<tr><th>flusher </th>
+</tr>
+<tr><th>nodelay </th>
+</tr>
+<tr><th>rto_calculator </th>
+</tr>
+<tr><th>sender_buffer </th>
+</tr>
+<tr><th>shared_ctx </th>
+</tr>
+<tr><th>xmit </th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="Sender">Sender</a></h4>
+<p class="description"></p>
+<p class="code">
+explicit Sender(CongestionController &amp; congestion_controller, RtoCalculator &amp; rto_calculator, Flusher &amp; flusher, SenderBuffer &amp; sender_buffer, AckController &amp; ack_controller, SharedCtx &amp; shared_ctx, congestion_controller( congestion_controller, rto_calculator( rto_calculator, flusher( flusher, sender_buffer( sender_buffer, ack_controller( ack_controller, shared_ctx( shared_ctx);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>congestion_controller</th>
+</tr>
+<tr><th>rto_calculator</th>
+</tr>
+<tr><th>flusher</th>
+</tr>
+<tr><th>sender_buffer</th>
+</tr>
+<tr><th>ack_controller</th>
+</tr>
+<tr><th>shared_ctx</th>
+</tr>
+<tr><th>congestion_controller</th>
+</tr>
+<tr><th>rto_calculator</th>
+</tr>
+<tr><th>flusher</th>
+</tr>
+<tr><th>sender_buffer</th>
+</tr>
+<tr><th>ack_controller</th>
+</tr>
+<tr><th>shared_ctx</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="estimate_segments_count">estimate_segments_count</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] size_t estimate_segments_count(const size_t size);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>size</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="flush_data_segments">flush_data_segments</a></h4>
+<p class="description"></p>
+<p class="code">
+void flush_data_segments(const output_callback_t &amp; output, const u32 current, const i32 unused_receive_window);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>output</th>
+</tr>
+<tr><th>current</th>
+</tr>
+<tr><th>unused_receive_window</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="get_earliest_transmit_delta">get_earliest_transmit_delta</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] std::optional u32 get_earliest_transmit_delta(const u32 current);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>current</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="move_send_queue_to_buffer">move_send_queue_to_buffer</a></h4>
+<p class="description"></p>
+<p class="code">
+void move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>cwnd</th>
+</tr>
+<tr><th>current</th>
+</tr>
+<tr><th>unused_receive_window</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="send">send</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] tl::expected size_t, error send(const std::span const std::byte buffer);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>buffer</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="set_fastresend">set_fastresend</a></h4>
+<p class="description"></p>
+<p class="code">
+void set_fastresend(const i32 value);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>value</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="set_nodelay">set_nodelay</a></h4>
+<p class="description"></p>
+<p class="code">
+void set_nodelay(const u32 value);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>value</th>
+</tr>
+</tbody></table>
+<h3 class="class"><a id="imkcpp::SenderBuffer">imkcpp::SenderBuffer</a></h3>
+<p class="description"></p>
+<p class="code">class imkcpp::SenderBuffer {<br>
+&#160;&#160;private:<br>
+&#160;&#160;&#160;&#160;SharedCtx &amp; shared_ctx;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>shared_ctx </th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="SenderBuffer">SenderBuffer</a></h4>
+<p class="description"></p>
+<p class="code">
+explicit SenderBuffer(SharedCtx &amp; shared_ctx, shared_ctx( shared_ctx);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>shared_ctx</th>
+</tr>
+<tr><th>shared_ctx</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="empty">empty</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] bool empty(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="erase">erase</a></h4>
+<p class="description"></p>
+<p class="code">
+void erase(const u32 sn);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>sn</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="erase_before">erase_before</a></h4>
+<p class="description"></p>
+<p class="code">
+void erase_before(const u32 sn);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>sn</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="get">get</a></h4>
+<p class="description"></p>
+<p class="code">
+std::deque Segment &amp; get(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="push_segment">push_segment</a></h4>
+<p class="description"></p>
+<p class="code">
+void push_segment(Segment &amp; segment);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>segment</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="shrink">shrink</a></h4>
+<p class="description"></p>
+<p class="code">
+void shrink(void);</p>
+<h3 class="class"><a id="imkcpp::SharedCtx">imkcpp::SharedCtx</a></h3>
+<p class="description"></p>
+<p class="code">class imkcpp::SharedCtx {<br>
+&#160;&#160;private:<br>
+&#160;&#160;&#160;&#160;State state;<br>
+&#160;&#160;public:<br>
+&#160;&#160;&#160;&#160;u32 conv;<br>
+&#160;&#160;&#160;&#160;u32 interval;<br>
+&#160;&#160;&#160;&#160;size_t mss;<br>
+&#160;&#160;&#160;&#160;size_t mtu;<br>
+&#160;&#160;&#160;&#160;u32 rcv_nxt;<br>
+&#160;&#160;&#160;&#160;u32 snd_nxt;<br>
+&#160;&#160;&#160;&#160;u32 snd_una;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>conv </th>
+</tr>
+<tr><th>interval </th>
+</tr>
+<tr><th>mss </th>
+</tr>
+<tr><th>mtu </th>
+</tr>
+<tr><th>rcv_nxt </th>
+</tr>
+<tr><th>snd_nxt </th>
+</tr>
+<tr><th>snd_una </th>
+</tr>
+<tr><th>state </th>
+<td class="description">TODO: Make private and add meaningful getters/setters</td></tr>
+</tbody></table>
+<h4 class="method"><a id="get_state">get_state</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] State get_state(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description">TODO: Make private and add meaningful getters/setters</p>
+<h4 class="method"><a id="set_state">set_state</a></h4>
+<p class="description"></p>
+<p class="code">
+void set_state(const State state);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>state</th>
+</tr>
+</tbody></table>
+<h2 class="title"><a id="FUNCTIONS">Functions</a></h2>
+<h3 class="function"><a id="imkcpp::commands::is_valid">imkcpp::commands::is_valid</a></h3>
+<p class="description">TODO: Rework this to be a proper enum class</p>
+<p class="code">
+inline bool imkcpp::commands::is_valid(const u8 cmd);</p>
+<h4 class="parameters">Parameters</h4>
+<table class="list"><tbody>
+<tr><th>cmd</th>
+</tr>
+</tbody></table>
+<h4 class="returnvalue">Return Value</h4>
+<p class="description">Returns true if the u8 value is a valid command.</p>
+<h3 class="function"><a id="imkcpp::encoder::decode16u">imkcpp::encoder::decode16u</a></h3>
+<p class="description">Decodes a u16 value from the buffer at the given offset and increments the offset by sizeof(u16).</p>
+<p class="code">
+void imkcpp::encoder::decode16u(const std::span const std::byte &amp; buf, size_t &amp; offset, u16 &amp; value);</p>
+<h4 class="parameters">Parameters</h4>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+<tr><th>offset</th>
+</tr>
+<tr><th>value</th>
+</tr>
+</tbody></table>
+<h3 class="function"><a id="imkcpp::encoder::decode32u">imkcpp::encoder::decode32u</a></h3>
+<p class="description">Decodes a u32 value from the buffer at the given offset and increments the offset by sizeof(u32).</p>
+<p class="code">
+void imkcpp::encoder::decode32u(const std::span const std::byte &amp; buf, size_t &amp; offset, u32 &amp; value);</p>
+<h4 class="parameters">Parameters</h4>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+<tr><th>offset</th>
+</tr>
+<tr><th>value</th>
+</tr>
+</tbody></table>
+<h3 class="function"><a id="imkcpp::encoder::decode8u">imkcpp::encoder::decode8u</a></h3>
+<p class="description">Decodes a u8 value from the buffer at the given offset and increments the offset by sizeof(u8).</p>
+<p class="code">
+void imkcpp::encoder::decode8u(const std::span const std::byte &amp; buf, size_t &amp; offset, u8 &amp; value);</p>
+<h4 class="parameters">Parameters</h4>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+<tr><th>offset</th>
+</tr>
+<tr><th>value</th>
+</tr>
+</tbody></table>
+<h3 class="function"><a id="imkcpp::encoder::encode16u">imkcpp::encoder::encode16u</a></h3>
+<p class="description">Encodes a u16 value into the buffer at the given offset and increments the offset by sizeof(u16).</p>
+<p class="code">
+void imkcpp::encoder::encode16u(std::span std::byte &amp; buf, size_t &amp; offset, u16 value);</p>
+<h4 class="parameters">Parameters</h4>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+<tr><th>offset</th>
+</tr>
+<tr><th>value</th>
+</tr>
+</tbody></table>
+<h3 class="function"><a id="imkcpp::encoder::encode32u">imkcpp::encoder::encode32u</a></h3>
+<p class="description">Encodes a u32 value into the buffer at the given offset and increments the offset by sizeof(u32).</p>
+<p class="code">
+void imkcpp::encoder::encode32u(std::span std::byte &amp; buf, size_t &amp; offset, u32 value);</p>
+<h4 class="parameters">Parameters</h4>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+<tr><th>offset</th>
+</tr>
+<tr><th>value</th>
+</tr>
+</tbody></table>
+<h3 class="function"><a id="imkcpp::encoder::encode8u">imkcpp::encoder::encode8u</a></h3>
+<p class="description">Encodes a u8 value into the buffer at the given offset and increments the offset by sizeof(u8).</p>
+<p class="code">
+void imkcpp::encoder::encode8u(std::span std::byte &amp; buf, size_t &amp; offset, u8 value);</p>
+<h4 class="parameters">Parameters</h4>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+<tr><th>offset</th>
+</tr>
+<tr><th>value</th>
+</tr>
+</tbody></table>
+<h3 class="function"><a id="imkcpp::err_to_str">imkcpp::err_to_str</a></h3>
+<p class="description"></p>
+<p class="code">
+inline std::string imkcpp::err_to_str(error e);</p>
+<h4 class="parameters">Parameters</h4>
+<table class="list"><tbody>
+<tr><th>e</th>
+</tr>
+</tbody></table>
+<h4 class="returnvalue">Return Value</h4>
+<p class="description"></p>
+<h2 class="title"><a id="STRUCTURES">Structures</a></h2>
+<h3 class="struct"><a id="imkcpp::FlushResult">imkcpp::FlushResult</a></h3>
+<p class="description"></p>
+<p class="code">struct imkcpp::FlushResult {<br>
+&#160;&#160;&#160;&#160;u32 ack_sent_count;<br>
+&#160;&#160;&#160;&#160;u32 cmd_wask_count;<br>
+&#160;&#160;&#160;&#160;u32 cmd_wins_count;<br>
+&#160;&#160;&#160;&#160;u32 data_sent_count;<br>
+&#160;&#160;&#160;&#160;u32 retransmitted_count;<br>
+&#160;&#160;&#160;&#160;size_t total_bytes_sent;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>ack_sent_count </th>
+</tr>
+<tr><th>cmd_wask_count </th>
+</tr>
+<tr><th>cmd_wins_count </th>
+</tr>
+<tr><th>data_sent_count </th>
+</tr>
+<tr><th>retransmitted_count </th>
+</tr>
+<tr><th>total_bytes_sent </th>
+</tr>
+</tbody></table>
+<h3 class="struct"><a id="imkcpp::Segment">imkcpp::Segment</a></h3>
+<p class="description"></p>
+<p class="code">struct imkcpp::Segment {<br>
+&#160;&#160;&#160;&#160;void <a href="#imkcpp::Segment.data_assign">data_assign</a>(const std::span const std::byte buf);<br>
+&#160;&#160;&#160;&#160;nodiscard]] size_t <a href="#imkcpp::Segment.data_size">data_size</a>(void);<br>
+&#160;&#160;&#160;&#160;void <a href="#imkcpp::Segment.decode_from">decode_from</a>(const std::span const std::byte buf, size_t &amp; offset);<br>
+&#160;&#160;&#160;&#160;void <a href="#imkcpp::Segment.encode_to">encode_to</a>(const std::span std::byte buf, size_t &amp; offset);<br>
+&#160;&#160;&#160;&#160;nodiscard]] size_t <a href="#imkcpp::Segment.size">size</a>(void);<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+</tbody></table>
+<h4 class="method"><a id="data_assign">data_assign</a></h4>
+<p class="description"></p>
+<p class="code">
+void data_assign(const std::span const std::byte buf);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="data_size">data_size</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] size_t data_size(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="decode_from">decode_from</a></h4>
+<p class="description"></p>
+<p class="code">
+void decode_from(const std::span const std::byte buf, size_t &amp; offset);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+<tr><th>offset</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="encode_to">encode_to</a></h4>
+<p class="description"></p>
+<p class="code">
+void encode_to(const std::span std::byte buf, size_t &amp; offset);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+<tr><th>offset</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="size">size</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] size_t size(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h3 class="struct"><a id="imkcpp::SegmentData">imkcpp::SegmentData</a></h3>
+<p class="description"></p>
+<p class="code">struct imkcpp::SegmentData {<br>
+&#160;&#160;&#160;&#160;explicit <a href="#imkcpp::SegmentData.SegmentData">SegmentData</a>(const size_t size, data( size);<br>
+&#160;&#160;&#160;&#160;void <a href="#imkcpp::SegmentData.assign">assign</a>(const std::span const std::byte buf);<br>
+&#160;&#160;&#160;&#160;void <a href="#imkcpp::SegmentData.decode_from">decode_from</a>(const std::span const std::byte buf, size_t &amp; offset, const size_t length);<br>
+&#160;&#160;&#160;&#160;void <a href="#imkcpp::SegmentData.encode_to">encode_to</a>(std::span std::byte buf, size_t &amp; offset, const size_t length);<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+</tbody></table>
+<h4 class="method"><a id="SegmentData">SegmentData</a></h4>
+<p class="description"></p>
+<p class="code">
+explicit SegmentData(const size_t size, data( size);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>size</th>
+</tr>
+<tr><th>size</th>
+</tr>
+</tbody></table>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
+<h4 class="method"><a id="assign">assign</a></h4>
+<p class="description"></p>
+<p class="code">
+void assign(const std::span const std::byte buf);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="decode_from">decode_from</a></h4>
+<p class="description"></p>
+<p class="code">
+void decode_from(const std::span const std::byte buf, size_t &amp; offset, const size_t length);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+<tr><th>offset</th>
+</tr>
+<tr><th>length</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="encode_to">encode_to</a></h4>
+<p class="description"></p>
+<p class="code">
+void encode_to(std::span std::byte buf, size_t &amp; offset, const size_t length);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+<tr><th>offset</th>
+</tr>
+<tr><th>length</th>
+</tr>
+</tbody></table>
+<h3 class="struct"><a id="imkcpp::SegmentHeader">imkcpp::SegmentHeader</a></h3>
+<p class="description">TODO: The logic is heavily reliant on the fact that everything is public. Rework this.</p>
+<p class="code">struct imkcpp::SegmentHeader {<br>
+&#160;&#160;&#160;&#160;u8 cmd;<br>
+&#160;&#160;&#160;&#160;u32 conv;<br>
+&#160;&#160;&#160;&#160;u8 frg;<br>
+&#160;&#160;&#160;&#160;u32 len;<br>
+&#160;&#160;&#160;&#160;u32 sn;<br>
+&#160;&#160;&#160;&#160;u32 ts;<br>
+&#160;&#160;&#160;&#160;u32 una;<br>
+&#160;&#160;&#160;&#160;u16 wnd;<br>
+&#160;&#160;&#160;&#160;void <a href="#imkcpp::SegmentHeader.decode_from">decode_from</a>(const std::span const std::byte buf, size_t &amp; offset);<br>
+&#160;&#160;&#160;&#160;void <a href="#imkcpp::SegmentHeader.encode_to">encode_to</a>(std::span std::byte buf, size_t &amp; offset);<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>cmd </th>
+<td class="description">Command type.</td></tr>
+<tr><th>conv </th>
+<td class="description">Conversation ID. // TODO: Does this need to be 4 bytes?</td></tr>
+<tr><th>frg </th>
+<td class="description">Fragment.</td></tr>
+<tr><th>len </th>
+<td class="description">Length of the payload.</td></tr>
+<tr><th>sn </th>
+<td class="description">Sequence number.</td></tr>
+<tr><th>ts </th>
+<td class="description">Timestamp.</td></tr>
+<tr><th>una </th>
+<td class="description">Unacknowledged sequence number.</td></tr>
+<tr><th>wnd </th>
+<td class="description">Window size (available space in the receive buffer).</td></tr>
+</tbody></table>
+<h4 class="method"><a id="decode_from">decode_from</a></h4>
+<p class="description"></p>
+<p class="code">
+void decode_from(const std::span const std::byte buf, size_t &amp; offset);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+<tr><th>offset</th>
+</tr>
+</tbody></table>
+<h4 class="method"><a id="encode_to">encode_to</a></h4>
+<p class="description">Length of the payload.</p>
+<p class="code">
+void encode_to(std::span std::byte buf, size_t &amp; offset);</p>
+<h5 class="parameters">Parameters</h5>
+<table class="list"><tbody>
+<tr><th>buf</th>
+</tr>
+<tr><th>offset</th>
+</tr>
+</tbody></table>
+<h3 class="struct"><a id="imkcpp::SegmentMetadata">imkcpp::SegmentMetadata</a></h3>
+<p class="description">TODO: Too many public members, make them private. Also, make the Segment class a friend of the SegmentHeader class.</p>
+<p class="code">struct imkcpp::SegmentMetadata {<br>
+&#160;&#160;&#160;&#160;u32 fastack;<br>
+&#160;&#160;&#160;&#160;u32 resendts;<br>
+&#160;&#160;&#160;&#160;u32 rto;<br>
+&#160;&#160;&#160;&#160;u32 xmit;<br>
+};</p>
+<h4 class="members">Members</h4>
+<table class="list"><tbody>
+<tr><th>fastack </th>
+</tr>
+<tr><th>resendts </th>
+</tr>
+<tr><th>rto </th>
+</tr>
+<tr><th>xmit </th>
+</tr>
+</tbody></table>
+<h2 class="title"><a id="VARIABLES">Variables</a></h2>
+<h3 class="variable"><a id="IKCP_ASK_SEND">IKCP_ASK_SEND</a></h3>
+<p class="description">need to send IKCP_CMD_WASK</p>
+<p class="code">constexpr uint32_t IKCP_ASK_SEND = imkcpp::constants::1;</p>
+<h3 class="variable"><a id="IKCP_ASK_TELL">IKCP_ASK_TELL</a></h3>
+<p class="description">need to send IKCP_CMD_WINS</p>
+<p class="code">constexpr uint32_t IKCP_ASK_TELL = imkcpp::constants::2;</p>
+<h3 class="variable"><a id="IKCP_CMD_WINS">IKCP_CMD_WINS</a></h3>
+<p class="description">Returns true if the u8 value is a valid command.</p>
+<p class="code">constexpr u8 IKCP_CMD_WINS = imkcpp::commands::84;</p>
+<h3 class="variable"><a id="IKCP_FASTACK_LIMIT">IKCP_FASTACK_LIMIT</a></h3>
+<p class="description">max times to trigger fastack</p>
+<p class="code">constexpr uint32_t IKCP_FASTACK_LIMIT = imkcpp::constants::5;</p>
+<h3 class="variable"><a id="IKCP_PROBE_INIT">IKCP_PROBE_INIT</a></h3>
+<p class="description">7 secs to probe window size</p>
+<p class="code">constexpr uint32_t IKCP_PROBE_INIT = imkcpp::constants::7000;</p>
+<h3 class="variable"><a id="IKCP_PROBE_LIMIT">IKCP_PROBE_LIMIT</a></h3>
+<p class="description">up to 120 secs to probe window</p>
+<p class="code">constexpr uint32_t IKCP_PROBE_LIMIT = imkcpp::constants::120000;</p>
+<h3 class="variable"><a id="IKCP_RTO_MIN">IKCP_RTO_MIN</a></h3>
+<p class="description">normal min rto</p>
+<p class="code">constexpr uint32_t IKCP_RTO_MIN = imkcpp::constants::100;</p>
+<h3 class="variable"><a id="IKCP_RTO_NDL">IKCP_RTO_NDL</a></h3>
+<p class="description">no delay min rto</p>
+<p class="code">constexpr uint32_t IKCP_RTO_NDL = imkcpp::constants::30;</p>
+<h3 class="variable"><a id="IKCP_WND_RCV">IKCP_WND_RCV</a></h3>
+<p class="description">must &gt;= max fragment size</p>
+<p class="code">constexpr uint32_t IKCP_WND_RCV = imkcpp::constants::128;</p>
+<h2 class="title"><a id="ENUMERATIONS">Constants</a></h2>
+<h3 class="enumeration"><a id="imkcpp::class">imkcpp::class</a></h3>
+<p class="description"></p>
+<h4 class="constants">Constants</h4>
+<table class="list"><tbody>
+<tr><th>imkcpp::DeadLink </th><td class="description">TODO: Add Finalize state which will be used to close the connection gracefully</td></tr>
+</tbody></table>
+</div>
+</body>
+</html>

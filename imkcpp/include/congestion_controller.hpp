@@ -13,8 +13,7 @@ namespace imkcpp {
         SharedCtx& shared_ctx;
         Flusher& flusher;
 
-        bool congestion_window = true;
-        u32 mss = constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD;
+        bool congestion_window = true; // Congestion Window Enabled
 
         u32 rcv_wnd = constants::IKCP_WND_RCV; // Receive Window
         u32 rmt_wnd = constants::IKCP_WND_SND; // Remote Window (receive window for the other side, advertised by the other side)
@@ -26,16 +25,12 @@ namespace imkcpp {
 
         // Probe is a part of flow control but it's deeply intertwined with congestion control so it's here
 
-        u32 probe = 0; // Probing
+        u32 probe = 0; // Probe flags
         u32 ts_probe = 0; // Timestamp of the last time we probed the remote window
         u32 probe_wait = 0; // How long we should wait before probing again
 
     public:
         explicit CongestionController(Flusher& flusher, SharedCtx& shared_ctx) : flusher(flusher), shared_ctx(shared_ctx) {}
-
-        void set_mss(const u32 mss) {
-            this->mss = mss;
-        }
 
         void set_congestion_window_enabled(const bool state) {
             this->congestion_window = state;
@@ -72,13 +67,13 @@ namespace imkcpp {
         void resent(const u32 packets_in_flight, const u32 resent) {
             this->ssthresh = std::max(packets_in_flight / 2, constants::IKCP_THRESH_MIN);
             this->cwnd = this->ssthresh + resent;
-            this->incr = this->cwnd * this->mss;
+            this->incr = this->cwnd * this->shared_ctx.mss;
         }
 
         void packet_lost() {
             this->ssthresh = std::max(this->cwnd / 2, constants::IKCP_THRESH_MIN);
             this->cwnd = 1;
-            this->incr = this->mss;
+            this->incr = this->shared_ctx.mss;
         }
 
         void adjust_parameters(const u32 latest_una, const u32 prev_una) {
@@ -87,7 +82,7 @@ namespace imkcpp {
             }
 
             if (this->cwnd < this->rmt_wnd) {
-                const u32 mss = this->mss;
+                const u32 mss = this->shared_ctx.mss;
 
                 if (this->cwnd < this->ssthresh) {
                     this->cwnd++;
@@ -114,7 +109,7 @@ namespace imkcpp {
         void ensure_at_least_one_packet_in_flight() {
             if (this->cwnd < 1) {
                 this->cwnd = 1;
-                this->incr = this->mss;
+                this->incr = this->shared_ctx.mss;
             }
         }
 

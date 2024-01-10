@@ -1,4 +1,4 @@
 #!/bin/bash
 
-codedoc imkcpp/include/*.hpp imkcpp/src/*.cpp > DOCUMENTATION.html
+codedoc imkcpp/include/*.hpp > DOCUMENTATION.html
 
