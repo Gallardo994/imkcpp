@@ -152,7 +152,7 @@ namespace imkcpp {
 
                     segment.metadata.resendts = current + segment.metadata.rto;
                     lost = true;
-                } else if (segment.metadata.fastack >= resent) {
+                } else if (resent < segment.metadata.fastack) {
                     // TODO: The second check is probably redundant
                     if (segment.metadata.xmit <= this->fastlimit || this->fastlimit == 0) {
                         // TODO: Why isn't this->xmit incremented here?
@@ -183,7 +183,7 @@ namespace imkcpp {
             }
 
             if (change) {
-                this->congestion_controller.packet_resent(this->segment_tracker.get_packets_in_flight(), resent);
+                this->congestion_controller.packets_resent(this->segment_tracker.get_packets_in_flight(), resent);
             }
 
             if (lost) {

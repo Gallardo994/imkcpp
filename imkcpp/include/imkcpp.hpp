@@ -268,6 +268,8 @@ namespace imkcpp {
 
             this->flusher.flush_if_not_empty(callback);
 
+            this->congestion_controller.ensure_at_least_one_packet_in_flight();
+
             return result;
         }
 
