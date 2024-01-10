@@ -129,8 +129,6 @@ namespace imkcpp {
 
         // Sends all scheduled acknowledgements and clears the acknowledgement list.
         void flush_acks(const output_callback_t& output, Segment& base_segment) {
-            // TODO: This is not optimal to send IKCP_OVERHEAD per ack, should be optimized
-
             for (const Ack& ack : this->acklist) {
                 // TODO: Return information back to the caller
 
