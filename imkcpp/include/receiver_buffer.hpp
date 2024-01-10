@@ -26,7 +26,7 @@ namespace imkcpp {
             }
 
             const auto it = std::find_if(this->rcv_buf.rbegin(), this->rcv_buf.rend(), [sn](const Segment& seg) {
-                return time_delta(sn, seg.header.sn) <= 0;
+                return sn <= seg.header.sn;
             });
 
             if (it != this->rcv_buf.rend() && it->header.sn == sn) {
