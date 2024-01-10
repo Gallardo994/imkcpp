@@ -123,6 +123,9 @@ namespace imkcpp {
 
                     this->ack_controller.schedule_ack(header.sn, header.ts);
 
+                    // TODO: This could probably be in fits_receive_window check,
+                    // TODO: but I'm not sure if it's correct because
+                    // TODO: the original code does it after schedling ack
                     if (header.sn >= shared_ctx.rcv_nxt) {
                         Segment seg;
                         seg.header = header; // TODO: Remove this copy
