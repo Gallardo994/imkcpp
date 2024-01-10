@@ -7,6 +7,8 @@ namespace imkcpp {
         State state = State::Alive; // Current state of the connection.
 
         u32 conv = 0; // Conversation ID
+
+        // TODO: These have to be compile-time values
         size_t mtu = 0; // Maximum Transmission Unit
         size_t mss = 0; // Maximum Segment Size (mtu - header size)
 
