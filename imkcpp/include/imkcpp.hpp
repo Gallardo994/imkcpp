@@ -38,11 +38,11 @@ namespace imkcpp {
         Receiver receiver{congestion_controller, shared_ctx};
         Sender sender{congestion_controller, rto_calculator, flusher, sender_buffer, ack_controller, shared_ctx};
 
-        bool updated = false;
-        u32 current = 0; // TODO: Should probably move to shared_ctx as well, but idk
-        u32 ts_flush = constants::IKCP_INTERVAL;
+        bool updated = false; // Whether update() was called at least once
+        u32 current = 0; // Current / last time we updated the state
+        u32 ts_flush = constants::IKCP_INTERVAL; // Time when we will probably flush the data next time
 
-        [[nodiscard]] auto create_service_segment(i32 unused_receive_window) const -> Segment {
+        [[nodiscard]] auto create_service_segment(const i32 unused_receive_window) const -> Segment {
             Segment seg;
 
             seg.header.conv = this->shared_ctx.conv;
