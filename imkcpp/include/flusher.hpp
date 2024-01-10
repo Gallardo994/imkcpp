@@ -13,6 +13,18 @@ namespace imkcpp {
         std::vector<std::byte> buffer{};
         size_t offset = 0;
 
+        // Flushes the buffer to the given output
+        [[nodiscard]] size_t flush(const output_callback_t& callback) {
+            const auto size = this->offset;
+
+            assert(size <= this->buffer.size());
+
+            callback({this->buffer.data(), size});
+            this->offset = 0;
+
+            return size;
+        }
+
     public:
         explicit Flusher(SharedCtx& shared_ctx) : shared_ctx(shared_ctx) {}
 
@@ -51,18 +63,6 @@ namespace imkcpp {
             }
 
             return 0;
-        }
-
-        // Flushes the buffer to the given output
-        [[nodiscard]] size_t flush(const output_callback_t& callback) {
-            const auto size = this->offset;
-
-            assert(size <= this->buffer.size());
-
-            callback({this->buffer.data(), size});
-            this->offset = 0;
-
-            return size;
         }
 
         // Encodes the given segment into the buffer
