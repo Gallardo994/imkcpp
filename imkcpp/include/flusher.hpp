@@ -65,8 +65,8 @@ namespace imkcpp {
             return 0;
         }
 
-        // Encodes the given segment into the buffer
-        void encode(const Segment& segment) {
+        // Emplaces the given segment into the buffer
+        void emplace_segment(const Segment& segment) {
             assert(this->offset + segment.size() <= this->buffer.size());
 
             segment.encode_to(this->buffer, this->offset);

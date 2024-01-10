@@ -126,7 +126,7 @@ namespace imkcpp {
                 base_segment.header.sn = ack.sn;
                 base_segment.header.ts = ack.ts;
 
-                this->flusher.encode(base_segment);
+                this->flusher.emplace_segment(base_segment);
             }
 
             this->acklist.clear();

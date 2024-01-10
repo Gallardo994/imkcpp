@@ -170,14 +170,14 @@ namespace imkcpp {
                 this->flusher.flush_if_full(output);
 
                 base_segment.header.cmd = commands::IKCP_CMD_WASK;
-                this->flusher.encode(base_segment);
+                this->flusher.emplace_segment(base_segment);
             }
 
             if (this->has_probe_flag(constants::IKCP_ASK_TELL)) {
                 this->flusher.flush_if_full(output);
 
                 base_segment.header.cmd = commands::IKCP_CMD_WINS;
-                this->flusher.encode(base_segment);
+                this->flusher.emplace_segment(base_segment);
             }
 
             this->reset_probe_flags();

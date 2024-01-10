@@ -167,7 +167,7 @@ namespace imkcpp {
                     segment.header.una = this->shared_ctx.rcv_nxt;
 
                     this->flusher.flush_if_does_not_fit(output, segment.data_size());
-                    this->flusher.encode(segment);
+                    this->flusher.emplace_segment(segment);
 
                     if (segment.metadata.xmit >= this->dead_link) {
                         this->shared_ctx.set_state(State::DeadLink);
