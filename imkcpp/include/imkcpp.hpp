@@ -263,7 +263,7 @@ namespace imkcpp {
             // Useful data
             this->sender.flush_data_segments(callback, current, unused_receive_window);
 
-            flusher.flush_if_not_empty(callback);
+            this->flusher.flush_if_not_empty(callback);
 
             return result;
         }
