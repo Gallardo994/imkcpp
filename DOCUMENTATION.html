@@ -767,11 +767,11 @@ void resize(const size_t size);</p>
 <h4 class="members">Members</h4>
 <table class="list"><tbody>
 <tr><th>current </th>
-<td class="description">TODO: Should probably move to shared_ctx as well, but idk</td></tr>
+<td class="description">Current / last time we updated the state</td></tr>
 <tr><th>ts_flush </th>
-</tr>
+<td class="description">Time when we will probably flush the data next time</td></tr>
 <tr><th>updated </th>
-</tr>
+<td class="description">Whether update() was called at least once</td></tr>
 </tbody></table>
 <h4 class="method"><a id="ImKcpp">ImKcpp</a></h4>
 <p class="description"></p>
@@ -796,16 +796,22 @@ auto check(const u32 current);</p>
 <h5 class="returnvalue">Return Value</h5>
 <p class="description"></p>
 <h4 class="method"><a id="create_service_segment">create_service_segment</a></h4>
-<p class="description"></p>
+<p class="description">Current / last time we updated the state</p>
 <p class="code">
-nodiscard]] auto create_service_segment(i32 unused_receive_window);</p>
+nodiscard]] auto create_service_segment(const i32 unused_receive_window);</p>
 <h5 class="parameters">Parameters</h5>
 <table class="list"><tbody>
 <tr><th>unused_receive_window</th>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description">TODO: Should probably move to shared_ctx as well, but idk</p>
+<p class="description">Time when we will probably flush the data next time</p>
+<h4 class="method"><a id="estimate_max_payload_size">estimate_max_payload_size</a></h4>
+<p class="description"></p>
+<p class="code">
+nodiscard]] auto estimate_max_payload_size(void);</p>
+<h5 class="returnvalue">Return Value</h5>
+<p class="description"></p>
 <h4 class="method"><a id="estimate_segments_count">estimate_segments_count</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -1494,17 +1500,17 @@ inline std::string imkcpp::err_to_str(error e);</p>
 <h4 class="members">Members</h4>
 <table class="list"><tbody>
 <tr><th>ack_sent_count </th>
-</tr>
+<td class="description">Number of ACKs sent</td></tr>
 <tr><th>cmd_wask_count </th>
-</tr>
+<td class="description">Number of WASK commands sent</td></tr>
 <tr><th>cmd_wins_count </th>
-</tr>
+<td class="description">Number of WINS commands sent</td></tr>
 <tr><th>data_sent_count </th>
-</tr>
+<td class="description">Number of data segments sent</td></tr>
 <tr><th>retransmitted_count </th>
-</tr>
+<td class="description">Number of retransmitted segments</td></tr>
 <tr><th>total_bytes_sent </th>
-</tr>
+<td class="description">Total number of bytes sent</td></tr>
 </tbody></table>
 <h3 class="struct"><a id="imkcpp::Segment">imkcpp::Segment</a></h3>
 <p class="description"></p>
