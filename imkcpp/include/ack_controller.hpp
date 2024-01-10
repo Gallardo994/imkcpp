@@ -112,7 +112,7 @@ namespace imkcpp {
             this->sender_buffer.shrink();
         }
 
-        void emplace_back(const u32 sn, const u32 ts) {
+        void schedule_ack(const u32 sn, const u32 ts) {
             this->acklist.emplace_back(sn, ts);
         }
 
