@@ -89,6 +89,7 @@ namespace imkcpp {
             return this->snd_buf.empty();
         }
 
+        // TODO: Get rid of this
         std::deque<Segment>& get() {
             return this->snd_buf;
         }
