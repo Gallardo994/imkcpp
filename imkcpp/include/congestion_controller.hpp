@@ -5,10 +5,12 @@
 #include "types.hpp"
 #include "constants.hpp"
 #include "utility.hpp"
+#include "shared_ctx.hpp"
 #include "flusher.hpp"
 
 namespace imkcpp {
     class CongestionController {
+        SharedCtx& shared_ctx;
         Flusher& flusher;
 
         bool congestion_window = true;
@@ -29,7 +31,7 @@ namespace imkcpp {
         u32 probe_wait = 0; // How long we should wait before probing again
 
     public:
-        explicit CongestionController(Flusher& flusher) : flusher(flusher) {}
+        explicit CongestionController(Flusher& flusher, SharedCtx& shared_ctx) : flusher(flusher), shared_ctx(shared_ctx) {}
 
         void set_mss(const u32 mss) {
             this->mss = mss;
@@ -45,6 +47,10 @@ namespace imkcpp {
 
         [[nodiscard]] u32 get_receive_window() const {
             return this->rcv_wnd;
+        }
+
+        bool fits_receive_window(u32 sn) {
+            return sn < this->shared_ctx.rcv_nxt + this->get_receive_window();
         }
 
         void set_remote_window(const u32 rmt_wnd) {
@@ -75,30 +81,32 @@ namespace imkcpp {
             this->incr = this->mss;
         }
 
-        void packet_acked(const u32 latest_una, const u32 prev_una) {
-            if (latest_una > prev_una) {
-                if (this->cwnd < this->rmt_wnd) {
-                    const u32 mss = this->mss;
+        void adjust_parameters(const u32 latest_una, const u32 prev_una) {
+            if (latest_una <= prev_una) {
+                return;
+            }
 
-                    if (this->cwnd < this->ssthresh) {
-                        this->cwnd++;
-                        this->incr += mss;
-                    } else {
-                        if (this->incr < mss) {
-                            this->incr = mss;
-                        }
+            if (this->cwnd < this->rmt_wnd) {
+                const u32 mss = this->mss;
 
-                        this->incr += (mss * mss) / this->incr + (mss / 16);
-
-                        if ((this->cwnd + 1) * mss <= this->incr) {
-                            this->cwnd = (this->incr + mss - 1) / ((mss > 0) ? mss : 1);
-                        }
+                if (this->cwnd < this->ssthresh) {
+                    this->cwnd++;
+                    this->incr += mss;
+                } else {
+                    if (this->incr < mss) {
+                        this->incr = mss;
                     }
 
-                    if (this->cwnd > this->rmt_wnd) {
-                        this->cwnd = this->rmt_wnd;
-                        this->incr = this->rmt_wnd * mss;
+                    this->incr += (mss * mss) / this->incr + (mss / 16);
+
+                    if ((this->cwnd + 1) * mss <= this->incr) {
+                        this->cwnd = (this->incr + mss - 1) / ((mss > 0) ? mss : 1);
                     }
+                }
+
+                if (this->cwnd > this->rmt_wnd) {
+                    this->cwnd = this->rmt_wnd;
+                    this->incr = this->rmt_wnd * mss;
                 }
             }
         }

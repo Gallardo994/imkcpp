@@ -17,6 +17,7 @@
 #include "congestion_controller.hpp"
 #include "shared_ctx.hpp"
 #include "receiver.hpp"
+#include "sender_buffer.hpp"
 #include "sender.hpp"
 #include "ack_controller.hpp"
 #include "flusher.hpp"
@@ -28,14 +29,15 @@ namespace imkcpp {
     class ImKcpp final {
         SharedCtx shared_ctx{};
         Flusher flusher{shared_ctx};
+        SenderBuffer sender_buffer{shared_ctx};
 
         RtoCalculator rto_calculator{shared_ctx};
-        CongestionController congestion_controller{flusher};
+        CongestionController congestion_controller{flusher, shared_ctx};
 
-        AckController ack_controller{flusher, shared_ctx};
+        AckController ack_controller{flusher, rto_calculator, sender_buffer, shared_ctx};
 
         Receiver receiver{congestion_controller, shared_ctx};
-        Sender sender{congestion_controller, rto_calculator, flusher, ack_controller, shared_ctx};
+        Sender sender{congestion_controller, rto_calculator, flusher, sender_buffer, ack_controller, shared_ctx};
 
         bool updated = false;
         u32 current = 0; // TODO: Should probably move to shared_ctx as well, but idk

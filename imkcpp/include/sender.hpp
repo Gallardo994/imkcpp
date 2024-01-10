@@ -8,6 +8,7 @@
 #include "congestion_controller.hpp"
 #include "shared_ctx.hpp"
 #include "ack_controller.hpp"
+#include "sender_buffer.hpp"
 
 namespace imkcpp {
     // TODO: Move snd_buf to AckController as it is generally used there for ACKs information
@@ -15,11 +16,11 @@ namespace imkcpp {
         CongestionController& congestion_controller;
         RtoCalculator& rto_calculator;
         Flusher& flusher;
+        SenderBuffer& sender_buffer;
         AckController& ack_controller;
         SharedCtx& shared_ctx;
 
         std::deque<Segment> snd_queue{};
-        std::deque<Segment> snd_buf{};
 
         i32 fastresend = 0;
         i32 fastlimit = constants::IKCP_FASTACK_LIMIT;
@@ -32,11 +33,13 @@ namespace imkcpp {
         explicit Sender(CongestionController& congestion_controller,
                         RtoCalculator& rto_calculator,
                         Flusher& flusher,
+                        SenderBuffer& sender_buffer,
                         AckController& ack_controller,
                         SharedCtx& shared_ctx) :
                         congestion_controller(congestion_controller),
                         rto_calculator(rto_calculator),
                         flusher(flusher),
+                        sender_buffer(sender_buffer),
                         ack_controller(ack_controller),
                         shared_ctx(shared_ctx) {}
 
@@ -89,65 +92,13 @@ namespace imkcpp {
                 newseg.metadata.fastack = 0;
                 newseg.metadata.xmit = 0;
 
-                snd_buf.push_back(std::move(newseg));
+                sender_buffer.push_segment(newseg);
                 snd_queue.pop_front();
             }
         }
 
         [[nodiscard]] size_t estimate_segments_count(const size_t size) const {
             return std::max(static_cast<size_t>(1), (size + this->shared_ctx.mss - 1) / this->shared_ctx.mss);
-        }
-
-        void acknowledge_seqence_number(const u32 sn) {
-            for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
-                if (sn == it->header.sn) {
-                    this->snd_buf.erase(it);
-                    break;
-                }
-
-                if (time_delta(sn, it->header.sn) < 0) {
-                    break;
-                }
-
-                ++it;
-            }
-        }
-
-        void acknowledge_fastack(const u32 sn, const u32 ts) {
-            for (Segment& seg : this->snd_buf) {
-                if (time_delta(sn, seg.header.sn) < 0) {
-                    break;
-                }
-
-                if (sn != seg.header.sn) {
-#ifndef IKCP_FASTACK_CONSERVE
-                    seg.metadata.fastack++;
-#else
-                    if (time_delta(ts, seg.ts) >= 0) {
-                        seg.metadata.fastack++;
-                    }
-#endif
-                }
-            }
-        }
-
-        void clear_acknowledged(const u32 una) {
-            for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
-                if (time_delta(una, it->header.sn) > 0) {
-                    it = this->snd_buf.erase(it);
-                } else {
-                    break;
-                }
-            }
-        }
-
-        void shrink_buf() {
-            if (!this->snd_buf.empty()) {
-                const Segment& seg = this->snd_buf.front();
-                shared_ctx.snd_una = seg.header.sn;
-            } else {
-                shared_ctx.snd_una = shared_ctx.snd_nxt;
-            }
         }
 
         void set_fastresend(const i32 value) {
@@ -157,10 +108,8 @@ namespace imkcpp {
         }
 
         void set_nodelay(const u32 value) {
-            if (value >= 0) {
-                this->nodelay = value;
-                this->rto_calculator.set_min_rto(value > 0 ? constants::IKCP_RTO_NDL : constants::IKCP_RTO_MIN);
-            }
+            this->nodelay = value;
+            this->rto_calculator.set_min_rto(value > 0 ? constants::IKCP_RTO_NDL : constants::IKCP_RTO_MIN);
         }
 
         void flush_data_segments(const output_callback_t& output, const u32 current, const i32 unused_receive_window) {
@@ -174,7 +123,9 @@ namespace imkcpp {
             const u32 resent = (this->fastresend > 0) ? this->fastresend : 0xffffffff;
             const u32 rtomin = (this->nodelay == 0) ? (this->rto_calculator.get_rto() >> 3) : 0;
 
-            for (Segment& segment : this->snd_buf) {
+            auto& snd_buf = this->sender_buffer.get();
+
+            for (Segment& segment : snd_buf) {
                 bool needsend = false;
 
                 if (segment.metadata.xmit == 0) {
@@ -238,14 +189,14 @@ namespace imkcpp {
         }
 
         [[nodiscard]] std::optional<u32> get_earliest_transmit_delta(const u32 current) const {
-            if (this->snd_buf.empty()) {
+            if (this->sender_buffer.empty()) {
                 return std::nullopt;
             }
 
             constexpr u32 default_value = std::numeric_limits<u32>::max();
             u32 tm_packet = default_value;
 
-            for (const Segment& seg : this->snd_buf) {
+            for (const Segment& seg : this->sender_buffer.get()) {
                 if (seg.metadata.resendts <= current) {
                     return 0;
                 }

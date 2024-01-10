@@ -22,13 +22,6 @@ namespace imkcpp {
     public:
         explicit RtoCalculator(SharedCtx& shared_ctx) : shared_ctx(shared_ctx) {}
 
-        void ack_received(const u32 current, const u32 ts) {
-            if (time_delta(current, ts) >= 0) {
-                const i32 rtt = time_delta(current, ts);
-                this->update_rtt(rtt);
-            }
-        }
-
         void update_rtt(const i32 rtt) {
             if (this->srtt == 0) {
                 // First measurement

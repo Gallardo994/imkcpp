@@ -83,8 +83,7 @@ namespace imkcpp {
         }
 
         const u32 prev_una = shared_ctx.snd_una;
-        u32 maxack = 0, latest_ts = 0;
-        bool flag = false;
+        FastAckCtx fastack_ctx{};
 
         size_t offset = 0;
 
@@ -105,50 +104,27 @@ namespace imkcpp {
             }
 
             this->congestion_controller.set_remote_window(header.wnd);
-            this->sender.clear_acknowledged(header.una);
-            this->sender.shrink_buf();
+            this->ack_controller.una_received(header.una);
 
             switch (header.cmd) {
                 case commands::IKCP_CMD_ACK: {
-                    // TODO: This should probaby go through AckController first
-                    this->rto_calculator.ack_received(this->current, header.ts);
-
-                    if (this->ack_controller.should_acknowledge(header.sn)) {
-                        this->sender.acknowledge_seqence_number(header.sn);
-                    }
-
-                    this->sender.shrink_buf();
-
-                    if (!flag) {
-                        flag = true;
-                        maxack = header.sn;
-                        latest_ts = header.ts;
-                    } else {
-                        if (time_delta(header.sn, maxack) > 0) {
-    #ifndef IKCP_FASTACK_CONSERVE
-                            maxack = header.sn;
-                            latest_ts = header.ts;
-    #else
-                            if (time_delta(header.ts, latest_ts) > 0) {
-                                maxack = sn;
-                                latest_ts = ts;
-                            }
-    #endif
-                        }
-                    }
-
+                    this->ack_controller.ack_received(this->current, header.sn, header.ts);
+                    fastack_ctx.update(header.sn, header.ts);
                     break;
                 }
                 case commands::IKCP_CMD_PUSH: {
-                    if (time_delta(header.sn, shared_ctx.rcv_nxt + this->congestion_controller.get_receive_window()) < 0) {
-                        this->ack_controller.emplace_back(header.sn, header.ts);
-                        if (time_delta(header.sn, shared_ctx.rcv_nxt) >= 0) {
-                            Segment seg;
-                            seg.header = header; // TODO: Remove this copy
-                            seg.data.decode_from(data, offset, header.len);
+                    if (!this->congestion_controller.fits_receive_window(header.sn)) {
+                        break;
+                    }
 
-                            this->receiver.parse_data(seg);
-                        }
+                    this->ack_controller.emplace_back(header.sn, header.ts);
+
+                    if (header.sn >= shared_ctx.rcv_nxt) {
+                        Segment seg;
+                        seg.header = header; // TODO: Remove this copy
+                        seg.data.decode_from(data, offset, header.len);
+
+                        this->receiver.parse_data(seg);
                     }
                     break;
                 }
@@ -165,11 +141,8 @@ namespace imkcpp {
             }
         }
 
-        if (flag && this->ack_controller.should_acknowledge(maxack)) {
-            this->sender.acknowledge_fastack(maxack, latest_ts);
-        }
-
-        congestion_controller.packet_acked(shared_ctx.snd_una, prev_una);
+        this->ack_controller.acknowledge_fastack(fastack_ctx);
+        congestion_controller.adjust_parameters(shared_ctx.snd_una, prev_una);
 
         return offset;
     }
