@@ -17,7 +17,7 @@ C++20 implementation of KCP protocol with improvements ontop
 - Create and use `imkcpp::ImKcpp` object as you would use `ikcp` object
 
 # Documentation
-- TODO
+- Open DOCUMENTATION.html file in your browser
 
 # Special thanks
 - [skywind3000](https://github.com/skywind3000) for the original [kcp](https://github.com/skywind3000/kcp) implementation
