@@ -12,12 +12,12 @@
 
 namespace imkcpp {
     class Sender {
+        SharedCtx& shared_ctx;
         CongestionController& congestion_controller;
         RtoCalculator& rto_calculator;
         Flusher& flusher;
         SenderBuffer& sender_buffer;
         AckController& ack_controller;
-        SharedCtx& shared_ctx;
 
         std::deque<Segment> snd_queue{};
 
@@ -29,18 +29,18 @@ namespace imkcpp {
         u32 dead_link = constants::IKCP_DEADLINK;
 
     public:
-        explicit Sender(CongestionController& congestion_controller,
+        explicit Sender(SharedCtx& shared_ctx,
+                        CongestionController& congestion_controller,
                         RtoCalculator& rto_calculator,
                         Flusher& flusher,
                         SenderBuffer& sender_buffer,
-                        AckController& ack_controller,
-                        SharedCtx& shared_ctx) :
+                        AckController& ack_controller) :
+                        shared_ctx(shared_ctx),
                         congestion_controller(congestion_controller),
                         rto_calculator(rto_calculator),
                         flusher(flusher),
                         sender_buffer(sender_buffer),
-                        ack_controller(ack_controller),
-                        shared_ctx(shared_ctx) {}
+                        ack_controller(ack_controller) {}
 
         // Takes the payload, splits it into segments and puts them into the send queue.
         [[nodiscard]] tl::expected<size_t, error> send(const std::span<const std::byte> buffer) {

@@ -30,7 +30,7 @@ namespace imkcpp {
         u32 probe_wait = 0; // How long we should wait before probing again
 
     public:
-        explicit CongestionController(Flusher& flusher, SharedCtx& shared_ctx) : flusher(flusher), shared_ctx(shared_ctx) {}
+        explicit CongestionController(SharedCtx& shared_ctx, Flusher& flusher) : shared_ctx(shared_ctx), flusher(flusher) {}
 
         void set_congestion_window_enabled(const bool state) {
             this->congestion_window = state;

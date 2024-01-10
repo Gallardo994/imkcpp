@@ -27,16 +27,15 @@ namespace imkcpp {
     // TODO: Additionally, this will allow more compile-time optimizations.
     class ImKcpp final {
         SharedCtx shared_ctx{};
-        Flusher flusher{shared_ctx};
-        SenderBuffer sender_buffer{shared_ctx};
-
         RtoCalculator rto_calculator{shared_ctx};
-        CongestionController congestion_controller{flusher, shared_ctx};
+        Flusher flusher{shared_ctx};
+        CongestionController congestion_controller{shared_ctx, flusher};
 
-        AckController ack_controller{flusher, rto_calculator, sender_buffer, shared_ctx};
+        Receiver receiver{shared_ctx, congestion_controller};
 
-        Receiver receiver{congestion_controller, shared_ctx};
-        Sender sender{congestion_controller, rto_calculator, flusher, sender_buffer, ack_controller, shared_ctx};
+        SenderBuffer sender_buffer{shared_ctx};
+        AckController ack_controller{shared_ctx, flusher, rto_calculator, sender_buffer};
+        Sender sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, ack_controller};
 
         bool updated = false; // Whether update() was called at least once
         u32 current = 0; // Current / last time we updated the state

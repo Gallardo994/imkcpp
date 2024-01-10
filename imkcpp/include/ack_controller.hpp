@@ -53,8 +53,8 @@ namespace imkcpp {
         };
 
         SharedCtx& shared_ctx;
-        RtoCalculator& rto_calculator;
         Flusher& flusher;
+        RtoCalculator& rto_calculator;
         SenderBuffer& sender_buffer;
 
         std::vector<Ack> acklist{};
@@ -68,13 +68,13 @@ namespace imkcpp {
         }
 
     public:
-        explicit AckController(Flusher& flusher,
+        explicit AckController(SharedCtx& shared_ctx,
+                               Flusher& flusher,
                                RtoCalculator& rto_calculator,
-                               SenderBuffer& sender_buffer,
-                               SharedCtx& shared_ctx) :
+                               SenderBuffer& sender_buffer) :
                                shared_ctx(shared_ctx),
-                               rto_calculator(rto_calculator),
                                flusher(flusher),
+                               rto_calculator(rto_calculator),
                                sender_buffer(sender_buffer) {}
 
         void acknowledge_fastack(const FastAckCtx& fast_ack_ctx) {
