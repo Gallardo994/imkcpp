@@ -65,7 +65,7 @@ namespace imkcpp {
                 const size_t size = std::min(buffer.size() - offset, this->shared_ctx.mss);
                 assert(size > 0);
 
-                Segment& seg = snd_queue.emplace_back();
+                Segment& seg = this->snd_queue.emplace_back();
                 seg.data_assign({buffer.data() + offset, size});
                 seg.header.frg = static_cast<u8>(count - i - 1);
 
@@ -79,23 +79,23 @@ namespace imkcpp {
 
         // Flushes data segments from the send queue to the sender buffer.
         void move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window) {
-            while (!snd_queue.empty() && shared_ctx.snd_nxt < shared_ctx.snd_una + cwnd) {
-                Segment& newseg = snd_queue.front();
+            while (!this->snd_queue.empty() && this->shared_ctx.snd_nxt < this->shared_ctx.snd_una + cwnd) {
+                Segment& newseg = this->snd_queue.front();
 
                 newseg.header.conv = this->shared_ctx.conv;
                 newseg.header.cmd = commands::IKCP_CMD_PUSH;
                 newseg.header.wnd = unused_receive_window;
                 newseg.header.ts = current;
-                newseg.header.sn = shared_ctx.snd_nxt++;
-                newseg.header.una = shared_ctx.rcv_nxt;
+                newseg.header.sn = this->shared_ctx.snd_nxt++;
+                newseg.header.una = this->shared_ctx.rcv_nxt;
 
                 newseg.metadata.resendts = current;
                 newseg.metadata.rto = this->rto_calculator.get_rto();
                 newseg.metadata.fastack = 0;
                 newseg.metadata.xmit = 0;
 
-                sender_buffer.push_segment(newseg);
-                snd_queue.pop_front();
+                this->sender_buffer.push_segment(newseg);
+                this->snd_queue.pop_front();
             }
         }
 
@@ -165,10 +165,10 @@ namespace imkcpp {
                 if (needsend) {
                     segment.header.ts = current;
                     segment.header.wnd = unused_receive_window;
-                    segment.header.una = shared_ctx.rcv_nxt;
+                    segment.header.una = this->shared_ctx.rcv_nxt;
 
-                    flusher.flush_if_does_not_fit(output, segment.data_size());
-                    flusher.encode(segment);
+                    this->flusher.flush_if_does_not_fit(output, segment.data_size());
+                    this->flusher.encode(segment);
 
                     if (segment.metadata.xmit >= this->dead_link) {
                         this->shared_ctx.set_state(State::DeadLink);
@@ -180,7 +180,7 @@ namespace imkcpp {
             }
 
             if (change) {
-                this->congestion_controller.resent(shared_ctx.snd_nxt - shared_ctx.snd_una, resent);
+                this->congestion_controller.resent(this->shared_ctx.snd_nxt - this->shared_ctx.snd_una, resent);
             }
 
             if (lost) {

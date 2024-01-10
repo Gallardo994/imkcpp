@@ -134,12 +134,12 @@ namespace imkcpp {
             for (const Ack& ack : this->acklist) {
                 // TODO: Return information back to the caller
 
-                flusher.flush_if_full(output);
+                this->flusher.flush_if_full(output);
 
                 base_segment.header.sn = ack.sn;
                 base_segment.header.ts = ack.ts;
 
-                flusher.encode(base_segment);
+                this->flusher.encode(base_segment);
             }
 
             this->acklist.clear();

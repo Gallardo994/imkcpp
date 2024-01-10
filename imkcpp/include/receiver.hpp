@@ -98,7 +98,7 @@ namespace imkcpp {
 
                 this->rcv_queue.push_back(std::move(seg));
                 this->rcv_buf.pop_front();
-                shared_ctx.rcv_nxt++;
+                this->shared_ctx.rcv_nxt++;
             }
         }
 
@@ -107,7 +107,7 @@ namespace imkcpp {
             bool repeat = false;
 
             // TODO: Partially duplicates logic in imkcpp.hpp. Should probably stay here
-            if (sn >= shared_ctx.rcv_nxt + this->congestion_controller.get_receive_window() || sn < shared_ctx.rcv_nxt) {
+            if (sn >= this->shared_ctx.rcv_nxt + this->congestion_controller.get_receive_window() || sn < this->shared_ctx.rcv_nxt) {
                 return;
             }
 

@@ -167,17 +167,17 @@ namespace imkcpp {
             // TODO: Return information back to the caller
 
             if (this->has_probe_flag(constants::IKCP_ASK_SEND)) {
-                flusher.flush_if_full(output);
+                this->flusher.flush_if_full(output);
 
                 base_segment.header.cmd = commands::IKCP_CMD_WASK;
-                flusher.encode(base_segment);
+                this->flusher.encode(base_segment);
             }
 
             if (this->has_probe_flag(constants::IKCP_ASK_TELL)) {
-                flusher.flush_if_full(output);
+                this->flusher.flush_if_full(output);
 
                 base_segment.header.cmd = commands::IKCP_CMD_WINS;
-                flusher.encode(base_segment);
+                this->flusher.encode(base_segment);
             }
 
             this->reset_probe_flags();

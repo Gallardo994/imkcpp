@@ -83,7 +83,7 @@ namespace imkcpp {
         explicit Segment() = default;
 
         void encode_to(const std::span<std::byte> buf, size_t& offset) const {
-            assert(buf.size() >= constants::IKCP_OVERHEAD + header.len);
+            assert(buf.size() >= constants::IKCP_OVERHEAD + this->header.len);
             assert(this->header.len == this->data.data.size());
 
             this->header.encode_to(buf, offset);
