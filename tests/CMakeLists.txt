@@ -14,5 +14,4 @@ add_executable(imkcpp_tests
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/imkcpp/include)
-target_link_libraries(imkcpp_tests imkcpp)
 target_link_libraries(imkcpp_tests gtest gtest_main gmock gmock_main)

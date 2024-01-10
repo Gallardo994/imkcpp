@@ -13,4 +13,4 @@ add_executable(imkcpp_benchmarks
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/imkcpp/include)
-target_link_libraries(imkcpp_benchmarks benchmark::benchmark imkcpp)
+target_link_libraries(imkcpp_benchmarks benchmark::benchmark)

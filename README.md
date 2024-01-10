@@ -12,9 +12,9 @@ C++20 implementation of KCP protocol with improvements ontop
 - Upstream repository has unmerged bugfixes like [this one](https://github.com/skywind3000/kcp/pull/291)
 
 # How to use
-- Copy `imkcpp/include` and `imkcpp/src` to your project
+- Copy `imkcpp/include` to your project
 - Include `imkcpp.hpp` in your source code
-- Create and use `imkcpp` object as you would use `ikcp` object
+- Create and use `imkcpp::ImKcpp` object as you would use `ikcp` object
 
 # Documentation
 - TODO

@@ -18,7 +18,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND ENABLE_ASAN)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=address")
 endif()
 
-add_subdirectory(imkcpp)
 add_subdirectory(tests)
 if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_subdirectory(benchmarks)
