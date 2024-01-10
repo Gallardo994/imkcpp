@@ -47,7 +47,8 @@ namespace imkcpp {
                 }
 
                 rcv_queue.push_back(std::move(seg));
-                rcv_buf.pop_front();
+
+                this->rcv_buf.pop_front();
                 this->shared_ctx.rcv_nxt++;
             }
         }
