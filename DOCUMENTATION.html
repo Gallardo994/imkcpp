@@ -803,9 +803,9 @@ auto check(const u32 current);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Checks when the next update() should be called.</p>
 <h4 class="method"><a id="create_service_segment">create_service_segment</a></h4>
-<p class="description">Current / last time we updated the state</p>
+<p class="description">Time when we will probably flush the data next time</p>
 <p class="code">
 nodiscard]] auto create_service_segment(const i32 unused_receive_window);</p>
 <h5 class="parameters">Parameters</h5>
@@ -814,13 +814,13 @@ nodiscard]] auto create_service_segment(const i32 unused_receive_window);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description">Time when we will probably flush the data next time</p>
+<p class="description">Creates a new service segment for non-data packets.</p>
 <h4 class="method"><a id="estimate_max_payload_size">estimate_max_payload_size</a></h4>
 <p class="description"></p>
 <p class="code">
 nodiscard]] auto estimate_max_payload_size(void);</p>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Calculates the maximum payload size that can be sent in a single send() call.</p>
 <h4 class="method"><a id="estimate_segments_count">estimate_segments_count</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -831,7 +831,7 @@ nodiscard]] auto estimate_segments_count(const size_t size);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Calculates the number of segments required to send the given amount of data.</p>
 <h4 class="method"><a id="flush">flush</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -842,25 +842,25 @@ auto flush(const output_callback_t &amp; callback);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Flushes the data to the output callback.</p>
 <h4 class="method"><a id="get_max_segment_size">get_max_segment_size</a></h4>
 <p class="description"></p>
 <p class="code">
 nodiscard]] auto get_max_segment_size(void);</p>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Gets current maximum segment size.</p>
 <h4 class="method"><a id="get_mtu">get_mtu</a></h4>
 <p class="description"></p>
 <p class="code">
 nodiscard]] auto get_mtu(void);</p>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Gets current maximum transmission unit.</p>
 <h4 class="method"><a id="get_state">get_state</a></h4>
 <p class="description"></p>
 <p class="code">
 nodiscard]] auto get_state(void);</p>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Gets the current state.</p>
 <h4 class="method"><a id="input">input</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -873,7 +873,7 @@ auto input(const std::span const std::byte data, tl::expected size_t);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Receives data from the transport layer.</p>
 <h4 class="method"><a id="peek_size">peek_size</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -884,7 +884,7 @@ nodiscard]] auto peek_size(const - tl::expected size_t);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Gets bytes count of the available data in the receive queue.</p>
 <h4 class="method"><a id="recv">recv</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -897,7 +897,7 @@ auto recv(const std::span std::byte buffer, tl::expected size_t);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Reads data from the receive queue.</p>
 <h4 class="method"><a id="send">send</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -910,7 +910,7 @@ auto send(const std::span const std::byte buffer, tl::expected size_t);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Sends data.</p>
 <h4 class="method"><a id="set_congestion_window_enabled">set_congestion_window_enabled</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -921,7 +921,7 @@ auto set_congestion_window_enabled(const bool state);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Enables or disables congestion window.</p>
 <h4 class="method"><a id="set_interval">set_interval</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -932,7 +932,7 @@ auto set_interval(const u32 interval);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Sets the internal clock interval in milliseconds.</p>
 <h4 class="method"><a id="set_mtu">set_mtu</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -945,7 +945,7 @@ auto set_mtu(const u32 mtu, tl::expected size_t);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Sets the maximum transmission unit.</p>
 <h4 class="method"><a id="set_nodelay">set_nodelay</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -980,7 +980,7 @@ auto set_wndsize(const u32 sndwnd, const u32 rcvwnd);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Sets receive and send windows.</p>
 <h4 class="method"><a id="update">update</a></h4>
 <p class="description"></p>
 <p class="code">
@@ -993,7 +993,7 @@ auto update(const u32 current, const output_callback_t &amp; callback);</p>
 </tr>
 </tbody></table>
 <h5 class="returnvalue">Return Value</h5>
-<p class="description"></p>
+<p class="description">Updates the state and performs flush if necessary.</p>
 <h3 class="class"><a id="imkcpp::Receiver">imkcpp::Receiver</a></h3>
 <p class="description"></p>
 <p class="code">class imkcpp::Receiver {<br>

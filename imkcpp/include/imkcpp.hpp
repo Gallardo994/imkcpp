@@ -43,6 +43,7 @@ namespace imkcpp {
         u32 current = 0; // Current / last time we updated the state
         u32 ts_flush = constants::IKCP_INTERVAL; // Time when we will probably flush the data next time
 
+        // Creates a new service segment for non-data packets.
         [[nodiscard]] auto create_service_segment(const i32 unused_receive_window) const -> Segment {
             Segment seg;
 
@@ -64,6 +65,7 @@ namespace imkcpp {
             this->set_mtu(constants::IKCP_MTU_DEF);
         }
 
+        // Sets the internal clock interval in milliseconds.
         auto set_interval(const u32 interval) -> void {
             this->shared_ctx.set_interval(std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000)));
         }
@@ -76,6 +78,7 @@ namespace imkcpp {
             this->sender.set_fastresend(resend);
         }
 
+        // Sets the maximum transmission unit.
         auto set_mtu(const u32 mtu) -> tl::expected<size_t, error> {
             if (mtu <= constants::IKCP_OVERHEAD) {
                 return tl::unexpected(error::less_than_header_size);
@@ -87,6 +90,7 @@ namespace imkcpp {
             return mtu;
         }
 
+        // Sets receive and send windows.
         auto set_wndsize(const u32 sndwnd, const u32 rcvwnd) -> void {
             if (sndwnd > 0) {
                 this->congestion_controller.set_send_window(sndwnd);
@@ -98,10 +102,12 @@ namespace imkcpp {
             }
         }
 
+        // Enables or disables congestion window.
         auto set_congestion_window_enabled(const bool state) -> void {
             this->congestion_controller.set_congestion_window_enabled(state);
         }
 
+        // Receives data from the transport layer.
         auto input(const std::span<const std::byte> data) -> tl::expected<size_t, error> {
             if (data.size() < constants::IKCP_OVERHEAD) {
                 return tl::unexpected(error::less_than_header_size);
@@ -182,14 +188,17 @@ namespace imkcpp {
             return offset;
         }
 
+        // Reads data from the receive queue.
         auto recv(const std::span<std::byte> buffer) -> tl::expected<size_t, error> {
             return this->receiver.recv(buffer);
         }
 
+        // Sends data.
         auto send(const std::span<const std::byte> buffer) -> tl::expected<size_t, error> {
             return this->sender.send(buffer);
         }
 
+        // Checks when the next update() should be called.
         auto check(const u32 current) -> u32 {
             if (!this->updated) {
                 return current;
@@ -217,6 +226,7 @@ namespace imkcpp {
             return current + std::min(this->shared_ctx.get_interval(), minimal);
         }
 
+        // Updates the state and performs flush if necessary.
         auto update(const u32 current, const output_callback_t& callback) -> FlushResult {
             this->current = current;
 
@@ -246,6 +256,7 @@ namespace imkcpp {
             return {};
         }
 
+        // Flushes the data to the output callback.
         auto flush(const output_callback_t& callback) -> FlushResult {
             // TODO: Populate result with information
             FlushResult result;
@@ -273,25 +284,32 @@ namespace imkcpp {
             return result;
         }
 
+        // Gets the current state.
         [[nodiscard]] auto get_state() const -> State {
             return this->shared_ctx.get_state();
         }
 
+        // Gets current maximum transmission unit.
         [[nodiscard]] auto get_mtu() const -> u32 {
             return this->shared_ctx.get_mtu();
         }
+
+        // Gets current maximum segment size.
         [[nodiscard]] auto get_max_segment_size() const -> u32 {
             return this->shared_ctx.get_mss();
         }
 
+        // Gets bytes count of the available data in the receive queue.
         [[nodiscard]] auto peek_size() const -> tl::expected<size_t, error> {
             return this->receiver.peek_size();
         }
 
+        // Calculates the number of segments required to send the given amount of data.
         [[nodiscard]] auto estimate_segments_count(const size_t size) const -> size_t {
             return this->sender.estimate_segments_count(size);
         }
 
+        // Calculates the maximum payload size that can be sent in a single send() call.
         [[nodiscard]] auto estimate_max_payload_size() const -> size_t {
             const size_t max_segments_count = std::min(
                 static_cast<size_t>(this->congestion_controller.get_send_window()),
