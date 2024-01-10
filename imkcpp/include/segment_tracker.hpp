@@ -3,6 +3,7 @@
 #include "types.hpp"
 
 namespace imkcpp {
+    // TODO: Add logical methods like "can_receive" and "is_in_flight", etc
     class SegmentTracker {
         u32 snd_una = 0; // Sequence number of the first unacknowledged segment.
         u32 snd_nxt = 0; // Sequence number of the next segment to be sent.
