@@ -286,5 +286,14 @@ namespace imkcpp {
         [[nodiscard]] auto estimate_segments_count(const size_t size) const -> size_t {
             return this->sender.estimate_segments_count(size);
         }
+
+        [[nodiscard]] auto estimate_max_payload_size() const -> size_t {
+            const size_t max_segments_count = std::min(
+                static_cast<size_t>(this->congestion_controller.get_send_window()),
+                static_cast<size_t>(std::numeric_limits<u8>::max())
+                );
+
+            return this->shared_ctx.mss * max_segments_count;
+        }
     };
 }
