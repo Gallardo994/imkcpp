@@ -180,7 +180,7 @@ namespace imkcpp {
             }
 
             if (change) {
-                this->congestion_controller.resent(this->shared_ctx.snd_nxt - this->shared_ctx.snd_una, resent);
+                this->congestion_controller.packet_resent(this->shared_ctx.snd_nxt - this->shared_ctx.snd_una, resent);
             }
 
             if (lost) {
