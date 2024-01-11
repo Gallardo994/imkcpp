@@ -110,6 +110,10 @@ namespace imkcpp {
             this->sender.set_deadlink(threshold);
         }
 
+        [[nodiscard]] u32 get_total_retransmits() const {
+            return this->sender.get_total_retransmits();
+        }
+
         // Receives data from the transport layer.
         // TODO: Return more detailed data on what was received like update()/flush() does.
         auto input(const std::span<const std::byte> data) -> tl::expected<InputResult, error> {
