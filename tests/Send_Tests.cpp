@@ -17,6 +17,7 @@ TEST(Send_Tests, Send_ValidValues) {
     struct DurationResult {
         std::chrono::milliseconds duration;
         size_t size;
+        size_t segments_count;
     };
     std::vector<DurationResult> durations(tests_count);
 
@@ -112,7 +113,7 @@ TEST(Send_Tests, Send_ValidValues) {
         const auto end = std::chrono::steady_clock::now();
 
         const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        durations.emplace_back(duration, size);
+        durations.emplace_back(duration, size, segments_count);
     }
 
     auto total_duration = std::accumulate(durations.begin(), durations.end(), std::chrono::milliseconds(0),
@@ -124,8 +125,8 @@ TEST(Send_Tests, Send_ValidValues) {
     auto average_duration = total_duration / durations.size();
 
     std::cout << "Total time taken: " << total_duration.count() << " milliseconds" << std::endl;
-    std::cout << "Best result: " << min_it->duration.count() << " milliseconds, Size: " << min_it->size << std::endl;
-    std::cout << "Worst result: " << max_it->duration.count() << " milliseconds, Size: " << max_it->size << std::endl;
+    std::cout << "Best result: " << min_it->duration.count() << " milliseconds, Size: " << min_it->size << ", Segments: " << min_it->segments_count << std::endl;
+    std::cout << "Worst result: " << max_it->duration.count() << " milliseconds, Size: " << max_it->size << ", Segments: " << max_it->segments_count << std::endl;
     std::cout << "Average result: " << average_duration.count() << " milliseconds" << std::endl;
 }
 
