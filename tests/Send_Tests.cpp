@@ -15,7 +15,7 @@ TEST(Send_Tests, Send_ValidValues) {
     constexpr size_t tests_count = (max_data_size - min_data_size) / step;
 
     struct DurationResult {
-        std::chrono::milliseconds duration;
+        std::chrono::microseconds duration;
         size_t size;
         size_t segments_count;
     };
@@ -112,11 +112,11 @@ TEST(Send_Tests, Send_ValidValues) {
 
         const auto end = std::chrono::steady_clock::now();
 
-        const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        const auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
         durations.emplace_back(duration, size, segments_count);
     }
 
-    auto total_duration = std::accumulate(durations.begin(), durations.end(), std::chrono::milliseconds(0),
+    auto total_duration = std::accumulate(durations.begin(), durations.end(), std::chrono::microseconds(0),
                                       [](const auto& sum, const auto& dur) { return sum + dur.duration; });
 
     auto [min_it, max_it] = std::minmax_element(durations.begin(), durations.end(),
@@ -124,10 +124,10 @@ TEST(Send_Tests, Send_ValidValues) {
 
     auto average_duration = total_duration / durations.size();
 
-    std::cout << "Total time taken: " << total_duration.count() << " milliseconds" << std::endl;
-    std::cout << "Best result: " << min_it->duration.count() << " milliseconds, Size: " << min_it->size << ", Segments: " << min_it->segments_count << std::endl;
-    std::cout << "Worst result: " << max_it->duration.count() << " milliseconds, Size: " << max_it->size << ", Segments: " << max_it->segments_count << std::endl;
-    std::cout << "Average result: " << average_duration.count() << " milliseconds" << std::endl;
+    std::cout << "Total time taken: " << total_duration.count() << " microseconds" << std::endl;
+    std::cout << "Best result: " << min_it->duration.count() << " microseconds, Size: " << min_it->size << ", Segments: " << min_it->segments_count << std::endl;
+    std::cout << "Worst result: " << max_it->duration.count() << " microseconds, Size: " << max_it->size << ", Segments: " << max_it->segments_count << std::endl;
+    std::cout << "Average result: " << average_duration.count() << " microseconds" << std::endl;
 }
 
 TEST(Send_Tests, Send_FragmentedValidValues) {
