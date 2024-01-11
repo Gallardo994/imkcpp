@@ -46,9 +46,9 @@ namespace imkcpp {
 
         // Other
 
-        [[nodiscard]] u32 get_packets_in_flight() const {
+        [[nodiscard]] u32 get_packets_in_flight_count() const {
             assert(this->snd_nxt >= this->snd_una);
-            
+
             return this->snd_nxt - this->snd_una;
         }
 

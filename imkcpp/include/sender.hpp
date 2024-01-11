@@ -182,7 +182,7 @@ namespace imkcpp {
             }
 
             if (change) {
-                this->congestion_controller.packets_resent(this->segment_tracker.get_packets_in_flight(), resent);
+                this->congestion_controller.packets_resent(this->segment_tracker.get_packets_in_flight_count(), resent);
             }
 
             if (lost) {
