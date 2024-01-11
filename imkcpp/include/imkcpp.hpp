@@ -152,9 +152,13 @@ namespace imkcpp {
                         break;
                     }
                     case commands::IKCP_CMD_PUSH: {
-                        if (!this->congestion_controller.fits_receive_window(header.sn)) {
+                        const auto drop_push = [&] {
                             offset += header.len;
                             input_result.dropped_push_count++;
+                        };
+
+                        if (!this->congestion_controller.fits_receive_window(header.sn)) {
+                            drop_push();
                             break;
                         }
 
@@ -167,8 +171,7 @@ namespace imkcpp {
                             this->receiver_buffer.emplace_segment(header, segment_data);
                             this->receiver.move_receive_buffer_to_queue();
                         } else {
-                            offset += header.len;
-                            input_result.dropped_push_count++;
+                            drop_push();
                         }
                         break;
                     }
