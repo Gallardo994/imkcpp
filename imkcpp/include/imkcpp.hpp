@@ -25,6 +25,8 @@
 namespace imkcpp {
     template <size_t MTU>
     class ImKcpp final {
+        static_assert(MTU > constants::IKCP_OVERHEAD, "MTU is too small");
+
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
 
         SharedCtx shared_ctx{};

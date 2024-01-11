@@ -8,7 +8,7 @@
 
 namespace imkcpp {
     template <size_t MTU>
-    class ReceiverBuffer {
+    class ReceiverBuffer final {
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
 
         CongestionController<MTU>& congestion_controller;

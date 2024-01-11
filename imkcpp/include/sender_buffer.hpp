@@ -7,7 +7,7 @@
 #include "segment_tracker.hpp"
 
 namespace imkcpp {
-    class SenderBuffer {
+    class SenderBuffer final {
         SharedCtx& shared_ctx;
         SegmentTracker& segment_tracker;
 

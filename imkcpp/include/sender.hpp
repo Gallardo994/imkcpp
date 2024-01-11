@@ -14,7 +14,7 @@
 
 namespace imkcpp {
     template <size_t MTU>
-    class Sender {
+    class Sender final {
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
 
         SharedCtx& shared_ctx;

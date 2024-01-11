@@ -9,7 +9,7 @@
 
 namespace imkcpp {
     // FastAckCtx is used to track the latest received segment and its timestamp.
-    class FastAckCtx {
+    class FastAckCtx final {
         bool valid = false; // At least one ack has been received
         u32 maxack = 0; // The latest received segment number
         u32 latest_ts = 0; // The timestamp of the latest received segment
@@ -46,7 +46,7 @@ namespace imkcpp {
     };
 
     template <size_t MTU>
-    class AckController {
+    class AckController final {
         struct Ack {
             u32 sn = 0; // Segment number
             u32 ts = 0; // Timestamp

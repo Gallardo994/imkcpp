@@ -1,7 +1,7 @@
 #pragma once
 
 namespace imkcpp {
-    struct InputResult {
+    struct InputResult final {
         u32 cmd_ack_count = 0; // Number of ACK commands received
         u32 cmd_wask_count = 0; // Number of WASK commands received
         u32 cmd_wins_count = 0; // Number of WINS commands received
@@ -34,7 +34,7 @@ namespace imkcpp {
         }
     };
 
-    struct FlushResult {
+    struct FlushResult final {
         u32 cmd_ack_count = 0; // Number of ACK commands sent
         u32 cmd_wask_count = 0; // Number of WASK commands sent
         u32 cmd_wins_count = 0; // Number of WINS commands sent

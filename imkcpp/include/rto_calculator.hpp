@@ -8,7 +8,7 @@
 namespace imkcpp {
     // https://www.computer-networking.info/1st/html/transport/tcp.html
     // https://datatracker.ietf.org/doc/html/rfc2988.html#section-2
-    class RtoCalculator {
+    class RtoCalculator final {
         SharedCtx& shared_ctx;
 
         u32 srtt = 0; // Smoothed round trip time

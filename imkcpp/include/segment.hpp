@@ -7,7 +7,7 @@
 namespace imkcpp {
     // TODO: Too many public members, make them private. Also, make the Segment class a friend of the SegmentHeader class.
     // TODO: The logic is heavily reliant on the fact that everything is public. Rework this.
-    struct SegmentHeader {
+    struct SegmentHeader final {
         u32 conv = 0; // Conversation ID. // TODO: Does this need to be 4 bytes?
         u8 cmd = 0; // Command type.
         u8 frg = 0; // Fragment.
@@ -44,14 +44,14 @@ namespace imkcpp {
         }
     };
 
-    struct SegmentMetadata {
+    struct SegmentMetadata final {
         u32 resendts = 0; // Timestamp for retransmission.
         u32 rto = 0; // Retransmission timeout.
         u32 fastack = 0; // Number of times this segment has been acknowledged without any intervening segments being acknowledged.
         u32 xmit = 0; // Number of times this segment has been transmitted.
     };
 
-    struct SegmentData {
+    struct SegmentData final {
         std::vector<std::byte> data{};
 
         explicit SegmentData() = default;
@@ -79,7 +79,7 @@ namespace imkcpp {
         }
     };
 
-    struct Segment {
+    struct Segment final {
         SegmentHeader header{};
         SegmentMetadata metadata{};
         SegmentData data{};

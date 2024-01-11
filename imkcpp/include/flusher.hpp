@@ -9,7 +9,7 @@
 
 namespace imkcpp {
     template <size_t MTU>
-    class Flusher {
+    class Flusher final {
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
 
         SharedCtx& shared_ctx;

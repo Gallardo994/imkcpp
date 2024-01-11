@@ -3,7 +3,7 @@
 #include "types.hpp"
 
 namespace imkcpp {
-    class SharedCtx {
+    class SharedCtx final {
         State state = State::Alive; // Current state of the connection.
 
         u32 conv = 0; // Conversation ID.
