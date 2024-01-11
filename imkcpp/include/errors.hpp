@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace imkcpp {
     enum class error {
         none = 0,
