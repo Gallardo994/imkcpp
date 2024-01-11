@@ -115,6 +115,10 @@ namespace imkcpp {
             this->fastresend = value;
         }
 
+        void set_fastlimit(const u32 value) {
+            this->fastlimit = value;
+        }
+
         void set_nodelay(const u32 value) {
             this->nodelay = value;
             this->rto_calculator.set_min_rto(value > 0 ? constants::IKCP_RTO_NDL : constants::IKCP_RTO_MIN);

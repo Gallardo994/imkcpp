@@ -66,7 +66,7 @@ namespace imkcpp {
             this->shared_ctx.set_conv(conv);
         }
 
-        // Sets the internal clock interval in milliseconds.
+        // Sets the internal clock interval in milliseconds. Must be between 10 and 5000.
         auto set_interval(const u32 interval) -> void {
             this->shared_ctx.set_interval(std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000)));
         }
@@ -75,8 +75,12 @@ namespace imkcpp {
             this->sender.set_nodelay(nodelay);
         }
 
-        auto set_resend(const u32 resend) -> void {
-            this->sender.set_fastresend(resend);
+        auto set_fastresend(const u32 fastresend) -> void {
+            this->sender.set_fastresend(fastresend);
+        }
+
+        auto set_fastlimit(const u32 limit) -> void {
+            this->sender.set_fastlimit(limit);
         }
 
         // Sets the maximum number of segments that can be sent in a single update() call.
