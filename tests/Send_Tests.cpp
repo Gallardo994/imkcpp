@@ -1,6 +1,8 @@
 #include "gtest/gtest.h"
 #include "imkcpp.hpp"
 #include "commands.hpp"
+#include <cstdio>
+#include <numeric>
 
 TEST(Send_Tests, Send_ValidValues) {
     using namespace imkcpp;
@@ -9,6 +11,16 @@ TEST(Send_Tests, Send_ValidValues) {
     constexpr size_t min_data_size = 1;
     constexpr size_t max_data_size = max_segment_size * 255;
     constexpr size_t step = max_segment_size / 2;
+
+    constexpr size_t tests_count = (max_data_size - min_data_size) / step;
+
+    struct DurationResult {
+        std::chrono::milliseconds duration;
+        size_t size;
+    };
+    std::vector<DurationResult> durations(tests_count);
+
+    std::cout << "Running " << tests_count << " Send_ValidValues tests" << std::endl;
 
     for (size_t size = min_data_size; size < max_data_size; size += step) {
         ImKcpp<constants::IKCP_MTU_DEF> kcp_output(0);
@@ -35,6 +47,8 @@ TEST(Send_Tests, Send_ValidValues) {
         for (u32 j = 0; j < size; ++j) {
             send_buffer[j] = static_cast<std::byte>(j);
         }
+
+        const auto start = std::chrono::steady_clock::now();
 
         auto send_result = kcp_output.send(send_buffer);
         ASSERT_TRUE(send_result.has_value()) << err_to_str(send_result.error());
@@ -94,7 +108,25 @@ TEST(Send_Tests, Send_ValidValues) {
         kcp_output.update(5000, [](std::span<const std::byte>) {
             FAIL() << "Should not be called because all data should be acknowledged";
         });
+
+        const auto end = std::chrono::steady_clock::now();
+
+        const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        durations.emplace_back(duration, size);
     }
+
+    auto total_duration = std::accumulate(durations.begin(), durations.end(), std::chrono::milliseconds(0),
+                                      [](const auto& sum, const auto& dur) { return sum + dur.duration; });
+
+    auto [min_it, max_it] = std::minmax_element(durations.begin(), durations.end(),
+                                                [](const auto& a, const auto& b) { return a.duration < b.duration; });
+
+    auto average_duration = total_duration / durations.size();
+
+    std::cout << "Total time taken: " << total_duration.count() << " milliseconds" << std::endl;
+    std::cout << "Best result: " << min_it->duration.count() << " milliseconds, Size: " << min_it->size << std::endl;
+    std::cout << "Worst result: " << max_it->duration.count() << " milliseconds, Size: " << max_it->size << std::endl;
+    std::cout << "Average result: " << average_duration.count() << " milliseconds" << std::endl;
 }
 
 TEST(Send_Tests, Send_FragmentedValidValues) {
