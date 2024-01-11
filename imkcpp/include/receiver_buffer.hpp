@@ -23,7 +23,7 @@ namespace imkcpp {
             bool repeat = false;
 
             assert(this->segment_tracker.should_receive(sn));
-            assert(sn >= this->segment_tracker.get_rcv_nxt() + this->congestion_controller.get_receive_window());
+            assert(this->congestion_controller.fits_receive_window(sn));
 
             const auto it = std::find_if(this->rcv_buf.rbegin(), this->rcv_buf.rend(), [sn](const Segment& seg) {
                 return sn <= seg.header.sn;
