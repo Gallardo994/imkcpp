@@ -30,7 +30,7 @@ namespace imkcpp {
         }
 
     public:
-        explicit Flusher(SharedCtx& shared_ctx) : shared_ctx(shared_ctx), buffer() {}
+        explicit Flusher(SharedCtx& shared_ctx) : shared_ctx(shared_ctx) {}
 
         // Returns true if the buffer is empty.
         [[nodiscard]] bool is_empty() const {

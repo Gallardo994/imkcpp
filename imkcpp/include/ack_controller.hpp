@@ -48,10 +48,10 @@ namespace imkcpp {
     template <size_t MTU>
     class AckController {
         struct Ack {
-            u32 sn; // Segment number
-            u32 ts; // Timestamp
+            u32 sn = 0; // Segment number
+            u32 ts = 0; // Timestamp
 
-            explicit Ack() : sn(0), ts(0) { }
+            explicit Ack() = default;
             explicit Ack(const u32 sn, const u32 ts) : sn(sn), ts(ts) { }
         };
 

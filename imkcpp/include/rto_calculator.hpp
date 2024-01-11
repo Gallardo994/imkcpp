@@ -14,13 +14,12 @@ namespace imkcpp {
         u32 srtt = 0; // Smoothed round trip time
         u32 rttvar = 0; // Round trip time variation
         u32 rto = constants::IKCP_RTO_DEF; // Retransmission timeout
+        u32 last_rtt = 0;
 
         u32 minrto = constants::IKCP_RTO_MIN; // Minimum retransmission timeout
         u32 maxrto = constants::IKCP_RTO_MAX; // Maximum retransmission timeout
 
     public:
-        u32 last_rtt = 0;
-
         explicit RtoCalculator(SharedCtx& shared_ctx) : shared_ctx(shared_ctx) {}
 
         void update_rtt(const i32 rtt) {
@@ -64,6 +63,10 @@ namespace imkcpp {
 
         [[nodiscard]] u32 get_rto() const {
             return this->rto;
+        }
+
+        [[nodiscard]] u32 get_last_rtt() const {
+            return this->last_rtt;
         }
     };
 }
