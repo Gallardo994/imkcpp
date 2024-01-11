@@ -11,6 +11,7 @@
 #include "utility.hpp"
 
 namespace imkcpp {
+    // TODO: Benchmark against std::vector instead of std::deque
     template <size_t MTU>
     class Receiver {
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
