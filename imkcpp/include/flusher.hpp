@@ -14,7 +14,7 @@ namespace imkcpp {
 
         SharedCtx& shared_ctx;
 
-        std::vector<std::byte> buffer{};
+        std::vector<std::byte> buffer{MAX_SEGMENT_SIZE};
         size_t offset = 0;
 
         // Flushes the buffer to the given output
