@@ -5,7 +5,7 @@
 TEST(Send_Tests, Send_ValidValues) {
     using namespace imkcpp;
 
-    constexpr size_t max_segment_size = constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD;
+    constexpr size_t max_segment_size = MTU_TO_MSS<constants::IKCP_MTU_DEF>();
     constexpr size_t min_data_size = 1;
     constexpr size_t max_data_size = max_segment_size * 255;
     constexpr size_t step = max_segment_size / 2;
@@ -44,7 +44,9 @@ TEST(Send_Tests, Send_ValidValues) {
         ASSERT_EQ(update_result.cmd_ack_count, 0);
         ASSERT_EQ(update_result.cmd_wask_count, 0);
         ASSERT_EQ(update_result.cmd_wins_count, 0);
-        ASSERT_EQ(update_result.retransmitted_count, 0);
+        ASSERT_EQ(update_result.timeout_retransmitted_count, 0);
+        ASSERT_EQ(update_result.fast_retransmitted_count, 0);
+        ASSERT_GT(update_result.total_bytes_sent, 0);
 
         for (auto& captured : captured_data) {
             auto input_result = kcp_input.input(captured);
