@@ -68,7 +68,7 @@ TEST(Send_Tests, Send_FragmentedValidValues) {
     kcp.set_send_window(2048);
     kcp.set_receive_window(2048);
 
-    auto data_size = kcp.get_max_segment_size() * 255;
+    constexpr auto data_size = MTU_TO_MSS<constants::IKCP_MTU_DEF>() * 255;
     std::vector<std::byte> data(data_size);
     auto result = kcp.send(data);
     ASSERT_TRUE(result.has_value()) << err_to_str(result.error());
@@ -123,7 +123,7 @@ TEST(Send_Tests, Send_ExceedsWindowSize) {
     kcp.set_send_window(128);
     kcp.set_receive_window(128);
 
-    std::vector<std::byte> data(kcp.get_max_segment_size() * 128 + 1);
+    std::vector<std::byte> data(MTU_TO_MSS<constants::IKCP_MTU_DEF>() * 128 + 1);
     auto result = kcp.send(data);
     EXPECT_EQ(result.error(), error::exceeds_window_size);
 }

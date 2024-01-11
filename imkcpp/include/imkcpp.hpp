@@ -284,11 +284,6 @@ namespace imkcpp {
             return this->shared_ctx.get_state();
         }
 
-        // Gets current maximum segment size.
-        [[nodiscard]] auto get_max_segment_size() const -> u32 {
-            return MAX_SEGMENT_SIZE;
-        }
-
         // Gets bytes count of the available data in the receive queue.
         [[nodiscard]] auto peek_size() const -> tl::expected<size_t, error> {
             return this->receiver.peek_size();
