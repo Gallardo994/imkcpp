@@ -24,7 +24,6 @@ namespace imkcpp {
 
         void emplace_segment(const SegmentHeader& header, SegmentData& data) {
             u32 sn = header.sn;
-            bool repeat = false;
 
             assert(this->segment_tracker.should_receive(sn));
             assert(this->congestion_controller.fits_receive_window(sn));
@@ -34,10 +33,6 @@ namespace imkcpp {
             });
 
             if (it != this->rcv_buf.rend() && it->header.sn == sn) {
-                repeat = true;
-            }
-
-            if (!repeat) {
                 this->rcv_buf.emplace(it.base(), header, data);
             }
         }
