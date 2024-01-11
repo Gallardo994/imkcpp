@@ -1,6 +1,39 @@
 #pragma once
 
 namespace imkcpp {
+    struct InputResult {
+        u32 cmd_ack_count = 0; // Number of ACK commands received
+        u32 cmd_push_count = 0; // Number of PUSH segments received
+        u32 cmd_wask_count = 0; // Number of WASK commands received
+        u32 cmd_wins_count = 0; // Number of WINS commands received
+
+        u32 dropped_push_count = 0; // Number of PUSH segments dropped
+
+        size_t total_bytes_received = 0; // Total number of bytes received
+
+        InputResult operator+(const InputResult& other) const {
+            return {
+                cmd_ack_count + other.cmd_ack_count,
+                cmd_push_count + other.cmd_push_count,
+                cmd_wask_count + other.cmd_wask_count,
+                cmd_wins_count + other.cmd_wins_count,
+                dropped_push_count + other.dropped_push_count,
+                total_bytes_received + other.total_bytes_received
+            };
+        }
+
+        InputResult& operator+=(const InputResult& other) {
+            cmd_ack_count += other.cmd_ack_count;
+            cmd_push_count += other.cmd_push_count;
+            cmd_wask_count += other.cmd_wask_count;
+            cmd_wins_count += other.cmd_wins_count;
+            dropped_push_count += other.dropped_push_count;
+            total_bytes_received += other.total_bytes_received;
+
+            return *this;
+        }
+    };
+
     struct FlushResult {
         u32 cmd_ack_count = 0; // Number of ACK commands sent
         u32 cmd_wask_count = 0; // Number of WASK commands sent

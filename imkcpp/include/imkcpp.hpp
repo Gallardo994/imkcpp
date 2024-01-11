@@ -105,7 +105,7 @@ namespace imkcpp {
 
         // Receives data from the transport layer.
         // TODO: Return more detailed data on what was received like update()/flush() does.
-        auto input(const std::span<const std::byte> data) -> tl::expected<size_t, error> {
+        auto input(const std::span<const std::byte> data) -> tl::expected<InputResult, error> {
             if (data.size() < constants::IKCP_OVERHEAD) {
                 return tl::unexpected(error::less_than_header_size);
             }
@@ -113,6 +113,8 @@ namespace imkcpp {
             if (data.size() > MTU) {
                 return tl::unexpected(error::more_than_mtu);
             }
+
+            InputResult input_result{};
 
             const u32 prev_una = this->segment_tracker.get_snd_una();
             FastAckCtx fastack_ctx{};
@@ -146,11 +148,13 @@ namespace imkcpp {
                     case commands::IKCP_CMD_ACK: {
                         this->ack_controller.ack_received(this->current, header.sn, header.ts);
                         fastack_ctx.update(header.sn, header.ts);
+                        input_result.cmd_ack_count++;
                         break;
                     }
                     case commands::IKCP_CMD_PUSH: {
                         if (!this->congestion_controller.fits_receive_window(header.sn)) {
                             offset += header.len;
+                            input_result.dropped_push_count++;
                             break;
                         }
 
@@ -164,14 +168,17 @@ namespace imkcpp {
                             this->receiver.move_receive_buffer_to_queue();
                         } else {
                             offset += header.len;
+                            input_result.dropped_push_count++;
                         }
                         break;
                     }
                     case commands::IKCP_CMD_WASK: {
                         this->congestion_controller.set_probe_flag(constants::IKCP_ASK_TELL);
+                        input_result.cmd_wask_count++;
                         break;
                     }
                     case commands::IKCP_CMD_WINS: {
+                        input_result.cmd_wins_count++;
                         break;
                     }
                     default: {
@@ -184,7 +191,9 @@ namespace imkcpp {
 
             this->congestion_controller.adjust_parameters(this->segment_tracker.get_snd_una(), prev_una);
 
-            return offset;
+            input_result.total_bytes_received = offset;
+
+            return input_result;
         }
 
         // Reads data from the receive queue.

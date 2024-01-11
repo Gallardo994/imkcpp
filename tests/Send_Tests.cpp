@@ -51,7 +51,7 @@ TEST(Send_Tests, Send_ValidValues) {
         for (auto& captured : captured_data) {
             auto input_result = kcp_input.input(captured);
             ASSERT_TRUE(input_result.has_value()) << err_to_str(input_result.error());
-            ASSERT_EQ(input_result.value(), captured.size());
+            ASSERT_EQ(input_result.value().total_bytes_received, captured.size());
         }
 
         std::vector<std::byte> recv_buffer(size);
@@ -64,22 +64,32 @@ TEST(Send_Tests, Send_ValidValues) {
 
         std::vector<std::vector<std::byte>> captured_acks;
         captured_acks.reserve(segments_count);
-        auto input_update_result = kcp_input.update(300, [&captured_acks](std::span<const std::byte> data) {
+        auto capture_acks_result = kcp_input.update(300, [&captured_acks](std::span<const std::byte> data) {
             captured_acks.emplace_back(data.begin(), data.end());
         });
 
-        ASSERT_EQ(input_update_result.cmd_ack_count, segments_count);
-        ASSERT_EQ(input_update_result.cmd_wask_count, 0);
-        ASSERT_EQ(input_update_result.cmd_wins_count, 0);
-        ASSERT_EQ(input_update_result.timeout_retransmitted_count, 0);
-        ASSERT_EQ(input_update_result.fast_retransmitted_count, 0);
-        ASSERT_EQ(input_update_result.total_bytes_sent, input_update_result.cmd_ack_count * constants::IKCP_OVERHEAD);
+        ASSERT_EQ(capture_acks_result.cmd_ack_count, segments_count);
+        ASSERT_EQ(capture_acks_result.cmd_wask_count, 0);
+        ASSERT_EQ(capture_acks_result.cmd_wins_count, 0);
+        ASSERT_EQ(capture_acks_result.timeout_retransmitted_count, 0);
+        ASSERT_EQ(capture_acks_result.fast_retransmitted_count, 0);
+        ASSERT_EQ(capture_acks_result.total_bytes_sent, capture_acks_result.cmd_ack_count * constants::IKCP_OVERHEAD);
 
+        InputResult acks_input_result{};
         for (auto& captured : captured_acks) {
             auto input_result = kcp_output.input(captured);
             ASSERT_TRUE(input_result.has_value()) << err_to_str(input_result.error());
-            ASSERT_EQ(input_result.value(), captured.size());
+            ASSERT_EQ(input_result.value().total_bytes_received, captured.size());
+
+            acks_input_result += input_result.value();
         }
+
+        ASSERT_EQ(acks_input_result.cmd_ack_count, segments_count);
+        ASSERT_EQ(acks_input_result.cmd_push_count, 0);
+        ASSERT_EQ(acks_input_result.cmd_wask_count, 0);
+        ASSERT_EQ(acks_input_result.cmd_wins_count, 0);
+        ASSERT_EQ(acks_input_result.dropped_push_count, 0);
+        ASSERT_EQ(acks_input_result.total_bytes_received, acks_input_result.cmd_ack_count * constants::IKCP_OVERHEAD);
 
         kcp_output.update(5000, [](std::span<const std::byte>) {
             FAIL() << "Should not be called because all data should be acknowledged";
