@@ -118,17 +118,17 @@ namespace imkcpp {
         }
 
         // Sends all scheduled acknowledgements and clears the acknowledgement list.
-        void flush_acks(const output_callback_t& output, Segment& base_segment) {
+        void flush_acks(FlushResult& flush_result, const output_callback_t& output, Segment& base_segment) {
             for (const Ack& ack : this->acklist) {
-                // TODO: Return information back to the caller
-
-                this->flusher.flush_if_full(output);
+                flush_result.total_bytes_sent += this->flusher.flush_if_full(output);
 
                 base_segment.header.sn = ack.sn;
                 base_segment.header.ts = ack.ts;
 
                 this->flusher.emplace_segment(base_segment);
             }
+
+            flush_result.cmd_ack_count += this->acklist.size();
 
             this->acklist.clear();
         }

@@ -258,11 +258,10 @@ namespace imkcpp {
 
         // Flushes the data to the output callback.
         auto flush(const output_callback_t& callback) -> FlushResult {
-            // TODO: Populate result with information
-            FlushResult result;
+            FlushResult flush_result{};
 
             if (!this->updated) {
-                return result;
+                return flush_result;
             }
 
             const u32 current = this->current;
@@ -270,18 +269,19 @@ namespace imkcpp {
 
             // Service data
             Segment seg = this->create_service_segment(unused_receive_window);
-            this->ack_controller.flush_acks(callback, seg);
+            this->ack_controller.flush_acks(flush_result, callback, seg);
             this->congestion_controller.update_probe_request(current);
-            this->congestion_controller.flush_probes(callback, seg);
+            this->congestion_controller.flush_probes(flush_result, callback, seg);
 
             // Useful data
-            this->sender.flush_data_segments(callback, current, unused_receive_window);
+            this->sender.flush_data_segments(flush_result, callback, current, unused_receive_window);
 
-            this->flusher.flush_if_not_empty(callback);
+            // Flush remaining
+            flush_result.total_bytes_sent += this->flusher.flush_if_not_empty(callback);
 
             this->congestion_controller.ensure_at_least_one_packet_in_flight();
 
-            return result;
+            return flush_result;
         }
 
         // Gets the current state.

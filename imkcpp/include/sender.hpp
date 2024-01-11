@@ -117,8 +117,7 @@ namespace imkcpp {
         }
 
         // Flushes data segments from the send queue to the output callback.
-        void flush_data_segments(const output_callback_t& output, const u32 current, const i32 unused_receive_window) {
-            // TODO: Return information back to the caller
+        void flush_data_segments(FlushResult& flush_result, const output_callback_t& output, const u32 current, const i32 unused_receive_window) {
             const u32 cwnd = this->congestion_controller.calculate_congestion_window();
             this->move_send_queue_to_buffer(cwnd, current, unused_receive_window);
 
@@ -170,15 +169,15 @@ namespace imkcpp {
                     segment.header.wnd = unused_receive_window;
                     segment.header.una = this->segment_tracker.get_rcv_nxt();
 
-                    this->flusher.flush_if_does_not_fit(output, segment.data_size());
+                    flush_result.total_bytes_sent += this->flusher.flush_if_does_not_fit(output, segment.data_size());
                     this->flusher.emplace_segment(segment);
 
                     if (segment.metadata.xmit >= this->dead_link) {
                         this->shared_ctx.set_state(State::DeadLink);
                     }
 
-                    // result.data_sent_count++;
-                    // result.retransmitted_count += segment.metadata.xmit > 1 ? 1 : 0;
+                    flush_result.data_count++;
+                    flush_result.retransmitted_count += segment.metadata.xmit > 1 ? 1 : 0;
                 }
             }
 
@@ -189,8 +188,6 @@ namespace imkcpp {
             if (lost) {
                 this->congestion_controller.packet_lost();
             }
-
-            this->congestion_controller.ensure_at_least_one_packet_in_flight();
         }
     };
 }

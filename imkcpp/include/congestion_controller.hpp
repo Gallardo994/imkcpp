@@ -170,21 +170,23 @@ namespace imkcpp {
             this->probe = 0;
         }
 
-        void flush_probes(const output_callback_t& output, Segment& base_segment) {
-            // TODO: Return information back to the caller
-
+        void flush_probes(FlushResult& flush_result, const output_callback_t& output, Segment& base_segment) {
             if (this->has_probe_flag(constants::IKCP_ASK_SEND)) {
-                this->flusher.flush_if_full(output);
+                flush_result.total_bytes_sent += this->flusher.flush_if_full(output);
 
                 base_segment.header.cmd = commands::IKCP_CMD_WASK;
                 this->flusher.emplace_segment(base_segment);
+
+                flush_result.cmd_wask_count++;
             }
 
             if (this->has_probe_flag(constants::IKCP_ASK_TELL)) {
-                this->flusher.flush_if_full(output);
+                flush_result.total_bytes_sent +=this->flusher.flush_if_full(output);
 
                 base_segment.header.cmd = commands::IKCP_CMD_WINS;
                 this->flusher.emplace_segment(base_segment);
+
+                flush_result.cmd_wins_count++;
             }
 
             this->reset_probe_flags();
