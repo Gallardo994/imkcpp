@@ -23,9 +23,6 @@
 #include "utility.hpp"
 
 namespace imkcpp {
-    // TODO: Some day later this should become a template with MTU and max segment size as template parameters
-    // TODO: because changing MTU at runtime will cause issues with already queued segments.
-    // TODO: Additionally, this will allow more compile-time optimizations.
     template <size_t MTU>
     class ImKcpp final {
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
