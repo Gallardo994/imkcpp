@@ -61,6 +61,10 @@ namespace imkcpp {
             this->data.assign(buf.begin(), buf.end());
         }
 
+        [[nodiscard]] size_t size() const {
+            return this->data.size();
+        }
+
         void encode_to(std::span<std::byte> buf, size_t& offset, const size_t length) const {
             assert(buf.size() >= this->data.size());
 
@@ -85,7 +89,7 @@ namespace imkcpp {
 
         void encode_to(const std::span<std::byte> buf, size_t& offset) const {
             assert(buf.size() >= constants::IKCP_OVERHEAD + this->header.len);
-            assert(this->header.len == this->data.data.size());
+            assert(this->header.len == this->data.size());
 
             this->header.encode_to(buf, offset);
             this->data.encode_to(buf, offset, this->header.len);
