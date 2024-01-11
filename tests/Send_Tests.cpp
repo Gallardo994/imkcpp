@@ -51,6 +51,7 @@ TEST(Send_Tests, Send_ValidValues) {
         for (auto& captured : captured_data) {
             auto input_result = kcp_input.input(captured);
             ASSERT_TRUE(input_result.has_value()) << err_to_str(input_result.error());
+            ASSERT_EQ(input_result.value(), captured.size());
         }
 
         std::vector<std::byte> recv_buffer(size);
