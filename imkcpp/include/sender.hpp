@@ -1,6 +1,8 @@
 #pragma once
 
 #include <span>
+#include <limits>
+
 #include "types.hpp"
 #include "errors.hpp"
 #include "segment.hpp"

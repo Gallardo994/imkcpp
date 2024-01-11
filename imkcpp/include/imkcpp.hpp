@@ -4,6 +4,7 @@
 #include <queue>
 #include <optional>
 #include <cstddef>
+#include <limits>
 #include "third_party/expected.hpp"
 
 #include "types.hpp"

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <deque>
+#include <limits>
+
 #include "types.hpp"
 #include "segment.hpp"
 #include "shared_ctx.hpp"
