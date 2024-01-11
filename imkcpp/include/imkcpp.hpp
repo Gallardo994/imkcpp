@@ -149,6 +149,7 @@ namespace imkcpp {
                     }
                     case commands::IKCP_CMD_PUSH: {
                         if (!this->congestion_controller.fits_receive_window(header.sn)) {
+                            offset += header.len;
                             break;
                         }
 
@@ -160,6 +161,8 @@ namespace imkcpp {
 
                             this->receiver_buffer.emplace_segment(header, segment_data);
                             this->receiver.move_receive_buffer_to_queue();
+                        } else {
+                            offset += header.len;
                         }
                         break;
                     }
