@@ -2,6 +2,7 @@
 
 #include <span>
 #include <cstddef>
+#include <cstring>
 #include <cassert>
 #include "types.hpp"
 
