@@ -8,18 +8,24 @@
 #include "segment.hpp"
 #include "congestion_controller.hpp"
 #include "receiver_buffer.hpp"
+#include "utility.hpp"
 
 namespace imkcpp {
+    template <size_t MTU>
     class Receiver {
-        ReceiverBuffer& receiver_buffer;
-        CongestionController& congestion_controller;
+        constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
+
+        ReceiverBuffer<MTU>& receiver_buffer;
+        CongestionController<MTU>& congestion_controller;
 
         std::deque<Segment> rcv_queue{};
 
     public:
 
-        explicit Receiver(ReceiverBuffer& receiver_buffer, CongestionController& congestion_controller) :
-            receiver_buffer(receiver_buffer), congestion_controller(congestion_controller) {}
+        explicit Receiver(ReceiverBuffer<MTU>& receiver_buffer,
+                          CongestionController<MTU>& congestion_controller) :
+                          receiver_buffer(receiver_buffer),
+                          congestion_controller(congestion_controller) {}
 
         [[nodiscard]] tl::expected<size_t, error> peek_size() const {
             if (this->rcv_queue.empty()) {

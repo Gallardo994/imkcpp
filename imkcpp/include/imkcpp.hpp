@@ -20,24 +20,28 @@
 #include "sender.hpp"
 #include "ack_controller.hpp"
 #include "flusher.hpp"
+#include "utility.hpp"
 
 namespace imkcpp {
     // TODO: Some day later this should become a template with MTU and max segment size as template parameters
     // TODO: because changing MTU at runtime will cause issues with already queued segments.
     // TODO: Additionally, this will allow more compile-time optimizations.
+    template <size_t MTU>
     class ImKcpp final {
+        constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
+
         SharedCtx shared_ctx{};
         RtoCalculator rto_calculator{shared_ctx};
-        Flusher flusher{shared_ctx};
+        Flusher<MTU> flusher{shared_ctx};
         SegmentTracker segment_tracker{};
-        CongestionController congestion_controller{shared_ctx, flusher, segment_tracker};
+        CongestionController<MTU> congestion_controller{shared_ctx, flusher, segment_tracker};
 
-        ReceiverBuffer receiver_buffer{congestion_controller, segment_tracker};
-        Receiver receiver{receiver_buffer, congestion_controller};
+        ReceiverBuffer<MTU> receiver_buffer{congestion_controller, segment_tracker};
+        Receiver<MTU> receiver{receiver_buffer, congestion_controller};
 
         SenderBuffer sender_buffer{shared_ctx, segment_tracker};
-        AckController ack_controller{flusher, rto_calculator, sender_buffer, segment_tracker};
-        Sender sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, ack_controller, segment_tracker};
+        AckController<MTU> ack_controller{flusher, rto_calculator, sender_buffer, segment_tracker};
+        Sender<MTU> sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, ack_controller, segment_tracker};
 
         bool updated = false; // Whether update() was called at least once
         u32 current = 0; // Current / last time we updated the state
@@ -62,7 +66,6 @@ namespace imkcpp {
     public:
         explicit ImKcpp(const u32 conv) {
             this->shared_ctx.set_conv(conv);
-            this->set_mtu(constants::IKCP_MTU_DEF);
         }
 
         // Sets the internal clock interval in milliseconds.
@@ -76,18 +79,6 @@ namespace imkcpp {
 
         auto set_resend(const u32 resend) -> void {
             this->sender.set_fastresend(resend);
-        }
-
-        // Sets the maximum transmission unit.
-        auto set_mtu(const u32 mtu) -> tl::expected<size_t, error> {
-            if (mtu <= constants::IKCP_OVERHEAD) {
-                return tl::unexpected(error::less_than_header_size);
-            }
-
-            this->flusher.resize(mtu);
-            this->shared_ctx.set_mtu(mtu);
-
-            return mtu;
         }
 
         // Sets receive and send windows.
@@ -113,7 +104,7 @@ namespace imkcpp {
                 return tl::unexpected(error::less_than_header_size);
             }
 
-            if (data.size() > this->shared_ctx.get_mtu()) {
+            if (data.size() > MTU) {
                 return tl::unexpected(error::more_than_mtu);
             }
 
@@ -290,14 +281,9 @@ namespace imkcpp {
             return this->shared_ctx.get_state();
         }
 
-        // Gets current maximum transmission unit.
-        [[nodiscard]] auto get_mtu() const -> u32 {
-            return this->shared_ctx.get_mtu();
-        }
-
         // Gets current maximum segment size.
         [[nodiscard]] auto get_max_segment_size() const -> u32 {
-            return this->shared_ctx.get_mss();
+            return MAX_SEGMENT_SIZE;
         }
 
         // Gets bytes count of the available data in the receive queue.
@@ -317,7 +303,7 @@ namespace imkcpp {
                 static_cast<size_t>(std::numeric_limits<u8>::max())
                 );
 
-            return this->shared_ctx.get_mss() * max_segments_count;
+            return MAX_SEGMENT_SIZE * max_segments_count;
         }
     };
 }

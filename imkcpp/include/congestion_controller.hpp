@@ -10,9 +10,12 @@
 #include "segment_tracker.hpp"
 
 namespace imkcpp {
+    template <size_t MTU>
     class CongestionController {
+        constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
+
         SharedCtx& shared_ctx;
-        Flusher& flusher;
+        Flusher<MTU>& flusher;
         SegmentTracker& segment_tracker;
 
         bool congestion_window = true; // Congestion Window Enabled
@@ -33,7 +36,7 @@ namespace imkcpp {
 
     public:
         explicit CongestionController(SharedCtx& shared_ctx,
-                                      Flusher& flusher,
+                                      Flusher<MTU>& flusher,
                                       SegmentTracker& segment_tracker) :
                                       shared_ctx(shared_ctx),
                                       flusher(flusher),
@@ -74,13 +77,13 @@ namespace imkcpp {
         void packets_resent(const u32 packets_in_flight, const u32 resent) {
             this->ssthresh = std::max(packets_in_flight / 2, constants::IKCP_THRESH_MIN);
             this->cwnd = this->ssthresh + resent;
-            this->incr = this->cwnd * this->shared_ctx.get_mss();
+            this->incr = this->cwnd * MAX_SEGMENT_SIZE;
         }
 
         void packet_lost() {
             this->ssthresh = std::max(this->cwnd / 2, constants::IKCP_THRESH_MIN);
             this->cwnd = 1;
-            this->incr = this->shared_ctx.get_mss();
+            this->incr = MAX_SEGMENT_SIZE;
         }
 
         void adjust_parameters(const u32 latest_una, const u32 prev_una) {
@@ -89,26 +92,24 @@ namespace imkcpp {
             }
 
             if (this->cwnd < this->rmt_wnd) {
-                const u32 mss = this->shared_ctx.get_mss();
-
                 if (this->cwnd < this->ssthresh) {
                     this->cwnd++;
-                    this->incr += mss;
+                    this->incr += MAX_SEGMENT_SIZE;
                 } else {
-                    if (this->incr < mss) {
-                        this->incr = mss;
+                    if (this->incr < MAX_SEGMENT_SIZE) {
+                        this->incr = MAX_SEGMENT_SIZE;
                     }
 
-                    this->incr += (mss * mss) / this->incr + (mss / 16);
+                    this->incr += (MAX_SEGMENT_SIZE * MAX_SEGMENT_SIZE) / this->incr + (MAX_SEGMENT_SIZE / 16);
 
-                    if ((this->cwnd + 1) * mss <= this->incr) {
-                        this->cwnd = (this->incr + mss - 1) / ((mss > 0) ? mss : 1);
+                    if ((this->cwnd + 1) * MAX_SEGMENT_SIZE <= this->incr) {
+                        this->cwnd = (this->incr + MAX_SEGMENT_SIZE - 1) / ((MAX_SEGMENT_SIZE > 0) ? MAX_SEGMENT_SIZE : 1);
                     }
                 }
 
                 if (this->cwnd > this->rmt_wnd) {
                     this->cwnd = this->rmt_wnd;
-                    this->incr = this->rmt_wnd * mss;
+                    this->incr = this->rmt_wnd * MAX_SEGMENT_SIZE;
                 }
             }
         }
@@ -116,7 +117,7 @@ namespace imkcpp {
         void ensure_at_least_one_packet_in_flight() {
             if (this->cwnd < 1) {
                 this->cwnd = 1;
-                this->incr = this->shared_ctx.get_mss();
+                this->incr = MAX_SEGMENT_SIZE;
             }
         }
 

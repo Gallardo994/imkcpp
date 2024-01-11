@@ -5,6 +5,7 @@
 #include "rto_calculator.hpp"
 #include "sender_buffer.hpp"
 #include "segment_tracker.hpp"
+#include "utility.hpp"
 
 namespace imkcpp {
     // FastAckCtx is used to track the latest received segment and its timestamp.
@@ -44,6 +45,7 @@ namespace imkcpp {
         }
     };
 
+    template <size_t MTU>
     class AckController {
         struct Ack {
             u32 sn; // Segment number
@@ -53,7 +55,7 @@ namespace imkcpp {
             explicit Ack(const u32 sn, const u32 ts) : sn(sn), ts(ts) { }
         };
 
-        Flusher& flusher;
+        Flusher<MTU>& flusher;
         RtoCalculator& rto_calculator;
         SenderBuffer& sender_buffer;
         SegmentTracker& segment_tracker;
@@ -69,7 +71,7 @@ namespace imkcpp {
         }
 
     public:
-        explicit AckController(Flusher& flusher,
+        explicit AckController(Flusher<MTU>& flusher,
                                RtoCalculator& rto_calculator,
                                SenderBuffer& sender_buffer,
                                SegmentTracker& segment_tracker) :

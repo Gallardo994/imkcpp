@@ -4,16 +4,20 @@
 #include "types.hpp"
 #include "segment.hpp"
 #include "segment_tracker.hpp"
+#include "utility.hpp"
 
 namespace imkcpp {
+    template <size_t MTU>
     class ReceiverBuffer {
-        CongestionController& congestion_controller;
+        constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
+
+        CongestionController<MTU>& congestion_controller;
         SegmentTracker& segment_tracker;
 
         std::deque<Segment> rcv_buf{};
 
     public:
-        explicit ReceiverBuffer(CongestionController& congestion_controller,
+        explicit ReceiverBuffer(CongestionController<MTU>& congestion_controller,
                                 SegmentTracker& segment_tracker) :
                                 congestion_controller(congestion_controller),
                                 segment_tracker(segment_tracker) {}

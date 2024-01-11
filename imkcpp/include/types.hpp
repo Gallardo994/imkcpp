@@ -5,8 +5,6 @@
 #include <span>
 
 namespace imkcpp {
-    class ImKcpp;
-
     using i8 = int8_t;
     using u8 = uint8_t;
 

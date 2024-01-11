@@ -5,9 +5,13 @@
 #include "types.hpp"
 #include "segment.hpp"
 #include "shared_ctx.hpp"
+#include "utility.hpp"
 
 namespace imkcpp {
+    template <size_t MTU>
     class Flusher {
+        constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
+
         SharedCtx& shared_ctx;
 
         std::vector<std::byte> buffer{};
@@ -26,21 +30,16 @@ namespace imkcpp {
         }
 
     public:
-        explicit Flusher(SharedCtx& shared_ctx) : shared_ctx(shared_ctx) {}
+        explicit Flusher(SharedCtx& shared_ctx) : shared_ctx(shared_ctx), buffer(MTU) {}
 
         // Returns true if the buffer is empty.
         [[nodiscard]] bool is_empty() const {
             return this->offset == 0;
         }
 
-        // Resizes the buffer to the given size.
-        void resize(const size_t size) {
-            this->buffer.resize(size);
-        }
-
         // Flushes the buffer to the given output if it exceeds Max Segment Size
         [[nodiscard]] size_t flush_if_full(const output_callback_t& target) {
-            if (this->offset > this->shared_ctx.get_mss()) {
+            if (this->offset > MAX_SEGMENT_SIZE) {
                 return this->flush(target);
             }
 
@@ -49,7 +48,7 @@ namespace imkcpp {
 
         // Flushes the buffer to the given output if adding "size" bytes to the buffer would exceed Max Segment Size
         [[nodiscard]] size_t flush_if_does_not_fit(const output_callback_t& target, const size_t size) {
-            if (this->offset + size > this->shared_ctx.get_mss()) {
+            if (this->offset + size > MAX_SEGMENT_SIZE) {
                 return this->flush(target);
             }
 

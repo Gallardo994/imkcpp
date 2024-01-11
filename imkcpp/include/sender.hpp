@@ -9,15 +9,19 @@
 #include "shared_ctx.hpp"
 #include "ack_controller.hpp"
 #include "sender_buffer.hpp"
+#include "utility.hpp"
 
 namespace imkcpp {
+    template <size_t MTU>
     class Sender {
+        constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
+
         SharedCtx& shared_ctx;
-        CongestionController& congestion_controller;
+        CongestionController<MTU>& congestion_controller;
         RtoCalculator& rto_calculator;
-        Flusher& flusher;
+        Flusher<MTU>& flusher;
         SenderBuffer& sender_buffer;
-        AckController& ack_controller;
+        AckController<MTU>& ack_controller;
         SegmentTracker& segment_tracker;
 
         std::deque<Segment> snd_queue{};
@@ -31,11 +35,11 @@ namespace imkcpp {
 
     public:
         explicit Sender(SharedCtx& shared_ctx,
-                        CongestionController& congestion_controller,
+                        CongestionController<MTU>& congestion_controller,
                         RtoCalculator& rto_calculator,
-                        Flusher& flusher,
+                        Flusher<MTU>& flusher,
                         SenderBuffer& sender_buffer,
-                        AckController& ack_controller,
+                        AckController<MTU>& ack_controller,
                         SegmentTracker& segment_tracker) :
                         shared_ctx(shared_ctx),
                         congestion_controller(congestion_controller),
@@ -64,7 +68,7 @@ namespace imkcpp {
             size_t offset = 0;
 
             for (size_t i = 0; i < count; i++) {
-                const size_t size = std::min(buffer.size() - offset, this->shared_ctx.get_mss());
+                const size_t size = std::min(buffer.size() - offset, MAX_SEGMENT_SIZE);
                 assert(size > 0);
 
                 Segment& seg = this->snd_queue.emplace_back();
@@ -103,8 +107,7 @@ namespace imkcpp {
 
         // Given current max segment size, estimates the number of segments needed to fit the payload.
         [[nodiscard]] size_t estimate_segments_count(const size_t size) const {
-            const auto mss = this->shared_ctx.get_mss();
-            return std::max(static_cast<size_t>(1), (size + mss - 1) / mss);
+            return std::max(static_cast<size_t>(1), (size + MAX_SEGMENT_SIZE - 1) / MAX_SEGMENT_SIZE);
         }
 
         void set_fastresend(const u32 value) {
