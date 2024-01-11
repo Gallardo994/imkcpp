@@ -79,16 +79,19 @@ namespace imkcpp {
             this->sender.set_fastresend(resend);
         }
 
-        // Sets receive and send windows.
-        auto set_wndsize(const u32 sndwnd, const u32 rcvwnd) -> void {
-            if (sndwnd > 0) {
-                this->congestion_controller.set_send_window(sndwnd);
-                this->congestion_controller.set_remote_window(sndwnd);
-            }
+        // Sets the maximum number of segments that can be sent in a single update() call.
+        auto set_send_window(const u32 sndwnd) -> void {
+            assert(sndwnd > 0);
 
-            if (rcvwnd > 0) {
-                this->congestion_controller.set_receive_window(rcvwnd);
-            }
+            this->congestion_controller.set_send_window(sndwnd);
+            this->congestion_controller.set_remote_window(sndwnd);
+        }
+
+        // Sets the maximum number of segments that can be queued in the receive buffer.
+        auto set_receive_window(const u32 rcvwnd) -> void {
+            assert(rcvwnd > 0);
+
+            this->congestion_controller.set_receive_window(rcvwnd);
         }
 
         // Enables or disables congestion window.
