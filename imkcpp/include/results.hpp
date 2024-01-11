@@ -3,9 +3,9 @@
 namespace imkcpp {
     struct InputResult {
         u32 cmd_ack_count = 0; // Number of ACK commands received
-        u32 cmd_push_count = 0; // Number of PUSH segments received
         u32 cmd_wask_count = 0; // Number of WASK commands received
         u32 cmd_wins_count = 0; // Number of WINS commands received
+        u32 cmd_push_count = 0; // Number of PUSH segments received
 
         u32 dropped_push_count = 0; // Number of PUSH segments dropped
 
@@ -14,9 +14,9 @@ namespace imkcpp {
         InputResult operator+(const InputResult& other) const {
             return {
                 cmd_ack_count + other.cmd_ack_count,
-                cmd_push_count + other.cmd_push_count,
                 cmd_wask_count + other.cmd_wask_count,
                 cmd_wins_count + other.cmd_wins_count,
+                cmd_push_count + other.cmd_push_count,
                 dropped_push_count + other.dropped_push_count,
                 total_bytes_received + other.total_bytes_received
             };
@@ -24,9 +24,9 @@ namespace imkcpp {
 
         InputResult& operator+=(const InputResult& other) {
             cmd_ack_count += other.cmd_ack_count;
-            cmd_push_count += other.cmd_push_count;
             cmd_wask_count += other.cmd_wask_count;
             cmd_wins_count += other.cmd_wins_count;
+            cmd_push_count += other.cmd_push_count;
             dropped_push_count += other.dropped_push_count;
             total_bytes_received += other.total_bytes_received;
 
