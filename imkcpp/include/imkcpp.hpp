@@ -267,9 +267,12 @@ namespace imkcpp {
             const u32 current = this->current;
             const i32 unused_receive_window = this->receiver.get_unused_receive_window();
 
-            // Service data
             Segment seg = this->create_service_segment(unused_receive_window);
+
+            // Acks
             this->ack_controller.flush_acks(flush_result, callback, seg);
+
+            // Window probes
             this->congestion_controller.update_probe_request(current);
             this->congestion_controller.flush_probes(flush_result, callback, seg);
 
