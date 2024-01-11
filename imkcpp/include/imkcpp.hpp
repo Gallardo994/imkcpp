@@ -181,7 +181,7 @@ namespace imkcpp {
 
             this->ack_controller.acknowledge_fastack(fastack_ctx);
 
-            this-congestion_controller.adjust_parameters(this->segment_tracker.get_snd_una(), prev_una);
+            this->congestion_controller.adjust_parameters(this->segment_tracker.get_snd_una(), prev_una);
 
             return offset;
         }
