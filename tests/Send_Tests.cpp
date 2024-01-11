@@ -49,6 +49,11 @@ TEST(Send_Tests, Send_ValidValues) {
             send_buffer[j] = static_cast<std::byte>(j);
         }
 
+        std::vector<std::byte> recv_buffer(size);
+
+        std::vector<std::vector<std::byte>> captured_acks;
+        captured_acks.reserve(segments_count);
+
         const auto start = std::chrono::steady_clock::now();
 
         auto send_result = kcp_output.send(send_buffer);
@@ -69,7 +74,6 @@ TEST(Send_Tests, Send_ValidValues) {
             ASSERT_EQ(input_result.value().total_bytes_received, captured.size());
         }
 
-        std::vector<std::byte> recv_buffer(size);
         auto recv_result = kcp_input.recv(recv_buffer);
         ASSERT_TRUE(recv_result.has_value()) << err_to_str(recv_result.error());
 
@@ -77,8 +81,6 @@ TEST(Send_Tests, Send_ValidValues) {
             EXPECT_EQ(send_buffer.at(j), recv_buffer.at(j));
         }
 
-        std::vector<std::vector<std::byte>> captured_acks;
-        captured_acks.reserve(segments_count);
         auto capture_acks_result = kcp_input.update(300, [&captured_acks](std::span<const std::byte> data) {
             captured_acks.emplace_back(data.begin(), data.end());
         });
