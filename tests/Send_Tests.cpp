@@ -61,6 +61,14 @@ TEST(Send_Tests, Send_ValidValues) {
         for (size_t j = 0; j < size; ++j) {
             EXPECT_EQ(send_buffer.at(j), recv_buffer.at(j));
         }
+
+        auto input_update_result = kcp_input.update(300, [](std::span<const std::byte>) { });
+        ASSERT_EQ(input_update_result.cmd_ack_count, segments_count);
+        ASSERT_EQ(input_update_result.cmd_wask_count, 0);
+        ASSERT_EQ(input_update_result.cmd_wins_count, 0);
+        ASSERT_EQ(input_update_result.timeout_retransmitted_count, 0);
+        ASSERT_EQ(input_update_result.fast_retransmitted_count, 0);
+        ASSERT_EQ(input_update_result.total_bytes_sent, input_update_result.cmd_ack_count * constants::IKCP_OVERHEAD);
     }
 }
 
