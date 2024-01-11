@@ -106,6 +106,10 @@ namespace imkcpp {
             this->congestion_controller.set_congestion_window_enabled(state);
         }
 
+        auto set_deadlink(const u32 threshold) -> void {
+            this->sender.set_deadlink(threshold);
+        }
+
         // Receives data from the transport layer.
         // TODO: Return more detailed data on what was received like update()/flush() does.
         auto input(const std::span<const std::byte> data) -> tl::expected<InputResult, error> {

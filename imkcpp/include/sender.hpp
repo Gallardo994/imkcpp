@@ -126,6 +126,10 @@ namespace imkcpp {
             this->rto_calculator.set_min_rto(value > 0 ? constants::IKCP_RTO_NDL : constants::IKCP_RTO_MIN);
         }
 
+        void set_deadlink(const u32 value) {
+            this->dead_link = value;
+        }
+
         // Flushes data segments from the send queue to the output callback.
         void flush_data_segments(FlushResult& flush_result, const output_callback_t& output, const u32 current, const i32 unused_receive_window) {
             const u32 cwnd = this->congestion_controller.calculate_congestion_window();
