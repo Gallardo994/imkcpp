@@ -32,7 +32,7 @@ namespace imkcpp {
                 return sn <= seg.header.sn;
             });
 
-            if (it != this->rcv_buf.rend() && it->header.sn == sn) {
+            if (it == this->rcv_buf.rend() || it->header.sn != sn) {
                 this->rcv_buf.emplace(it.base(), header, data);
             }
         }
