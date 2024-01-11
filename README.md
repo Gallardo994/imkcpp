@@ -14,7 +14,7 @@ C++20 header-only implementation of KCP protocol with improvements ontop
 # How to use
 - Copy `imkcpp/include` to your project
 - Include `imkcpp.hpp` in your source code
-- Create and use `imkcpp::ImKcpp` object as you would use `ikcp` object
+- Create and use `imkcpp::ImKcpp<size_t MTU>` object as you would use `ikcp` object
 
 # Documentation
 TODO
