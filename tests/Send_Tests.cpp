@@ -39,7 +39,7 @@ TEST(Send_Tests, Send_ValidValues) {
         ASSERT_EQ(send_result.value(), size);
 
         auto update_result = kcp_output.update(200, output_callback);
-        ASSERT_EQ(update_result.ack_sent_count, 0);
+        ASSERT_EQ(update_result.cmd_ack_count, 0);
         ASSERT_EQ(update_result.cmd_wask_count, 0);
         ASSERT_EQ(update_result.cmd_wins_count, 0);
         ASSERT_EQ(update_result.retransmitted_count, 0);
