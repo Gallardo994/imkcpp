@@ -31,7 +31,7 @@ namespace imkcpp {
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
 
         SharedCtx shared_ctx{};
-        RtoCalculator rto_calculator{shared_ctx};
+
         Flusher<MTU> flusher{shared_ctx};
         SegmentTracker segment_tracker{};
         CongestionController<MTU> congestion_controller{shared_ctx, flusher, segment_tracker};
@@ -40,6 +40,7 @@ namespace imkcpp {
         Receiver<MTU> receiver{receiver_buffer, congestion_controller};
 
         SenderBuffer sender_buffer{shared_ctx, segment_tracker};
+        RtoCalculator rto_calculator{shared_ctx};
         AckController<MTU> ack_controller{flusher, rto_calculator, sender_buffer, segment_tracker};
         Sender<MTU> sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, ack_controller, segment_tracker};
 
