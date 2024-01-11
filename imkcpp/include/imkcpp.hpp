@@ -187,8 +187,6 @@ namespace imkcpp {
 
         // Sends data.
         auto send(const std::span<const std::byte> buffer) -> tl::expected<size_t, error> {
-            assert(!buffer.empty());
-
             return this->sender.send(buffer);
         }
 
