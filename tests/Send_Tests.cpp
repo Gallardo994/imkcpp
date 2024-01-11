@@ -62,13 +62,28 @@ TEST(Send_Tests, Send_ValidValues) {
             EXPECT_EQ(send_buffer.at(j), recv_buffer.at(j));
         }
 
-        auto input_update_result = kcp_input.update(300, [](std::span<const std::byte>) { });
+        std::vector<std::vector<std::byte>> captured_acks;
+        captured_acks.reserve(segments_count);
+        auto input_update_result = kcp_input.update(300, [&captured_acks](std::span<const std::byte> data) {
+            captured_acks.emplace_back(data.begin(), data.end());
+        });
+
         ASSERT_EQ(input_update_result.cmd_ack_count, segments_count);
         ASSERT_EQ(input_update_result.cmd_wask_count, 0);
         ASSERT_EQ(input_update_result.cmd_wins_count, 0);
         ASSERT_EQ(input_update_result.timeout_retransmitted_count, 0);
         ASSERT_EQ(input_update_result.fast_retransmitted_count, 0);
         ASSERT_EQ(input_update_result.total_bytes_sent, input_update_result.cmd_ack_count * constants::IKCP_OVERHEAD);
+
+        for (auto& captured : captured_acks) {
+            auto input_result = kcp_output.input(captured);
+            ASSERT_TRUE(input_result.has_value()) << err_to_str(input_result.error());
+            ASSERT_EQ(input_result.value(), captured.size());
+        }
+
+        kcp_output.update(5000, [](std::span<const std::byte>) {
+            FAIL() << "Should not be called because all data should be acknowledged";
+        });
     }
 }
 
