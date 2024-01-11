@@ -22,11 +22,8 @@ namespace imkcpp {
             u32 sn = newseg.header.sn;
             bool repeat = false;
 
-            // TODO: Partially duplicates logic in imkcpp.hpp. Should probably stay here
-            const auto rcv_nxt = this->segment_tracker.get_rcv_nxt();
-            if (sn >= rcv_nxt + this->congestion_controller.get_receive_window() || sn < rcv_nxt) {
-                return;
-            }
+            assert(this->segment_tracker.should_receive(sn));
+            assert(sn >= this->segment_tracker.get_rcv_nxt() + this->congestion_controller.get_receive_window());
 
             const auto it = std::find_if(this->rcv_buf.rbegin(), this->rcv_buf.rend(), [sn](const Segment& seg) {
                 return sn <= seg.header.sn;

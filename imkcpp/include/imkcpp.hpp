@@ -159,7 +159,7 @@ namespace imkcpp {
                         this->ack_controller.schedule_ack(header.sn, header.ts);
 
                         // TODO: This is half-duplicate of what's in receiver.hpp. Refactor it.
-                        if (header.sn >= this->segment_tracker.get_rcv_nxt()) {
+                        if (this->segment_tracker.should_receive(header.sn)) {
                             Segment seg;
                             seg.header = header; // TODO: Remove this copy
                             seg.data.decode_from(data, offset, header.len);

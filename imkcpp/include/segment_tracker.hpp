@@ -41,5 +41,9 @@ namespace imkcpp {
         void reset_snd_una() {
             this->snd_una = this->snd_nxt;
         }
+
+        [[nodiscard]] bool should_receive(const u32 sn) const {
+            return sn >= this->rcv_nxt;
+        }
     };
 }
