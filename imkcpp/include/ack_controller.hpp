@@ -60,6 +60,7 @@ namespace imkcpp {
         SenderBuffer& sender_buffer;
         SegmentTracker& segment_tracker;
 
+        // TODO: We could probably reserve space according to the send window size
         std::vector<Ack> acklist{};
 
         [[nodiscard]] bool should_acknowledge(const u32 sn) const {
