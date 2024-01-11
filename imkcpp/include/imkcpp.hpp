@@ -180,11 +180,15 @@ namespace imkcpp {
 
         // Reads data from the receive queue.
         auto recv(const std::span<std::byte> buffer) -> tl::expected<size_t, error> {
+            assert(!buffer.empty());
+
             return this->receiver.recv(buffer);
         }
 
         // Sends data.
         auto send(const std::span<const std::byte> buffer) -> tl::expected<size_t, error> {
+            assert(!buffer.empty());
+
             return this->sender.send(buffer);
         }
 

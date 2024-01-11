@@ -12,7 +12,8 @@ TEST(Send_Tests, Send_ValidValues) {
 
     for (size_t size = min_data_size; size < max_data_size; size += step) {
         ImKcpp<constants::IKCP_MTU_DEF> kcp_output(0);
-        kcp_output.set_wndsize(2048, 2048);
+        kcp_output.set_send_window(2048);
+        kcp_output.set_receive_window(2048);
         kcp_output.set_congestion_window_enabled(false);
 
         auto segments_count = kcp_output.estimate_segments_count(size);
@@ -26,7 +27,8 @@ TEST(Send_Tests, Send_ValidValues) {
         kcp_output.update(0, output_callback);
 
         ImKcpp<constants::IKCP_MTU_DEF> kcp_input(0);
-        kcp_input.set_wndsize(2048, 2048);
+        kcp_input.set_send_window(2048);
+        kcp_input.set_receive_window(2048);
         kcp_input.update(0, [](std::span<const std::byte>) { });
 
         std::vector<std::byte> send_buffer(size);
@@ -63,7 +65,8 @@ TEST(Send_Tests, Send_FragmentedValidValues) {
     using namespace imkcpp;
 
     ImKcpp<constants::IKCP_MTU_DEF> kcp(0);
-    kcp.set_wndsize(2048, 2048);
+    kcp.set_send_window(2048);
+    kcp.set_receive_window(2048);
 
     auto data_size = kcp.get_max_segment_size() * 255;
     std::vector<std::byte> data(data_size);
@@ -84,7 +87,8 @@ TEST(Send_Tests, Send_SizeValid) {
 
     for (size_t size = 1; size < max_data_size; size += step) {
         ImKcpp<constants::IKCP_MTU_DEF> kcp(0);
-        kcp.set_wndsize(255, 255);
+        kcp.set_send_window(255);
+        kcp.set_receive_window(255);
 
         auto result = kcp.send({buffer.data(), size});
         ASSERT_TRUE(result.has_value()) << err_to_str(result.error());
@@ -94,7 +98,8 @@ TEST(Send_Tests, Send_SizeValid) {
     // Exceeds max data size
     {
         ImKcpp<constants::IKCP_MTU_DEF> kcp(0);
-        kcp.set_wndsize(255, 255);
+        kcp.set_send_window(255);
+        kcp.set_receive_window(255);
 
         auto result = kcp.send({buffer.data(), max_data_size + 1});
         ASSERT_EQ(result.error(), error::too_many_fragments);
@@ -115,7 +120,8 @@ TEST(Send_Tests, Send_ExceedsWindowSize) {
     using namespace imkcpp;
 
     ImKcpp<constants::IKCP_MTU_DEF> kcp(0);
-    kcp.set_wndsize(128, 128);
+    kcp.set_send_window(128);
+    kcp.set_receive_window(128);
 
     std::vector<std::byte> data(kcp.get_max_segment_size() * 128 + 1);
     auto result = kcp.send(data);
