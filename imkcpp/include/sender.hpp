@@ -179,7 +179,7 @@ namespace imkcpp {
                         this->shared_ctx.set_state(State::DeadLink);
                     }
 
-                    flush_result.data_count++;
+                    flush_result.cmd_push_count++;
                     flush_result.retransmitted_count += segment.metadata.xmit > 1 ? 1 : 0;
                 }
             }
