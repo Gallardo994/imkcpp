@@ -93,7 +93,7 @@ namespace imkcpp {
 
             if (this->cwnd < this->rmt_wnd) {
                 if (this->cwnd < this->ssthresh) {
-                    this->cwnd++;
+                    ++this->cwnd;
                     this->incr += MAX_SEGMENT_SIZE;
                 } else {
                     if (this->incr < MAX_SEGMENT_SIZE) {
