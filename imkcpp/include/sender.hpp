@@ -10,6 +10,7 @@
 #include "ack_controller.hpp"
 #include "sender_buffer.hpp"
 #include "utility.hpp"
+#include "results.hpp"
 
 namespace imkcpp {
     template <size_t MTU>
@@ -143,7 +144,7 @@ namespace imkcpp {
                 } else if (time_delta(current, segment.metadata.resendts) >= 0) {
                     needsend = true;
                     segment.metadata.xmit++;
-                    this->xmit++;
+                    ++this->xmit;
 
                     if (this->nodelay == 0) {
                         segment.metadata.rto += std::max(segment.metadata.rto, this->rto_calculator.get_rto());
@@ -154,6 +155,8 @@ namespace imkcpp {
 
                     segment.metadata.resendts = current + segment.metadata.rto;
                     lost = true;
+
+                    flush_result.timeout_retransmitted_count++;
                 } else if (resent < segment.metadata.fastack) {
                     // TODO: The second check is probably redundant
                     if (segment.metadata.xmit <= this->fastlimit || this->fastlimit == 0) {
@@ -164,6 +167,8 @@ namespace imkcpp {
                         segment.metadata.xmit++;
                         segment.metadata.fastack = 0;
                         segment.metadata.resendts = current + segment.metadata.rto;
+
+                        flush_result.fast_retransmitted_count++;
                     }
                 }
 
@@ -180,7 +185,6 @@ namespace imkcpp {
                     }
 
                     flush_result.cmd_push_count++;
-                    flush_result.retransmitted_count += segment.metadata.xmit > 1 ? 1 : 0;
                 }
             }
 

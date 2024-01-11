@@ -7,7 +7,8 @@ namespace imkcpp {
         u32 cmd_wins_count = 0; // Number of WINS commands sent
         u32 cmd_push_count = 0; // Number of PUSH segments sent
 
-        u32 retransmitted_count = 0; // Number of retransmitted segments
+        u32 timeout_retransmitted_count = 0; // Number of retransmitted segments
+        u32 fast_retransmitted_count = 0; // Number of fast retransmitted segments
 
         size_t total_bytes_sent = 0; // Total number of bytes sent
 
@@ -17,7 +18,8 @@ namespace imkcpp {
                 cmd_wask_count + other.cmd_wask_count,
                 cmd_wins_count + other.cmd_wins_count,
                 cmd_push_count + other.cmd_push_count,
-                retransmitted_count + other.retransmitted_count,
+                timeout_retransmitted_count + other.timeout_retransmitted_count,
+                fast_retransmitted_count + other.fast_retransmitted_count,
                 total_bytes_sent + other.total_bytes_sent
             };
         }
@@ -27,7 +29,8 @@ namespace imkcpp {
             cmd_wask_count += other.cmd_wask_count;
             cmd_wins_count += other.cmd_wins_count;
             cmd_push_count += other.cmd_push_count;
-            retransmitted_count += other.retransmitted_count;
+            timeout_retransmitted_count += other.timeout_retransmitted_count;
+            fast_retransmitted_count += other.fast_retransmitted_count;
             total_bytes_sent += other.total_bytes_sent;
 
             return *this;
