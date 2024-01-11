@@ -38,7 +38,7 @@ namespace imkcpp {
             }
 
             if (!repeat) {
-                this->rcv_buf.insert(it.base(), Segment{header, data});
+                this->rcv_buf.emplace(it.base(), header, data);
             }
         }
 
