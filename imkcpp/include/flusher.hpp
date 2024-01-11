@@ -14,7 +14,7 @@ namespace imkcpp {
 
         SharedCtx& shared_ctx;
 
-        std::vector<std::byte> buffer{MAX_SEGMENT_SIZE};
+        std::array<std::byte, MTU> buffer{};
         size_t offset = 0;
 
         // Flushes the buffer to the given output
@@ -30,7 +30,7 @@ namespace imkcpp {
         }
 
     public:
-        explicit Flusher(SharedCtx& shared_ctx) : shared_ctx(shared_ctx), buffer(MTU) {}
+        explicit Flusher(SharedCtx& shared_ctx) : shared_ctx(shared_ctx), buffer() {}
 
         // Returns true if the buffer is empty.
         [[nodiscard]] bool is_empty() const {
