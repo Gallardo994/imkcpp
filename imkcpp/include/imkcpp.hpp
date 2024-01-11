@@ -158,13 +158,11 @@ namespace imkcpp {
 
                         this->ack_controller.schedule_ack(header.sn, header.ts);
 
-                        // TODO: This is half-duplicate of what's in receiver.hpp. Refactor it.
                         if (this->segment_tracker.should_receive(header.sn)) {
-                            Segment seg;
-                            seg.header = header; // TODO: Remove this copy
-                            seg.data.decode_from(data, offset, header.len);
+                            SegmentData segment_data;
+                            segment_data.decode_from(data, offset, header.len);
 
-                            this->receiver_buffer.emplace_segment(seg);
+                            this->receiver_buffer.emplace_segment(header, segment_data);
                             this->receiver.move_receive_buffer_to_queue();
                         }
                         break;

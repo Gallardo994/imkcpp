@@ -81,6 +81,7 @@ namespace imkcpp {
         SegmentData data{};
 
         explicit Segment() = default;
+        explicit Segment(const SegmentHeader& header, SegmentData& data) : header(header), data(std::move(data)) { }
 
         void encode_to(const std::span<std::byte> buf, size_t& offset) const {
             assert(buf.size() >= constants::IKCP_OVERHEAD + this->header.len);

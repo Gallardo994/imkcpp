@@ -18,8 +18,8 @@ namespace imkcpp {
                                 congestion_controller(congestion_controller),
                                 segment_tracker(segment_tracker) {}
 
-        void emplace_segment(const Segment& newseg) {
-            u32 sn = newseg.header.sn;
+        void emplace_segment(const SegmentHeader& header, SegmentData& data) {
+            u32 sn = header.sn;
             bool repeat = false;
 
             assert(this->segment_tracker.should_receive(sn));
@@ -34,8 +34,7 @@ namespace imkcpp {
             }
 
             if (!repeat) {
-                // TODO: This copy is probably redundant
-                this->rcv_buf.insert(it.base(), newseg);
+                this->rcv_buf.insert(it.base(), Segment{header, data});
             }
         }
 
