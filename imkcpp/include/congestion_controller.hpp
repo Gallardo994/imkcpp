@@ -86,11 +86,7 @@ namespace imkcpp {
             this->incr = MAX_SEGMENT_SIZE;
         }
 
-        void adjust_parameters(const u32 latest_una, const u32 prev_una) {
-            if (latest_una <= prev_una) {
-                return;
-            }
-
+        void adjust_parameters() {
             if (this->cwnd < this->rmt_wnd) {
                 if (this->cwnd < this->ssthresh) {
                     ++this->cwnd;
