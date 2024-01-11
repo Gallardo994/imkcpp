@@ -80,12 +80,12 @@ namespace imkcpp {
                                sender_buffer(sender_buffer),
                                segment_tracker(segment_tracker) {}
 
-        void acknowledge_fastack(const FastAckCtx& fast_ack_ctx) {
-            if (!fast_ack_ctx.is_valid()) {
+        void acknowledge_fastack(const FastAckCtx& fastack_ctx) {
+            if (!fastack_ctx.is_valid()) {
                 return;
             }
 
-            const auto maxack = fast_ack_ctx.get_maxack();
+            const auto maxack = fastack_ctx.get_maxack();
 
             if (!should_acknowledge(maxack)) {
                 return;
