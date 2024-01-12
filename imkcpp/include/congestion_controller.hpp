@@ -100,7 +100,7 @@ namespace imkcpp {
                     this->incr += (MAX_SEGMENT_SIZE * MAX_SEGMENT_SIZE) / this->incr + (MAX_SEGMENT_SIZE / 16);
 
                     if ((this->cwnd + 1) * MAX_SEGMENT_SIZE <= this->incr) {
-                        this->cwnd = (this->incr + MAX_SEGMENT_SIZE - 1) / ((MAX_SEGMENT_SIZE > 0) ? MAX_SEGMENT_SIZE : 1);
+                        this->cwnd = (this->incr + MAX_SEGMENT_SIZE - 1) / MAX_SEGMENT_SIZE;
                     }
                 }
 
