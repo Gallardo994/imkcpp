@@ -11,7 +11,7 @@ C++20 header-only implementation of KCP protocol with improvements ontop
 - Upstream repository has unmerged bugfixes like [this one](https://github.com/skywind3000/kcp/pull/291)
 
 # Is this compatible with original KCP?
-Yes and no. At the current state, this implementation is compatible with original KCP on the byte level, however, window calculation for transmission has been changed, alongside with possible future updates breaking compatibility. Use with original KCP only at your own risk.
+Yes and no. At the current state, this implementation is compatible with original KCP on the byte level, however, window calculation for transmission has been changed, and "stream"/FASTACK_CONSERVE have been removed. Also, further changes and updates may break compatibility with upstream. Use with original KCP only at your own risk.
 
 # How to use
 - Copy `imkcpp/include` to your project
