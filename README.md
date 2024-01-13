@@ -21,3 +21,8 @@ Yes and no. At the current state, this implementation is compatible with origina
 # Special thanks
 - [skywind3000](https://github.com/skywind3000) for the original [kcp](https://github.com/skywind3000/kcp) implementation
 - [TartanLlama](https://github.com/TartanLlama) for the [unexpected](https://github.com/TartanLlama/expected) implementation
+
+# Contacts
+
+- Telegram: [@boikoigorigorevich](https://t.me/boikoigorigorevich)
+- Email: [gx994@proton.me](mailto:gx994@proton.me)
