@@ -60,7 +60,6 @@ namespace imkcpp {
         SenderBuffer& sender_buffer;
         SegmentTracker& segment_tracker;
 
-        // TODO: We could probably reserve space according to the send window size
         std::vector<Ack> acklist{};
 
         [[nodiscard]] bool should_acknowledge(const u32 sn) const {
@@ -120,6 +119,10 @@ namespace imkcpp {
         // Adds a segment to the acknowledgement list to be sent later.
         void schedule_ack(const u32 sn, const u32 ts) {
             this->acklist.emplace_back(sn, ts);
+        }
+
+        void reserve(const size_t size) {
+            this->acklist.reserve(size);
         }
 
         // Sends all scheduled acknowledgements and clears the acknowledgement list.

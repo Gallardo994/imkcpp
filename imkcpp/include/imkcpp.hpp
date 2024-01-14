@@ -99,6 +99,7 @@ namespace imkcpp {
             assert(rcvwnd > 0);
 
             this->congestion_controller.set_receive_window(rcvwnd);
+            this->ack_controller.reserve(rcvwnd);
         }
 
         // Enables or disables congestion window.
