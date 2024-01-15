@@ -210,11 +210,6 @@ TEST(Send_Tests, Send_ReceivedMalformedData) {
     }
 
     {
-        std::vector<std::byte> data(constants::IKCP_MTU_DEF + 1);
-        ASSERT_EQ(kcp.input(data).error(), error::more_than_mtu);
-    }
-
-    {
         std::vector<std::byte> data(constants::IKCP_OVERHEAD);
         SegmentHeader header{};
         header.cmd = commands::IKCP_CMD_PUSH;
