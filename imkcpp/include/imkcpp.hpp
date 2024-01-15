@@ -49,7 +49,7 @@ namespace imkcpp {
         u32 ts_flush = constants::IKCP_INTERVAL; // Time when we will probably flush the data next time
 
         // Creates a new service segment for non-data packets.
-        [[nodiscard]] auto create_service_segment(const i32 unused_receive_window) const -> Segment {
+        [[nodiscard]] auto create_service_segment(const i32 unused_receive_window) const noexcept -> Segment {
             Segment seg;
 
             seg.header.conv = this->shared_ctx.get_conv();
@@ -65,29 +65,29 @@ namespace imkcpp {
         }
 
     public:
-        explicit ImKcpp(const u32 conv) {
+        explicit ImKcpp(const u32 conv) noexcept {
             this->shared_ctx.set_conv(conv);
         }
 
         // Sets the internal clock interval in milliseconds. Must be between 10 and 5000.
-        auto set_interval(const u32 interval) -> void {
+        auto set_interval(const u32 interval) noexcept -> void {
             this->shared_ctx.set_interval(std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000)));
         }
 
-        auto set_nodelay(const u32 nodelay) -> void {
+        auto set_nodelay(const u32 nodelay) noexcept -> void {
             this->sender.set_nodelay(nodelay);
         }
 
-        auto set_fastresend(const u32 fastresend) -> void {
+        auto set_fastresend(const u32 fastresend) noexcept -> void {
             this->sender.set_fastresend(fastresend);
         }
 
-        auto set_fastlimit(const u32 limit) -> void {
+        auto set_fastlimit(const u32 limit) noexcept -> void {
             this->sender.set_fastlimit(limit);
         }
 
         // Sets the maximum number of segments that can be sent in a single update() call.
-        auto set_send_window(const u32 sndwnd) -> void {
+        auto set_send_window(const u32 sndwnd) noexcept -> void {
             assert(sndwnd > 0);
 
             this->congestion_controller.set_send_window(sndwnd);
@@ -95,7 +95,7 @@ namespace imkcpp {
         }
 
         // Sets the maximum number of segments that can be queued in the receive buffer.
-        auto set_receive_window(const u32 rcvwnd) -> void {
+        auto set_receive_window(const u32 rcvwnd) noexcept -> void {
             assert(rcvwnd > 0);
 
             this->congestion_controller.set_receive_window(rcvwnd);
@@ -103,18 +103,18 @@ namespace imkcpp {
         }
 
         // Enables or disables congestion window.
-        auto set_congestion_window_enabled(const bool state) -> void {
+        auto set_congestion_window_enabled(const bool state) noexcept -> void {
             this->congestion_controller.set_congestion_window_enabled(state);
         }
 
-        auto set_deadlink(const u32 threshold) -> void {
+        auto set_deadlink(const u32 threshold) noexcept -> void {
             this->sender.set_deadlink(threshold);
         }
 
         // Receives data from the transport layer.
         // TODO: Slightly slower than original implementation with lower packet count, needs optimization.
         // TODO: --benchmark_filter=(imkcpp|original)_input*
-        auto input(const std::span<const std::byte> data) -> tl::expected<InputResult, error> {
+        auto input(const std::span<const std::byte> data) noexcept -> tl::expected<InputResult, error> {
             if (data.size() < constants::IKCP_OVERHEAD) {
                 return tl::unexpected(error::less_than_header_size);
             }
@@ -209,19 +209,19 @@ namespace imkcpp {
         }
 
         // Reads data from the receive queue.
-        auto recv(const std::span<std::byte> buffer) -> tl::expected<size_t, error> {
+        auto recv(const std::span<std::byte> buffer) noexcept -> tl::expected<size_t, error> {
             assert(!buffer.empty());
 
             return this->receiver.recv(buffer);
         }
 
         // Sends data.
-        auto send(const std::span<const std::byte> buffer) -> tl::expected<size_t, error> {
+        auto send(const std::span<const std::byte> buffer) noexcept -> tl::expected<size_t, error> {
             return this->sender.send(buffer);
         }
 
         // Checks when the next update() should be called.
-        auto check(const u32 current) -> u32 {
+        auto check(const u32 current) noexcept -> u32 {
             if (!this->updated) {
                 return current;
             }
@@ -249,7 +249,7 @@ namespace imkcpp {
         }
 
         // Updates the state and performs flush if necessary.
-        auto update(const u32 current, const output_callback_t& callback) -> FlushResult {
+        auto update(const u32 current, const output_callback_t& callback) noexcept -> FlushResult {
             this->current = current;
 
             if (!this->updated) {
@@ -279,7 +279,7 @@ namespace imkcpp {
         }
 
         // Flushes the data to the output callback.
-        auto flush(const output_callback_t& callback) -> FlushResult {
+        auto flush(const output_callback_t& callback) noexcept -> FlushResult {
             FlushResult flush_result{};
 
             if (!this->updated) {
@@ -310,22 +310,22 @@ namespace imkcpp {
         }
 
         // Gets the current state.
-        [[nodiscard]] auto get_state() const -> State {
+        [[nodiscard]] auto get_state() const noexcept -> State {
             return this->shared_ctx.get_state();
         }
 
         // Gets bytes count of the available data in the receive queue.
-        [[nodiscard]] auto peek_size() const -> tl::expected<size_t, error> {
+        [[nodiscard]] auto peek_size() const noexcept -> tl::expected<size_t, error> {
             return this->receiver.peek_size();
         }
 
         // Calculates the number of segments required to send the given amount of data.
-        [[nodiscard]] auto estimate_segments_count(const size_t size) const -> size_t {
+        [[nodiscard]] auto estimate_segments_count(const size_t size) const noexcept -> size_t {
             return this->sender.estimate_segments_count(size);
         }
 
         // Calculates the maximum payload size that can be sent in a single send() call.
-        [[nodiscard]] auto estimate_max_payload_size() const -> size_t {
+        [[nodiscard]] auto estimate_max_payload_size() const noexcept -> size_t {
             const size_t max_segments_count = std::min(
                 static_cast<size_t>(this->congestion_controller.get_send_window()),
                 static_cast<size_t>(std::numeric_limits<u8>::max())
