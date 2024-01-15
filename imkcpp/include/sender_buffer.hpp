@@ -53,7 +53,7 @@ namespace imkcpp {
         }
 
         void increment_fastack_before(const u32 sn) {
-            for (const auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
+            for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
                 if (it->header.sn < sn) {
                     it->metadata.fastack++;
                 } else {
