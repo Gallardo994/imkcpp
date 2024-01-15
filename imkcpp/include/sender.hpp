@@ -165,7 +165,6 @@ namespace imkcpp {
                     flush_result.timeout_retransmitted_count++;
                 } else if (resent < segment.metadata.fastack) {
                     if (segment.metadata.xmit <= this->fastlimit || this->fastlimit == 0) {
-                        // TODO: Why isn't this->xmit incremented here?
                         needsend = true;
                         change = true;
 
