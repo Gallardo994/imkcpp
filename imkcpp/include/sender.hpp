@@ -25,7 +25,7 @@ namespace imkcpp {
         SenderBuffer& sender_buffer;
         SegmentTracker& segment_tracker;
 
-        std::deque<Segment> snd_queue{};
+        std::vector<Segment> snd_queue{};
 
         u32 fastresend = 0;
         u32 fastlimit = constants::IKCP_FASTACK_LIMIT;
@@ -46,7 +46,12 @@ namespace imkcpp {
                         rto_calculator(rto_calculator),
                         flusher(flusher),
                         sender_buffer(sender_buffer),
-                        segment_tracker(segment_tracker) {}
+                        segment_tracker(segment_tracker) {
+        }
+
+        void reserve(const size_t size) {
+            this->snd_queue.reserve(size);
+        }
 
         // Takes the payload, splits it into segments and puts them into the send queue.
         [[nodiscard]] tl::expected<size_t, error> send(const std::span<const std::byte> buffer) {
@@ -84,24 +89,33 @@ namespace imkcpp {
 
         // Flushes data segments from the send queue to the sender buffer.
         void move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window) {
-            while (!this->snd_queue.empty() && this->segment_tracker.get_snd_nxt() < this->segment_tracker.get_snd_una() + cwnd) {
-                Segment& newseg = this->snd_queue.front();
+            const size_t size = this->snd_queue.size();
+            size_t count = 0;
 
-                newseg.header.conv = this->shared_ctx.get_conv();
+            const u32 conv = this->shared_ctx.get_conv();
+            const u32 rto = this->rto_calculator.get_rto();
+            const u32 rcv_nxt = this->segment_tracker.get_rcv_nxt();
+
+            while (count < size && this->segment_tracker.get_snd_nxt() < this->segment_tracker.get_snd_una() + cwnd) {
+                Segment& newseg = this->snd_queue.at(count);
+
+                newseg.header.conv = conv;
                 newseg.header.cmd = commands::IKCP_CMD_PUSH;
                 newseg.header.wnd = unused_receive_window;
                 newseg.header.ts = current;
                 newseg.header.sn = this->segment_tracker.get_and_increment_snd_nxt();
-                newseg.header.una = this->segment_tracker.get_rcv_nxt();
+                newseg.header.una = rcv_nxt;
 
                 newseg.metadata.resendts = current;
-                newseg.metadata.rto = this->rto_calculator.get_rto();
+                newseg.metadata.rto = rto;
                 newseg.metadata.fastack = 0;
                 newseg.metadata.xmit = 0;
 
                 this->sender_buffer.push_segment(newseg);
-                this->snd_queue.pop_front();
+                ++count;
             }
+
+            this->snd_queue.erase(this->snd_queue.begin(), this->snd_queue.begin() + count);
         }
 
         // Given current max segment size, estimates the number of segments needed to fit the payload.
