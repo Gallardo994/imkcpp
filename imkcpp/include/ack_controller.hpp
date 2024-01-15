@@ -104,9 +104,8 @@ namespace imkcpp {
 
             if (this->should_acknowledge(sn)) {
                 this->sender_buffer.erase(sn);
+                this->sender_buffer.shrink();
             }
-
-            this->sender_buffer.shrink();
         }
 
         // Removes acknowledged segments from the sender buffer according to
