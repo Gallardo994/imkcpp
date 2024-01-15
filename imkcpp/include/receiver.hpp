@@ -19,7 +19,7 @@ namespace imkcpp {
         ReceiverBuffer<MTU>& receiver_buffer;
         CongestionController<MTU>& congestion_controller;
 
-        std::deque<Segment> rcv_queue{};
+        std::deque<Segment> rcv_queue{}; // TODO: Does not need to be Segment as we don't use metadata
 
     public:
 

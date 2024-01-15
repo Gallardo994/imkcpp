@@ -14,7 +14,7 @@ namespace imkcpp {
         CongestionController<MTU>& congestion_controller;
         SegmentTracker& segment_tracker;
 
-        std::deque<Segment> rcv_buf{};
+        std::deque<Segment> rcv_buf{}; // TODO: Does not need to be Segment as we don't use metadata
 
     public:
         explicit ReceiverBuffer(CongestionController<MTU>& congestion_controller,
