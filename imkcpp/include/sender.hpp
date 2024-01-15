@@ -2,6 +2,7 @@
 
 #include <span>
 #include <limits>
+#include <vector>
 
 #include "types.hpp"
 #include "errors.hpp"
