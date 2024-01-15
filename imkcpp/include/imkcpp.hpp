@@ -116,7 +116,8 @@ namespace imkcpp {
         }
 
         // Receives data from the transport layer.
-        // TODO: Slightly slower than original implementation, needs optimization (see benchmarks).
+        // TODO: Slightly slower than original implementation with lower packet count, needs optimization.
+        // TODO: --benchmark_filter=(imkcpp|original)_input*
         auto input(const std::span<const std::byte> data) -> tl::expected<InputResult, error> {
             if (data.size() < constants::IKCP_OVERHEAD) {
                 return tl::unexpected(error::less_than_header_size);
@@ -161,7 +162,6 @@ namespace imkcpp {
 
                 switch (header.cmd) {
                     case commands::IKCP_CMD_PUSH: {
-
                         if (!this->congestion_controller.fits_receive_window(header.sn)) {
                             drop_push();
                             break;
@@ -181,10 +181,10 @@ namespace imkcpp {
                         break;
                     }
                     case commands::IKCP_CMD_ACK: {
-                            this->ack_controller.ack_received(this->current, header.sn, header.ts);
-                            fastack_ctx.update(header.sn, header.ts);
-                            input_result.cmd_ack_count++;
-                            break;
+                        this->ack_controller.ack_received(this->current, header.sn, header.ts);
+                        fastack_ctx.update(header.sn, header.ts);
+                        input_result.cmd_ack_count++;
+                        break;
                     }
                     case commands::IKCP_CMD_WASK: {
                         this->congestion_controller.set_probe_flag(constants::IKCP_ASK_TELL);
