@@ -247,6 +247,7 @@ BENCHMARK(BM_imkcpp_input_receive)
     ->Arg(16384)
     ->Arg(131072);
 
+// TODO: Figure out why this benchmark is slower than the original.
 BENCHMARK(BM_imkcpp_acknowledge)
     ->Unit(benchmark::kMicrosecond)
     ->Iterations(100000)
