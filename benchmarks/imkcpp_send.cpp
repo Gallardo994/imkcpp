@@ -69,7 +69,48 @@ void BM_imkcpp_send_receive_cycle_unconstrained(benchmark::State& state) {
     }
 }
 
+void BM_imkcpp_send(benchmark::State& state) {
+    using namespace imkcpp;
+
+    const auto size = state.range(0);
+
+    for (auto _ : state) {
+        state.PauseTiming();
+
+        ImKcpp<constants::IKCP_MTU_DEF> kcp_output(0);
+
+        kcp_output.set_send_window(2048);
+        kcp_output.set_receive_window(2048);
+        kcp_output.set_congestion_window_enabled(false);
+
+        auto output_callback = [](std::span<const std::byte>) {
+
+        };
+
+        kcp_output.update(0, output_callback);
+
+        std::vector<std::byte> send_buffer(size);
+        for (u32 j = 0; j < size; ++j) {
+            send_buffer[j] = static_cast<std::byte>(j);
+        }
+
+        state.ResumeTiming();
+
+        kcp_output.send(send_buffer);
+        kcp_output.update(200, output_callback);
+    }
+}
+
 BENCHMARK(BM_imkcpp_send_receive_cycle_unconstrained)
+    ->Unit(benchmark::kMicrosecond)
+    ->Iterations(1000000)
+    ->Arg(64)
+    ->Arg(256)
+    ->Arg(2048)
+    ->Arg(16384)
+    ->Arg(131072);
+
+BENCHMARK(BM_imkcpp_send)
     ->Unit(benchmark::kMicrosecond)
     ->Iterations(1000000)
     ->Arg(64)

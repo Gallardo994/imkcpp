@@ -81,7 +81,49 @@ void BM_original_send_receive_cycle_unconstrained(benchmark::State& state) {
     }
 }
 
+void BM_original_send(benchmark::State& state) {
+    const auto size = state.range(0);
+
+    for (auto _ : state) {
+        state.PauseTiming();
+
+        ikcpcb* kcp_output = ikcp_create(0, nullptr);
+        ikcp_wndsize(kcp_output, 2048, 2048);
+        ikcp_nodelay(kcp_output, 0, 100, 0, 1);
+
+        auto output_callback = [](const char* data, const int len, ikcpcb*, void* user) -> int {
+            return 0;
+        };
+        ikcp_setoutput(kcp_output, output_callback);
+
+        ikcp_update(kcp_output, 0);
+
+        std::vector<char> send_buffer(size);
+        for (int j = 0; j < size; ++j) {
+            send_buffer[j] = static_cast<char>(j);
+        }
+
+        state.ResumeTiming();
+
+        ikcp_send(kcp_output, send_buffer.data(), send_buffer.size());
+        ikcp_update(kcp_output, 200);
+
+        state.PauseTiming();
+        ikcp_release(kcp_output);
+        state.ResumeTiming();
+    }
+}
+
 BENCHMARK(BM_original_send_receive_cycle_unconstrained)
+    ->Unit(benchmark::kMicrosecond)
+    ->Iterations(1000000)
+    ->Arg(64)
+    ->Arg(256)
+    ->Arg(2048)
+    ->Arg(16384)
+    ->Arg(131072);
+
+BENCHMARK(BM_original_send)
     ->Unit(benchmark::kMicrosecond)
     ->Iterations(1000000)
     ->Arg(64)
