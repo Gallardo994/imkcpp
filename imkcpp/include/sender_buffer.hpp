@@ -21,6 +21,10 @@ namespace imkcpp {
                               shared_ctx(shared_ctx),
                               segment_tracker(segment_tracker) {}
 
+        void reserve(const size_t size) {
+            this->snd_buf.reserve(size);
+        }
+
         void push_segment(Segment& segment) {
             this->snd_buf.push_back(std::move(segment));
         }

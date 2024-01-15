@@ -95,6 +95,7 @@ namespace imkcpp {
             this->congestion_controller.set_send_window(sndwnd);
             this->congestion_controller.set_remote_window(sndwnd);
             this->sender.reserve(sndwnd);
+            this->sender_buffer.reserve(sndwnd);
         }
 
         // Sets the maximum number of segments that can be queued in the receive buffer.
