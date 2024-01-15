@@ -9,7 +9,11 @@ set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "Suppressing benchmark's tests" FORC
 add_subdirectory(lib)
 
 add_executable(imkcpp_benchmarks
-        dummy.cpp
+        main.cpp
+        original/ikcp.c
+
+        original_send.cpp
+        imkcpp_send.cpp
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/imkcpp/include)
