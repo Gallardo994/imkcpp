@@ -10,25 +10,25 @@
 namespace imkcpp {
     // FastAckCtx is used to track the latest received segment and its timestamp.
     class FastAckCtx final {
-        bool valid = false; // At least one ack has been received
-        u32 maxack = 0; // The latest received segment number
-        u32 latest_ts = 0; // The timestamp of the latest received segment
+        constexpr static u32 INVALID = 0xffffffff;
+
+        u32 maxack = INVALID; // The latest received segment number
+        u32 latest_ts = INVALID; // The timestamp of the latest received segment
 
     public:
         // Returns true if at least one ack has been received.
         [[nodiscard]] bool is_valid() const {
-            return this->valid;
+            return this->maxack != INVALID;
         }
 
         // Updates the latest received segment number and its timestamp.
         void update(const u32 sn, const u32 ts) {
-            if (this->valid) {
+            if (this->is_valid()) {
                 if (sn > this->maxack) {
                     this->maxack = sn;
                     this->latest_ts = ts;
                 }
             } else {
-                this->valid = true;
                 this->maxack = sn;
                 this->latest_ts = ts;
             }

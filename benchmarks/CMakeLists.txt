@@ -14,6 +14,7 @@ add_executable(imkcpp_benchmarks
 
         original_send.cpp
         imkcpp_send.cpp
+        imkcpp_ack_controller.cpp
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/imkcpp/include)
