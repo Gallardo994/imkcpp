@@ -116,6 +116,7 @@ namespace imkcpp {
         }
 
         // Receives data from the transport layer.
+        // TODO: Slightly slower than original implementation, needs optimization (see benchmarks).
         auto input(const std::span<const std::byte> data) -> tl::expected<InputResult, error> {
             if (data.size() < constants::IKCP_OVERHEAD) {
                 return tl::unexpected(error::less_than_header_size);
