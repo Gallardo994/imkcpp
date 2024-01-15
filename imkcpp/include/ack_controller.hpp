@@ -79,7 +79,6 @@ namespace imkcpp {
                                rto_calculator(rto_calculator),
                                sender_buffer(sender_buffer),
                                segment_tracker(segment_tracker) {
-            acklist.reserve(32);
         }
 
         void acknowledge_fastack(const FastAckCtx& fastack_ctx) {
