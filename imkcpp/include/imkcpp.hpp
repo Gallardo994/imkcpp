@@ -127,14 +127,21 @@ namespace imkcpp {
             const u32 prev_una = this->segment_tracker.get_snd_una();
             FastAckCtx fastack_ctx{};
 
+            SegmentHeader header;
             size_t offset = 0;
 
-            while (offset <= data.size()) {
-                if (data.size() - offset < constants::IKCP_OVERHEAD) {
+            const auto drop_push = [&] {
+                offset += header.len;
+                input_result.dropped_push_count++;
+            };
+
+            const auto data_size = data.size();
+
+            while (true) {
+                if (data_size - offset < constants::IKCP_OVERHEAD) {
                     break;
                 }
 
-                SegmentHeader header;
                 header.decode_from(data, offset);
 
                 if (header.conv != this->shared_ctx.get_conv()) {
@@ -153,17 +160,7 @@ namespace imkcpp {
                 this->ack_controller.una_received(header.una);
 
                 switch (header.cmd) {
-                    case commands::IKCP_CMD_ACK: {
-                        this->ack_controller.ack_received(this->current, header.sn, header.ts);
-                        fastack_ctx.update(header.sn, header.ts);
-                        input_result.cmd_ack_count++;
-                        break;
-                    }
                     case commands::IKCP_CMD_PUSH: {
-                        const auto drop_push = [&] {
-                            offset += header.len;
-                            input_result.dropped_push_count++;
-                        };
 
                         if (!this->congestion_controller.fits_receive_window(header.sn)) {
                             drop_push();
@@ -182,6 +179,12 @@ namespace imkcpp {
                             drop_push();
                         }
                         break;
+                    }
+                    case commands::IKCP_CMD_ACK: {
+                            this->ack_controller.ack_received(this->current, header.sn, header.ts);
+                            fastack_ctx.update(header.sn, header.ts);
+                            input_result.cmd_ack_count++;
+                            break;
                     }
                     case commands::IKCP_CMD_WASK: {
                         this->congestion_controller.set_probe_flag(constants::IKCP_ASK_TELL);
