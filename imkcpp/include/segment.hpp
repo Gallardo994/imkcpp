@@ -10,7 +10,7 @@ namespace imkcpp {
     struct SegmentHeader final {
         u32 conv = 0; // Conversation ID. // TODO: Does this need to be 4 bytes?
         u8 cmd = 0; // Command type.
-        u8 frg = 0; // Fragment.
+        u8 frg = 0; // Fragment. Indicates how many next SNs are following this one in the same packet.
         u16 wnd = 0; // Window size (available space in the receive buffer).
         u32 ts = 0; // Timestamp.
         u32 sn = 0; // Sequence number.
