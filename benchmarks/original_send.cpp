@@ -2,7 +2,7 @@
 #include "original/ikcp.h"
 #include "types.hpp"
 
-void BM_original_send_receive_cycle_unconstrained(benchmark::State& state) {
+void BM_original_cycle_unconstrained(benchmark::State& state) {
     const auto size = state.range(0);
 
     for (auto _ : state) {
@@ -307,7 +307,7 @@ void BM_original_acknowledge(benchmark::State& state) {
     }
 }
 
-BENCHMARK(BM_original_send_receive_cycle_unconstrained)
+BENCHMARK(BM_original_cycle_unconstrained)
     ->Unit(benchmark::kMicrosecond)
     ->Iterations(100000)
     ->Arg(64)

@@ -1,7 +1,7 @@
 #include "benchmark/benchmark.h"
 #include "imkcpp.hpp"
 
-void BM_imkcpp_send_receive_cycle_unconstrained(benchmark::State& state) {
+void BM_imkcpp_cycle_unconstrained(benchmark::State& state) {
     using namespace imkcpp;
 
     const auto size = state.range(0);
@@ -276,7 +276,7 @@ void BM_imkcpp_acknowledge(benchmark::State& state) {
     }
 }
 
-BENCHMARK(BM_imkcpp_send_receive_cycle_unconstrained)
+BENCHMARK(BM_imkcpp_cycle_unconstrained)
     ->Unit(benchmark::kMicrosecond)
     ->Iterations(100000)
     ->Arg(64)
