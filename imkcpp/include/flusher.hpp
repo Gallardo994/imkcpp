@@ -4,15 +4,12 @@
 #include <cassert>
 #include "types.hpp"
 #include "segment.hpp"
-#include "shared_ctx.hpp"
 #include "utility.hpp"
 
 namespace imkcpp {
     template <size_t MTU>
     class Flusher final {
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
-
-        SharedCtx& shared_ctx;
 
         std::array<std::byte, MTU> buffer{};
         size_t offset = 0;
@@ -30,8 +27,6 @@ namespace imkcpp {
         }
 
     public:
-        explicit Flusher(SharedCtx& shared_ctx) : shared_ctx(shared_ctx) {}
-
         // Returns true if the buffer is empty.
         [[nodiscard]] bool is_empty() const {
             return this->offset == 0;

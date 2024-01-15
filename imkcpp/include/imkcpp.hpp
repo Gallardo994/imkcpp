@@ -32,9 +32,9 @@ namespace imkcpp {
 
         SharedCtx shared_ctx{};
 
-        Flusher<MTU> flusher{shared_ctx};
+        Flusher<MTU> flusher{};
         SegmentTracker segment_tracker{};
-        CongestionController<MTU> congestion_controller{shared_ctx, flusher, segment_tracker};
+        CongestionController<MTU> congestion_controller{flusher, segment_tracker};
 
         ReceiverBuffer<MTU> receiver_buffer{congestion_controller, segment_tracker};
         Receiver<MTU> receiver{receiver_buffer, congestion_controller};
@@ -42,7 +42,7 @@ namespace imkcpp {
         SenderBuffer sender_buffer{shared_ctx, segment_tracker};
         RtoCalculator rto_calculator{shared_ctx};
         AckController<MTU> ack_controller{flusher, rto_calculator, sender_buffer, segment_tracker};
-        Sender<MTU> sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, ack_controller, segment_tracker};
+        Sender<MTU> sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, segment_tracker};
 
         bool updated = false; // Whether update() was called at least once
         u32 current = 0; // Current / last time we updated the state

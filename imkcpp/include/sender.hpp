@@ -9,7 +9,6 @@
 #include "commands.hpp"
 #include "congestion_controller.hpp"
 #include "shared_ctx.hpp"
-#include "ack_controller.hpp"
 #include "sender_buffer.hpp"
 #include "utility.hpp"
 #include "results.hpp"
@@ -24,7 +23,6 @@ namespace imkcpp {
         RtoCalculator& rto_calculator;
         Flusher<MTU>& flusher;
         SenderBuffer& sender_buffer;
-        AckController<MTU>& ack_controller;
         SegmentTracker& segment_tracker;
 
         std::deque<Segment> snd_queue{};
@@ -42,14 +40,12 @@ namespace imkcpp {
                         RtoCalculator& rto_calculator,
                         Flusher<MTU>& flusher,
                         SenderBuffer& sender_buffer,
-                        AckController<MTU>& ack_controller,
                         SegmentTracker& segment_tracker) :
                         shared_ctx(shared_ctx),
                         congestion_controller(congestion_controller),
                         rto_calculator(rto_calculator),
                         flusher(flusher),
                         sender_buffer(sender_buffer),
-                        ack_controller(ack_controller),
                         segment_tracker(segment_tracker) {}
 
         // Takes the payload, splits it into segments and puts them into the send queue.

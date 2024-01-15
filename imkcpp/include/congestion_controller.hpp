@@ -4,7 +4,6 @@
 #include "types.hpp"
 #include "constants.hpp"
 #include "utility.hpp"
-#include "shared_ctx.hpp"
 #include "flusher.hpp"
 #include "commands.hpp"
 #include "segment_tracker.hpp"
@@ -14,7 +13,6 @@ namespace imkcpp {
     class CongestionController final {
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
 
-        SharedCtx& shared_ctx;
         Flusher<MTU>& flusher;
         SegmentTracker& segment_tracker;
 
@@ -35,10 +33,8 @@ namespace imkcpp {
         u32 probe_wait = 0; // How long we should wait before probing again
 
     public:
-        explicit CongestionController(SharedCtx& shared_ctx,
-                                      Flusher<MTU>& flusher,
+        explicit CongestionController(Flusher<MTU>& flusher,
                                       SegmentTracker& segment_tracker) :
-                                      shared_ctx(shared_ctx),
                                       flusher(flusher),
                                       segment_tracker(segment_tracker) {}
 
