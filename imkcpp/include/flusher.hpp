@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <array>
 #include <cassert>
 #include "types.hpp"
 #include "segment.hpp"
