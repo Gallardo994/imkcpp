@@ -11,11 +11,10 @@ namespace imkcpp {
         waiting_for_fragment = 4,
         too_many_fragments = 5,
         less_than_header_size = 6,
-        more_than_mtu = 7,
-        conv_mismatch = 8,
-        header_and_payload_length_mismatch = 9,
-        unknown_command = 10,
-        exceeds_window_size = 11,
+        conv_mismatch = 7,
+        header_and_payload_length_mismatch = 8,
+        unknown_command = 9,
+        exceeds_window_size = 10,
     };
 
     inline std::string err_to_str(error e) {
@@ -34,8 +33,6 @@ namespace imkcpp {
                 return "too_many_fragments";
             case error::less_than_header_size:
                 return "less_than_header_size";
-            case error::more_than_mtu:
-                return "more_than_mtu";
             case error::conv_mismatch:
                 return "conv_mismatch";
             case error::header_and_payload_length_mismatch:

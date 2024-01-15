@@ -121,10 +121,6 @@ namespace imkcpp {
                 return tl::unexpected(error::less_than_header_size);
             }
 
-            if (data.size() > MTU) {
-                return tl::unexpected(error::more_than_mtu);
-            }
-
             InputResult input_result{};
 
             const u32 prev_una = this->segment_tracker.get_snd_una();
