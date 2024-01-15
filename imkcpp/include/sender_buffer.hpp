@@ -13,7 +13,7 @@ namespace imkcpp {
         SharedCtx& shared_ctx;
         SegmentTracker& segment_tracker;
 
-        std::deque<Segment> snd_buf{};
+        std::vector<Segment> snd_buf{};
 
     public:
         explicit SenderBuffer(SharedCtx& shared_ctx,
@@ -35,28 +35,21 @@ namespace imkcpp {
         }
 
         void erase(const u32 sn) {
-            for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
-                if (sn == it->header.sn) {
-                    this->snd_buf.erase(it);
-                    break;
-                }
+            const auto it = std::find_if(this->snd_buf.begin(), this->snd_buf.end(),
+                                         [sn](const Segment& seg) {
+                                             return sn <= seg.header.sn;
+                                         });
 
-                if (sn < it->header.sn) {
-                    break;
-                }
-
-                ++it;
+            if (it != this->snd_buf.end() && it->header.sn == sn) {
+                this->snd_buf.erase(it);
             }
         }
 
         void erase_before(const u32 sn) {
-            for (auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
-                if (sn > it->header.sn) {
-                    it = this->snd_buf.erase(it);
-                } else {
-                    break;
-                }
-            }
+            const auto new_end = std::remove_if(this->snd_buf.begin(), this->snd_buf.end(),
+                                                [sn](const Segment& seg) { return seg.header.sn < sn; });
+
+            this->snd_buf.erase(new_end, this->snd_buf.end());
         }
 
         void increment_fastack_before(const u32 sn) {
@@ -99,7 +92,7 @@ namespace imkcpp {
         }
 
         // TODO: Get rid of this
-        std::deque<Segment>& get() {
+        std::vector<Segment>& get() {
             return this->snd_buf;
         }
     };
