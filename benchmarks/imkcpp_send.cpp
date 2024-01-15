@@ -282,7 +282,7 @@ BENCHMARK(BM_imkcpp_cycle_unconstrained)
     ->Arg(512)
     ->Arg(4096)
     ->Arg(16384)
-    ->Arg(131072);
+    ->Arg(125000);
 
 BENCHMARK(BM_imkcpp_send)
     ->Unit(benchmark::kMicrosecond)
@@ -290,7 +290,7 @@ BENCHMARK(BM_imkcpp_send)
     ->Arg(512)
     ->Arg(4096)
     ->Arg(16384)
-    ->Arg(131072);
+    ->Arg(125000);
 
 BENCHMARK(BM_imkcpp_input)
     ->Unit(benchmark::kMicrosecond)
@@ -298,7 +298,7 @@ BENCHMARK(BM_imkcpp_input)
     ->Arg(512)
     ->Arg(4096)
     ->Arg(16384)
-    ->Arg(131072);
+    ->Arg(125000);
 
 BENCHMARK(BM_imkcpp_receive)
     ->Unit(benchmark::kMicrosecond)
@@ -306,7 +306,7 @@ BENCHMARK(BM_imkcpp_receive)
     ->Arg(512)
     ->Arg(4096)
     ->Arg(16384)
-    ->Arg(131072);
+    ->Arg(125000);
 
 BENCHMARK(BM_imkcpp_acknowledge)
     ->Unit(benchmark::kMicrosecond)
@@ -314,4 +314,4 @@ BENCHMARK(BM_imkcpp_acknowledge)
     ->Arg(512)
     ->Arg(4096)
     ->Arg(16384)
-    ->Arg(131072);
+    ->Arg(125000);

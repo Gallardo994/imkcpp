@@ -310,11 +310,10 @@ void BM_original_acknowledge(benchmark::State& state) {
 BENCHMARK(BM_original_cycle_unconstrained)
     ->Unit(benchmark::kMicrosecond)
     ->Iterations(100000)
-    ->Arg(64)
-    ->Arg(256)
-    ->Arg(2048)
+    ->Arg(512)
+    ->Arg(4096)
     ->Arg(16384)
-    ->Arg(131072);
+    ->Arg(125000);
 
 BENCHMARK(BM_original_send)
     ->Unit(benchmark::kMicrosecond)
@@ -322,7 +321,7 @@ BENCHMARK(BM_original_send)
     ->Arg(512)
     ->Arg(4096)
     ->Arg(16384)
-    ->Arg(131072);
+    ->Arg(125000);
 
 BENCHMARK(BM_original_input)
     ->Unit(benchmark::kMicrosecond)
@@ -330,7 +329,7 @@ BENCHMARK(BM_original_input)
     ->Arg(512)
     ->Arg(4096)
     ->Arg(16384)
-    ->Arg(131072);
+    ->Arg(125000);
 
 BENCHMARK(BM_original_receive)
     ->Unit(benchmark::kMicrosecond)
@@ -338,7 +337,7 @@ BENCHMARK(BM_original_receive)
     ->Arg(512)
     ->Arg(4096)
     ->Arg(16384)
-    ->Arg(131072);
+    ->Arg(125000);
 
 BENCHMARK(BM_original_acknowledge)
     ->Unit(benchmark::kMicrosecond)
@@ -346,4 +345,4 @@ BENCHMARK(BM_original_acknowledge)
     ->Arg(512)
     ->Arg(4096)
     ->Arg(16384)
-    ->Arg(131072);
+    ->Arg(125000);
