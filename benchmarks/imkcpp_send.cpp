@@ -222,7 +222,7 @@ void BM_imkcpp_acknowledge(benchmark::State& state) {
 
 BENCHMARK(BM_imkcpp_send_receive_cycle_unconstrained)
     ->Unit(benchmark::kMicrosecond)
-    ->Iterations(1000000)
+    ->Iterations(100000)
     ->Arg(64)
     ->Arg(256)
     ->Arg(2048)
@@ -231,7 +231,7 @@ BENCHMARK(BM_imkcpp_send_receive_cycle_unconstrained)
 
 BENCHMARK(BM_imkcpp_send)
     ->Unit(benchmark::kMicrosecond)
-    ->Iterations(1000000)
+    ->Iterations(100000)
     ->Arg(64)
     ->Arg(256)
     ->Arg(2048)
