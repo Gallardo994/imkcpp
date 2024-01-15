@@ -111,10 +111,6 @@ namespace imkcpp {
             this->sender.set_deadlink(threshold);
         }
 
-        [[nodiscard]] u32 get_total_retransmits_count() const {
-            return this->sender.get_total_retransmits_count();
-        }
-
         // Receives data from the transport layer.
         // TODO: Slightly slower than original implementation with lower packet count, needs optimization.
         // TODO: --benchmark_filter=(imkcpp|original)_input*

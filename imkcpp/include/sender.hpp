@@ -130,10 +130,6 @@ namespace imkcpp {
             this->dead_link = value;
         }
 
-        [[nodiscard]] u32 get_total_retransmits_count() const {
-            return this->xmit;
-        }
-
         // Flushes data segments from the send queue to the output callback.
         void flush_data_segments(FlushResult& flush_result, const output_callback_t& output, const u32 current, const i32 unused_receive_window) {
             const u32 cwnd = this->congestion_controller.calculate_congestion_window();
