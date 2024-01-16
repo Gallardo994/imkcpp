@@ -2,13 +2,13 @@
 
 #include <algorithm>
 #include "types.hpp"
+#include "utility.hpp"
 #include "constants.hpp"
-#include "shared_ctx.hpp"
 
 namespace imkcpp {
     /// RtoCalculator is used to calculate retransmission timeout. It's based on RFC 2988.
     class RtoCalculator final {
-        SharedCtx& shared_ctx;
+        u32 interval = 0;
 
         /// Smoothed round trip time
         u32 srtt = 0;
@@ -27,9 +27,17 @@ namespace imkcpp {
         u32 maxrto = constants::IKCP_RTO_MAX;
 
     public:
-        explicit RtoCalculator(SharedCtx& shared_ctx) : shared_ctx(shared_ctx) {}
+        void set_interval(const u32 interval) {
+            this->interval = interval;
+        }
 
-        void update_rtt(const i32 rtt) {
+        void update_rtt(const u32 current, const u32 ts) {
+            const i32 rtt = time_delta(current, ts);
+
+            if (rtt < 0) {
+                return;
+            }
+
             this->last_rtt = rtt;
 
             if (this->srtt == 0) {
@@ -57,10 +65,9 @@ namespace imkcpp {
 
             // RTO = SRTT + max(G, K * RTTVAR)
             constexpr u32 K = 4;
-            const u32 rto = this->srtt + std::max(this->shared_ctx.get_interval(), K * this->rttvar);
+            const u32 rto = this->srtt + std::max(this->interval, K * this->rttvar);
 
             // Limiting to IKCP_RTO_MAX is not mentioned in RFC 2988, but is present in the original C implementation
-            // TODO: Investigate why it's needed
             this->rto = std::clamp(rto, this->minrto, this->maxrto);
         }
 

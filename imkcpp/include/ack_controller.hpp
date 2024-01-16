@@ -2,7 +2,6 @@
 
 #include "types.hpp"
 #include "flusher.hpp"
-#include "rto_calculator.hpp"
 #include "sender_buffer.hpp"
 #include "segment_tracker.hpp"
 #include "utility.hpp"
@@ -62,7 +61,6 @@ namespace imkcpp {
         };
 
         Flusher<MTU>& flusher;
-        RtoCalculator& rto_calculator;
         SenderBuffer& sender_buffer;
         SegmentTracker& segment_tracker;
 
@@ -79,11 +77,9 @@ namespace imkcpp {
 
     public:
         explicit AckController(Flusher<MTU>& flusher,
-                               RtoCalculator& rto_calculator,
                                SenderBuffer& sender_buffer,
                                SegmentTracker& segment_tracker) :
                                flusher(flusher),
-                               rto_calculator(rto_calculator),
                                sender_buffer(sender_buffer),
                                segment_tracker(segment_tracker) {
         }
@@ -104,10 +100,6 @@ namespace imkcpp {
 
         /// Updates the RTO and removes acknowledged segments from the sender buffer.
         void ack_received(const u32 current, const u32 sn, const u32 ts) {
-            if (const i32 rtt = time_delta(current, ts); rtt >= 0) {
-                this->rto_calculator.update_rtt(rtt);
-            }
-
             if (this->should_acknowledge(sn)) {
                 this->sender_buffer.erase(sn);
                 this->sender_buffer.shrink();

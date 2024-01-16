@@ -41,8 +41,8 @@ namespace imkcpp {
         Receiver<MTU> receiver{receiver_buffer, congestion_controller};
 
         SenderBuffer sender_buffer{shared_ctx, segment_tracker};
-        RtoCalculator rto_calculator{shared_ctx};
-        AckController<MTU> ack_controller{flusher, rto_calculator, sender_buffer, segment_tracker};
+        RtoCalculator rto_calculator{};
+        AckController<MTU> ack_controller{flusher, sender_buffer, segment_tracker};
         Sender<MTU> sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, segment_tracker};
 
         bool updated = false; // Whether update() was called at least once
@@ -73,8 +73,11 @@ namespace imkcpp {
         }
 
         /// Sets the internal clock interval in milliseconds. Must be between 10 and 5000.
-        auto set_interval(const u32 interval) noexcept -> void {
-            this->shared_ctx.set_interval(std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000)));
+        auto set_interval(u32 interval) noexcept -> void {
+            interval = std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000));
+
+            this->shared_ctx.set_interval(interval);
+            this->rto_calculator.set_interval(interval);
         }
 
         auto set_nodelay(const u32 nodelay) noexcept -> void {
@@ -181,6 +184,7 @@ namespace imkcpp {
                         break;
                     }
                     case commands::IKCP_CMD_ACK: {
+                        this->rto_calculator.update_rtt(this->current, header.ts);
                         this->ack_controller.ack_received(this->current, header.sn, header.ts);
                         fastack_ctx.update(header.sn, header.ts);
                         input_result.cmd_ack_count++;
