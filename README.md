@@ -18,6 +18,10 @@ Yes and no. At the current state, this implementation is compatible with origina
 - Include `imkcpp.hpp` in your source code
 - Create and use `imkcpp::ImKcpp<size_t MTU>` object as you would use `ikcp` object
 
+# Documentation
+
+Documentation is available [here](https://gallardo994.github.io/imkcpp/html/index.html).
+
 # Special thanks
 - [skywind3000](https://github.com/skywind3000) for the original [kcp](https://github.com/skywind3000/kcp) implementation
 - [TartanLlama](https://github.com/TartanLlama) for the [unexpected](https://github.com/TartanLlama/expected) implementation
