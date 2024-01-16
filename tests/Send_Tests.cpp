@@ -270,7 +270,7 @@ TEST(Send_Tests, Send_SendWindowSmallerThanReceive) {
         EXPECT_EQ(send_buffer.at(j), recv_buffer.at(j));
     }
 
-    std::cout << "Send_LossyScenario finished in simulated " << update_idx << " calls" << std::endl;
+    std::cout << "Send_SendWindowSmallerThanReceive finished in simulated " << update_idx << " calls" << std::endl;
 }
 
 TEST(Send_Tests, Send_FragmentedValidValues) {
