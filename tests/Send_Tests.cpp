@@ -214,6 +214,65 @@ TEST(Send_Tests, Send_LossyScenario) {
     std::cout << "Send_LossyScenario finished in simulated " << update_idx << " calls" << std::endl;
 }
 
+TEST(Send_Tests, Send_SendWindowSmallerThanReceive) {
+    using namespace imkcpp;
+
+    constexpr size_t max_segment_size = MTU_TO_MSS<constants::IKCP_MTU_DEF>();
+    constexpr size_t size = max_segment_size * 250;
+
+    ImKcpp<constants::IKCP_MTU_DEF> kcp_output(0);
+    kcp_output.set_send_window(128);
+    kcp_output.set_receive_window(256);
+    kcp_output.set_interval(10);
+    kcp_output.update(0, [](std::span<const std::byte>) { });
+
+    ImKcpp<constants::IKCP_MTU_DEF> kcp_input(0);
+    kcp_input.set_send_window(128);
+    kcp_input.set_receive_window(256);
+    kcp_input.set_interval(10);
+    kcp_input.update(0, [](std::span<const std::byte>) { });
+
+    std::vector<std::byte> send_buffer(size);
+    for (u32 j = 0; j < size; ++j) {
+        send_buffer[j] = static_cast<std::byte>(j);
+    }
+
+    auto send_result = kcp_output.send(send_buffer);
+    ASSERT_TRUE(send_result.has_value()) << err_to_str(send_result.error());
+    ASSERT_EQ(send_result.value(), size);
+
+    auto output_to_input = [&](const std::span<const std::byte> data) {
+        kcp_input.input(data);
+    };
+
+    auto input_to_output = [&](const std::span<const std::byte> data) {
+        kcp_output.input(data);
+    };
+
+    size_t update_idx = 0;
+
+    while (kcp_output.get_state() == State::Alive && kcp_input.peek_size() != size) {
+        const auto now = static_cast<u32>(update_idx * 10);
+
+        kcp_output.update(now, output_to_input);
+        kcp_input.update(now, input_to_output);
+
+        ++update_idx;
+    }
+
+    ASSERT_EQ(kcp_output.get_state(), State::Alive);
+
+    std::vector<std::byte> recv_buffer(size);
+    auto recv_result = kcp_input.recv(recv_buffer);
+    ASSERT_TRUE(recv_result.has_value()) << err_to_str(recv_result.error());
+
+    for (size_t j = 0; j < size; ++j) {
+        EXPECT_EQ(send_buffer.at(j), recv_buffer.at(j));
+    }
+
+    std::cout << "Send_LossyScenario finished in simulated " << update_idx << " calls" << std::endl;
+}
+
 TEST(Send_Tests, Send_FragmentedValidValues) {
     using namespace imkcpp;
 

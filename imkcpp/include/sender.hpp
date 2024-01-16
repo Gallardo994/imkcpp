@@ -60,7 +60,9 @@ namespace imkcpp {
                 return tl::unexpected(error::too_many_fragments);
             }
 
-            if (count > this->congestion_controller.get_send_window()) {
+            // We should limit sending by receive window because we can send more than send_wnd segments,
+            // but cannot receive more than rcv_wnd segments.
+            if (count > this->congestion_controller.get_receive_window()) {
                 return tl::unexpected(error::exceeds_window_size);
             }
 
