@@ -3,6 +3,7 @@
 #include "commands.hpp"
 #include <cstdio>
 #include <numeric>
+#include <random>
 
 TEST(Send_Tests, Send_ValidValues) {
     using namespace imkcpp;
@@ -130,6 +131,87 @@ TEST(Send_Tests, Send_ValidValues) {
     std::cout << "Best result: " << min_it->duration.count() << " microseconds, Size: " << min_it->size << ", Segments: " << min_it->segments_count << std::endl;
     std::cout << "Worst result: " << max_it->duration.count() << " microseconds, Size: " << max_it->size << ", Segments: " << max_it->segments_count << std::endl;
     std::cout << "Average result: " << average_duration.count() << " microseconds" << std::endl;
+}
+
+TEST(Send_Tests, Send_LossyScenario) {
+    using namespace imkcpp;
+
+    constexpr float loss_ratio = 0.5f;
+
+    constexpr size_t max_segment_size = MTU_TO_MSS<constants::IKCP_MTU_DEF>();
+    constexpr size_t size = max_segment_size * 120;
+
+    ImKcpp<constants::IKCP_MTU_DEF> kcp_output(0);
+    kcp_output.set_send_window(2048);
+    kcp_output.set_receive_window(2048);
+    kcp_output.set_interval(10);
+    kcp_output.set_congestion_window_enabled(false);
+    kcp_output.update(0, [](std::span<const std::byte>) { });
+
+    ImKcpp<constants::IKCP_MTU_DEF> kcp_input(0);
+    kcp_input.set_send_window(2048);
+    kcp_input.set_receive_window(2048);
+    kcp_input.set_interval(10);
+    kcp_input.set_congestion_window_enabled(false);
+    kcp_input.update(0, [](std::span<const std::byte>) { });
+
+    std::vector<std::byte> send_buffer(size);
+    for (u32 j = 0; j < size; ++j) {
+        send_buffer[j] = static_cast<std::byte>(j);
+    }
+
+    std::vector<std::byte> recv_buffer(size);
+
+    auto send_result = kcp_output.send(send_buffer);
+    ASSERT_TRUE(send_result.has_value()) << err_to_str(send_result.error());
+    ASSERT_EQ(send_result.value(), size);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution dis(0.0f, 1.0f);
+
+    auto should_drop = [&]() -> bool {
+        const auto random = dis(gen);
+        return random < loss_ratio;
+    };
+
+    auto output_to_input = [&](const std::span<const std::byte> data) {
+        if (should_drop()) {
+            return;
+        }
+
+        kcp_input.input(data);
+    };
+
+    auto input_to_output = [&](const std::span<const std::byte> data) {
+        if (should_drop()) {
+            return;
+        }
+
+        kcp_output.input(data);
+    };
+
+    size_t update_idx = 0;
+
+    while (kcp_output.get_state() == State::Alive && kcp_input.peek_size() != size) {
+        const auto now = static_cast<u32>(update_idx * 10);
+
+        kcp_output.update(now, output_to_input);
+        kcp_input.update(now, input_to_output);
+
+        ++update_idx;
+
+        ASSERT_LT(update_idx, 10000);
+    }
+
+    ASSERT_EQ(kcp_output.get_state(), State::Alive);
+
+    auto recv_result = kcp_input.recv(recv_buffer);
+    ASSERT_TRUE(recv_result.has_value()) << err_to_str(recv_result.error());
+
+    for (size_t j = 0; j < size; ++j) {
+        EXPECT_EQ(send_buffer.at(j), recv_buffer.at(j));
+    }
 }
 
 TEST(Send_Tests, Send_FragmentedValidValues) {
