@@ -18,15 +18,18 @@ namespace imkcpp {
 
         ReceiverBuffer<MTU>& receiver_buffer;
         CongestionController<MTU>& congestion_controller;
+        WindowProber<MTU>& window_prober;
 
         std::deque<Segment> rcv_queue{}; // TODO: Does not need to be Segment as we don't use metadata
 
     public:
 
         explicit Receiver(ReceiverBuffer<MTU>& receiver_buffer,
-                          CongestionController<MTU>& congestion_controller) :
+                          CongestionController<MTU>& congestion_controller,
+                          WindowProber<MTU>& window_prober) :
                           receiver_buffer(receiver_buffer),
-                          congestion_controller(congestion_controller) {}
+                          congestion_controller(congestion_controller),
+                          window_prober(window_prober) {}
 
         [[nodiscard]] tl::expected<size_t, error> peek_size() const {
             if (this->rcv_queue.empty()) {
@@ -92,7 +95,7 @@ namespace imkcpp {
             this->move_receive_buffer_to_queue();
 
             if (this->congestion_controller.get_receive_window() > this->rcv_queue.size() && recover) {
-                this->congestion_controller.set_probe_flag(constants::IKCP_ASK_TELL);
+                this->window_prober.set_flag(constants::IKCP_ASK_TELL);
             }
 
             return offset;

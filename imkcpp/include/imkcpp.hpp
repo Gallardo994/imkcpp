@@ -15,6 +15,7 @@
 #include "results.hpp"
 #include "rto_calculator.hpp"
 #include "congestion_controller.hpp"
+#include "window_prober.hpp"
 #include "shared_ctx.hpp"
 #include "receiver.hpp"
 #include "sender_buffer.hpp"
@@ -35,10 +36,11 @@ namespace imkcpp {
 
         Flusher<MTU> flusher{};
         SegmentTracker segment_tracker{};
-        CongestionController<MTU> congestion_controller{flusher, segment_tracker};
+        CongestionController<MTU> congestion_controller{segment_tracker};
+        WindowProber<MTU> window_prober{flusher};
 
         ReceiverBuffer<MTU> receiver_buffer{congestion_controller, segment_tracker};
-        Receiver<MTU> receiver{receiver_buffer, congestion_controller};
+        Receiver<MTU> receiver{receiver_buffer, congestion_controller, window_prober};
 
         SenderBuffer sender_buffer{shared_ctx, segment_tracker};
         RtoCalculator rto_calculator{};
@@ -191,7 +193,7 @@ namespace imkcpp {
                         break;
                     }
                     case commands::IKCP_CMD_WASK: {
-                        this->congestion_controller.set_probe_flag(constants::IKCP_ASK_TELL);
+                        this->window_prober.set_flag(constants::IKCP_ASK_TELL);
                         input_result.cmd_wask_count++;
                         break;
                     }
@@ -303,8 +305,8 @@ namespace imkcpp {
             this->ack_controller.flush_acks(flush_result, callback, seg);
 
             // Window probes
-            this->congestion_controller.update_probe_request(current);
-            this->congestion_controller.flush_probes(flush_result, callback, seg);
+            this->window_prober.update(current, this->congestion_controller.get_remote_window());
+            this->window_prober.flush(flush_result, callback, seg);
 
             // Useful data
             this->sender.flush_data_segments(flush_result, callback, current, unused_receive_window);
