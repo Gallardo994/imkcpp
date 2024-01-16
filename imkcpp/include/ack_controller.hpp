@@ -8,20 +8,23 @@
 #include "utility.hpp"
 
 namespace imkcpp {
-    // FastAckCtx is used to track the latest received segment and its timestamp.
+    /// FastAckCtx is used to track the latest received segment and its timestamp.
     class FastAckCtx final {
         constexpr static u32 INVALID = 0xffffffff;
 
-        u32 maxack = INVALID; // The latest received segment number
-        u32 latest_ts = INVALID; // The timestamp of the latest received segment
+        /// The latest received segment number
+        u32 maxack = INVALID;
+
+        /// The timestamp of the latest received segment
+        u32 latest_ts = INVALID;
 
     public:
-        // Returns true if at least one ack has been received.
+        /// Returns true if at least one ack has been received.
         [[nodiscard]] bool is_valid() const {
             return this->maxack != INVALID;
         }
 
-        // Updates the latest received segment number and its timestamp.
+        /// Updates the latest received segment number and its timestamp.
         void update(const u32 sn, const u32 ts) {
             if (this->is_valid()) {
                 if (sn > this->maxack) {
@@ -34,12 +37,12 @@ namespace imkcpp {
             }
         }
 
-        // Returns the latest received segment number.
+        /// Returns the latest received segment number.
         [[nodiscard]] u32 get_maxack() const {
             return this->maxack;
         }
 
-        // Returns the timestamp of the latest received segment.
+        /// Returns the timestamp of the latest received segment.
         [[nodiscard]] u32 get_latest_ts() const {
             return this->latest_ts;
         }
@@ -48,8 +51,11 @@ namespace imkcpp {
     template <size_t MTU>
     class AckController final {
         struct Ack {
-            u32 sn = 0; // Segment number
-            u32 ts = 0; // Timestamp
+            /// Segment number
+            u32 sn = 0;
+
+            /// Timestamp
+            u32 ts = 0;
 
             explicit Ack() = default;
             explicit Ack(const u32 sn, const u32 ts) : sn(sn), ts(ts) { }
@@ -95,7 +101,7 @@ namespace imkcpp {
             this->sender_buffer.increment_fastack_before(maxack);
         }
 
-        // Updates the RTO and removes acknowledged segments from the sender buffer.
+        /// Updates the RTO and removes acknowledged segments from the sender buffer.
         void ack_received(const u32 current, const u32 sn, const u32 ts) {
             if (const i32 rtt = time_delta(current, ts); rtt >= 0) {
                 this->rto_calculator.update_rtt(rtt);
@@ -107,23 +113,26 @@ namespace imkcpp {
             }
         }
 
-        // Removes acknowledged segments from the sender buffer according to
-        // remote una (unacknowledged segment number).
+        /**
+         *Removes acknowledged segments from the sender buffer according to
+         *remote una (unacknowledged segment number).
+        */
         void una_received(const u32 una) {
             this->sender_buffer.erase_before(una);
             this->sender_buffer.shrink();
         }
 
-        // Adds a segment to the acknowledgement list to be sent later.
+        /// Adds a segment to the acknowledgement list to be sent later.
         void schedule_ack(const u32 sn, const u32 ts) {
             this->acklist.emplace_back(sn, ts);
         }
 
+        /// Reserves space in the acknowledgement vector.
         void reserve(const size_t size) {
             this->acklist.reserve(size);
         }
 
-        // Sends all scheduled acknowledgements and clears the acknowledgement list.
+        /// Sends all scheduled acknowledgements and clears the acknowledgement list.
         void flush_acks(FlushResult& flush_result, const output_callback_t& output, Segment& base_segment) {
             for (const Ack& ack : this->acklist) {
                 flush_result.total_bytes_sent += this->flusher.flush_if_full(output);

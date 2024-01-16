@@ -71,7 +71,7 @@ namespace imkcpp {
             this->set_send_window(constants::IKCP_WND_SND);
         }
 
-        // Sets the internal clock interval in milliseconds. Must be between 10 and 5000.
+        /// Sets the internal clock interval in milliseconds. Must be between 10 and 5000.
         auto set_interval(const u32 interval) noexcept -> void {
             this->shared_ctx.set_interval(std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000)));
         }
@@ -80,15 +80,17 @@ namespace imkcpp {
             this->sender.set_nodelay(nodelay);
         }
 
+        /// Sets the number of non-sequential acks required to trigger fast resend.
         auto set_fastresend(const u32 fastresend) noexcept -> void {
             this->sender.set_fastresend(fastresend);
         }
 
+        /// Sets the maximum count of fast resends per segment.
         auto set_fastlimit(const u32 limit) noexcept -> void {
             this->sender.set_fastlimit(limit);
         }
 
-        // Sets the maximum number of segments that can be sent in a single update() call.
+        /// Sets the maximum number of segments that can be sent in a single update() call.
         auto set_send_window(const u32 sndwnd) noexcept -> void {
             assert(sndwnd > 0);
 
@@ -96,7 +98,7 @@ namespace imkcpp {
             this->congestion_controller.set_remote_window(sndwnd);
         }
 
-        // Sets the maximum number of segments that can be queued in the receive buffer.
+        /// Sets the maximum number of segments that can be queued in the receive buffer.
         auto set_receive_window(const u32 rcvwnd) noexcept -> void {
             assert(rcvwnd > 0);
 
@@ -104,18 +106,17 @@ namespace imkcpp {
             this->ack_controller.reserve(rcvwnd);
         }
 
-        // Enables or disables congestion window.
+        /// Enables or disables congestion window.
         auto set_congestion_window_enabled(const bool state) noexcept -> void {
             this->congestion_controller.set_congestion_window_enabled(state);
         }
 
+        /// Sets maximum retransmission count for a single segment until it's considered lost.
         auto set_deadlink(const u32 threshold) noexcept -> void {
             this->sender.set_deadlink(threshold);
         }
 
-        // Receives data from the transport layer.
-        // TODO: Slightly slower than original implementation with lower packet count, needs optimization.
-        // TODO: --benchmark_filter=(imkcpp|original)_input*
+        /// Receives data from the transport layer.
         auto input(const std::span<const std::byte> data) noexcept -> tl::expected<InputResult, error> {
             if (data.size() < constants::IKCP_OVERHEAD) {
                 return tl::unexpected(error::less_than_header_size);
@@ -210,19 +211,19 @@ namespace imkcpp {
             return input_result;
         }
 
-        // Reads data from the receive queue.
+        /// Reads data from the receive queue.
         auto recv(const std::span<std::byte> buffer) noexcept -> tl::expected<size_t, error> {
             assert(!buffer.empty());
 
             return this->receiver.recv(buffer);
         }
 
-        // Sends data.
+        /// Sends data.
         auto send(const std::span<const std::byte> buffer) noexcept -> tl::expected<size_t, error> {
             return this->sender.send(buffer);
         }
 
-        // Checks when the next update() should be called.
+        /// Checks when the next update() should be called.
         auto check(const u32 current) noexcept -> u32 {
             if (!this->updated) {
                 return current;
@@ -250,7 +251,7 @@ namespace imkcpp {
             return current + std::min(this->shared_ctx.get_interval(), minimal);
         }
 
-        // Updates the state and performs flush if necessary.
+        /// Updates the state and performs flush if necessary.
         auto update(const u32 current, const output_callback_t& callback) noexcept -> FlushResult {
             this->current = current;
 
@@ -280,7 +281,7 @@ namespace imkcpp {
             return {};
         }
 
-        // Flushes the data to the output callback.
+        /// Flushes the data to the output callback.
         auto flush(const output_callback_t& callback) noexcept -> FlushResult {
             FlushResult flush_result{};
 
@@ -311,22 +312,22 @@ namespace imkcpp {
             return flush_result;
         }
 
-        // Gets the current state.
+        /// Gets the current state.
         [[nodiscard]] auto get_state() const noexcept -> State {
             return this->shared_ctx.get_state();
         }
 
-        // Gets bytes count of the available data in the receive queue.
+        /// Gets bytes count of the available data in the receive queue.
         [[nodiscard]] auto peek_size() const noexcept -> tl::expected<size_t, error> {
             return this->receiver.peek_size();
         }
 
-        // Calculates the number of segments required to send the given amount of data.
+        /// Calculates the number of segments required to send the given amount of data.
         [[nodiscard]] auto estimate_segments_count(const size_t size) const noexcept -> size_t {
             return this->sender.estimate_segments_count(size);
         }
 
-        // Calculates the maximum payload size that can be sent in a single send() call.
+        /// Calculates the maximum payload size that can be sent in a single send() call.
         [[nodiscard]] auto estimate_max_payload_size() const noexcept -> size_t {
             const size_t max_segments_count = std::min(
                 static_cast<size_t>(this->congestion_controller.get_send_window()),

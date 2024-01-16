@@ -8,14 +8,29 @@ namespace imkcpp {
     // TODO: Too many public members, make them private. Also, make the Segment class a friend of the SegmentHeader class.
     // TODO: The logic is heavily reliant on the fact that everything is public. Rework this.
     struct SegmentHeader final {
-        u32 conv = 0; // Conversation ID. // TODO: Does this need to be 4 bytes?
-        u8 cmd = 0; // Command type.
-        u8 frg = 0; // Fragment. Indicates how many next SNs are following this one in the same packet.
-        u16 wnd = 0; // Window size (available space in the receive buffer).
-        u32 ts = 0; // Timestamp.
-        u32 sn = 0; // Sequence number.
-        u32 una = 0; // Unacknowledged sequence number.
-        u32 len = 0; // Length of the payload.
+        /// Conversation ID.
+        u32 conv = 0;  // TODO: Does this need to be 4 bytes?
+
+        /// Command type.
+        u8 cmd = 0;
+
+        /// Fragment. Indicates how many next SNs are following this one in the same packet.
+        u8 frg = 0;
+
+        /// Window size (available space in the receive buffer).
+        u16 wnd = 0;
+
+        /// Timestamp.
+        u32 ts = 0;
+
+        /// Sequence number.
+        u32 sn = 0;
+
+        /// Unacknowledged sequence number.
+        u32 una = 0;
+
+        /// Length of the payload.
+        u32 len = 0;
 
         void encode_to(std::span<std::byte> buf, size_t& offset) const {
             assert(buf.size() >= constants::IKCP_OVERHEAD);
@@ -45,10 +60,17 @@ namespace imkcpp {
     };
 
     struct SegmentMetadata final {
-        u32 resendts = 0; // Timestamp for retransmission.
-        u32 rto = 0; // Retransmission timeout.
-        u32 fastack = 0; // Number of times this segment has been acknowledged without any intervening segments being acknowledged.
-        u32 xmit = 0; // Number of times this segment has been transmitted.
+        /// Timestamp for retransmission.
+        u32 resendts = 0;
+
+        /// Retransmission timeout.
+        u32 rto = 0;
+
+        /// Number of times this segment has been acknowledged without any intervening segments being acknowledged.
+        u32 fastack = 0;
+
+        /// Number of times this segment has been transmitted.
+        u32 xmit = 0;
     };
 
     struct SegmentData final {

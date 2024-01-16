@@ -48,7 +48,7 @@ namespace imkcpp {
                         sender_buffer(sender_buffer),
                         segment_tracker(segment_tracker) {}
 
-        // Takes the payload, splits it into segments and puts them into the send queue.
+        /// Takes the payload, splits it into segments and puts them into the send queue.
         [[nodiscard]] tl::expected<size_t, error> send(const std::span<const std::byte> buffer) {
             if (buffer.empty()) {
                 return tl::unexpected(error::buffer_too_small);
@@ -82,7 +82,7 @@ namespace imkcpp {
             return offset;
         }
 
-        // Flushes data segments from the send queue to the sender buffer.
+        /// Flushes data segments from the send queue to the sender buffer.
         void move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window) {
             while (!this->snd_queue.empty() && this->segment_tracker.get_snd_nxt() < this->segment_tracker.get_snd_una() + cwnd) {
                 Segment& newseg = this->snd_queue.front();
@@ -104,7 +104,7 @@ namespace imkcpp {
             }
         }
 
-        // Given current max segment size, estimates the number of segments needed to fit the payload.
+        /// Given current max segment size, estimates the number of segments needed to fit the payload.
         [[nodiscard]] size_t estimate_segments_count(const size_t size) const {
             return std::max(static_cast<size_t>(1), (size + MAX_SEGMENT_SIZE - 1) / MAX_SEGMENT_SIZE);
         }
@@ -126,7 +126,7 @@ namespace imkcpp {
             this->dead_link = value;
         }
 
-        // Flushes data segments from the send queue to the output callback.
+        /// Flushes data segments from the send queue to the output callback.
         void flush_data_segments(FlushResult& flush_result, const output_callback_t& output, const u32 current, const i32 unused_receive_window) {
             const u32 cwnd = this->congestion_controller.calculate_congestion_window();
             this->move_send_queue_to_buffer(cwnd, current, unused_receive_window);

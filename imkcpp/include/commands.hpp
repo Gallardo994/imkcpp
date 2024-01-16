@@ -9,7 +9,7 @@ namespace imkcpp::commands {
     constexpr u8 IKCP_CMD_WASK = 83;
     constexpr u8 IKCP_CMD_WINS = 84;
 
-    // Returns true if the u8 value is a valid command.
+    /// Returns true if the u8 value is a valid command.
     inline bool is_valid(const u8 cmd) {
         return cmd >= IKCP_CMD_PUSH && cmd <= IKCP_CMD_WINS;
     }

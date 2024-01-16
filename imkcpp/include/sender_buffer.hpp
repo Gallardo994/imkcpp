@@ -69,8 +69,10 @@ namespace imkcpp {
             }
         }
 
-        // Returns nearest delta from current time to the earliest resend time of a segment in the buffer.
-        // If there are no segments in the buffer, returns std::nullopt
+        /**
+         *Returns nearest delta from current time to the earliest resend time of a segment in the buffer.
+         *If there are no segments in the buffer, returns std::nullopt
+         */
         [[nodiscard]] std::optional<u32> get_earliest_transmit_delta(const u32 current) const {
             if (this->snd_buf.empty()) {
                 return std::nullopt;

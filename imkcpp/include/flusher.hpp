@@ -14,7 +14,7 @@ namespace imkcpp {
         std::array<std::byte, MTU> buffer{};
         size_t offset = 0;
 
-        // Flushes the buffer to the given output
+        /// Flushes the buffer to the given output
         [[nodiscard]] size_t flush(const output_callback_t& callback) {
             const auto size = this->offset;
 
@@ -27,12 +27,12 @@ namespace imkcpp {
         }
 
     public:
-        // Returns true if the buffer is empty.
+        /// Returns true if the buffer is empty.
         [[nodiscard]] bool is_empty() const {
             return this->offset == 0;
         }
 
-        // Flushes the buffer to the given output if it exceeds Max Segment Size
+        /// Flushes the buffer to the given output if it exceeds Max Segment Size
         [[nodiscard]] size_t flush_if_full(const output_callback_t& target) {
             if (this->offset > MAX_SEGMENT_SIZE) {
                 return this->flush(target);
@@ -41,7 +41,7 @@ namespace imkcpp {
             return 0;
         }
 
-        // Flushes the buffer to the given output if adding "size" bytes to the buffer would exceed Max Segment Size
+        /// Flushes the buffer to the given output if adding "size" bytes to the buffer would exceed Max Segment Size
         [[nodiscard]] size_t flush_if_does_not_fit(const output_callback_t& target, const size_t size) {
             if (this->offset + size > MAX_SEGMENT_SIZE) {
                 return this->flush(target);
@@ -50,7 +50,7 @@ namespace imkcpp {
             return 0;
         }
 
-        // Flushes the buffer to the given output if it's not empty
+        /// Flushes the buffer to the given output if it's not empty
         [[nodiscard]] size_t flush_if_not_empty(const output_callback_t& target) {
             if (!this->is_empty()) {
                 return this->flush(target);
@@ -59,7 +59,7 @@ namespace imkcpp {
             return 0;
         }
 
-        // Emplaces the given segment into the buffer
+        /// Emplaces the given segment into the buffer
         void emplace_segment(const Segment& segment) {
             assert(this->offset + segment.size() <= this->buffer.size());
 

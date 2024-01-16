@@ -4,18 +4,22 @@
 
 namespace imkcpp {
     class SharedCtx final {
-        State state = State::Alive; // Current state of the connection.
+        /// Current state of the connection.
+        State state = State::Alive;
 
-        u32 conv = 0; // Conversation ID.
-        u32 interval = constants::IKCP_INTERVAL; // Interval.
+        /// Conversation ID.
+        u32 conv = 0;
+
+        /// Interval.
+        u32 interval = constants::IKCP_INTERVAL;
 
     public:
-        // Gets the current state of the connection.
+        /// Gets the current state of the connection.
         [[nodiscard]] State get_state() const {
             return this->state;
         }
 
-        // Sets the current state of the connection.
+        /// Sets the current state of the connection.
         void set_state(const State state) {
             this->state = state;
         }

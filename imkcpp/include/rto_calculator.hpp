@@ -6,18 +6,28 @@
 #include "shared_ctx.hpp"
 
 namespace imkcpp {
-    // https://www.computer-networking.info/1st/html/transport/tcp.html
-    // https://datatracker.ietf.org/doc/html/rfc2988.html#section-2
+    /**
+     *https://www.computer-networking.info/1st/html/transport/tcp.html
+     *https://datatracker.ietf.org/doc/html/rfc2988.html#section-2
+     */
     class RtoCalculator final {
         SharedCtx& shared_ctx;
 
-        u32 srtt = 0; // Smoothed round trip time
-        u32 rttvar = 0; // Round trip time variation
-        u32 rto = constants::IKCP_RTO_DEF; // Retransmission timeout
+        /// Smoothed round trip time
+        u32 srtt = 0;
+
+        /// Round trip time variation
+        u32 rttvar = 0;
+
+        /// Retransmission timeout
+        u32 rto = constants::IKCP_RTO_DEF;
         u32 last_rtt = 0;
 
-        u32 minrto = constants::IKCP_RTO_MIN; // Minimum retransmission timeout
-        u32 maxrto = constants::IKCP_RTO_MAX; // Maximum retransmission timeout
+        /// Minimum retransmission timeout
+        u32 minrto = constants::IKCP_RTO_MIN;
+
+        /// Maximum retransmission timeout
+        u32 maxrto = constants::IKCP_RTO_MAX;
 
     public:
         explicit RtoCalculator(SharedCtx& shared_ctx) : shared_ctx(shared_ctx) {}

@@ -2,14 +2,23 @@
 
 namespace imkcpp {
     struct InputResult final {
-        u32 cmd_ack_count = 0; // Number of ACK commands received
-        u32 cmd_wask_count = 0; // Number of WASK commands received
-        u32 cmd_wins_count = 0; // Number of WINS commands received
-        u32 cmd_push_count = 0; // Number of PUSH segments received
+        /// Number of ACK commands received
+        u32 cmd_ack_count = 0;
 
-        u32 dropped_push_count = 0; // Number of PUSH segments dropped
+        /// Number of WASK commands received
+        u32 cmd_wask_count = 0;
 
-        size_t total_bytes_received = 0; // Total number of bytes received
+        /// Number of WINS commands received
+        u32 cmd_wins_count = 0;
+
+        /// Number of PUSH segments received
+        u32 cmd_push_count = 0;
+
+        /// Number of PUSH segments dropped
+        u32 dropped_push_count = 0;
+
+        /// Total number of bytes received
+        size_t total_bytes_received = 0;
 
         InputResult operator+(const InputResult& other) const {
             return {
@@ -35,15 +44,26 @@ namespace imkcpp {
     };
 
     struct FlushResult final {
-        u32 cmd_ack_count = 0; // Number of ACK commands sent
-        u32 cmd_wask_count = 0; // Number of WASK commands sent
-        u32 cmd_wins_count = 0; // Number of WINS commands sent
-        u32 cmd_push_count = 0; // Number of PUSH segments sent
+        /// Number of ACK commands sent
+        u32 cmd_ack_count = 0;
 
-        u32 timeout_retransmitted_count = 0; // Number of retransmitted segments
-        u32 fast_retransmitted_count = 0; // Number of fast retransmitted segments
+        /// Number of WASK commands sent
+        u32 cmd_wask_count = 0;
 
-        size_t total_bytes_sent = 0; // Total number of bytes sent
+        /// Number of WINS commands sent
+        u32 cmd_wins_count = 0;
+
+        /// Number of PUSH segments sent
+        u32 cmd_push_count = 0;
+
+        /// Number of retransmitted segments
+        u32 timeout_retransmitted_count = 0;
+
+        /// Number of fast retransmitted segments
+        u32 fast_retransmitted_count = 0;
+
+        /// Total number of bytes sent
+        size_t total_bytes_sent = 0;
 
         FlushResult operator+(const FlushResult& other) const {
             return {
