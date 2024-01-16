@@ -67,6 +67,7 @@ namespace imkcpp {
         SegmentTracker& segment_tracker;
 
         std::vector<Ack> acklist{};
+        u32 rmt_una = 0;
 
         [[nodiscard]] bool should_acknowledge(const u32 sn) const {
             if (sn < this->segment_tracker.get_snd_una() || sn >= this->segment_tracker.get_snd_nxt()) {
@@ -118,6 +119,8 @@ namespace imkcpp {
          *remote una (unacknowledged segment number).
         */
         void una_received(const u32 una) {
+            rmt_una = std::max(rmt_una, una);
+
             this->sender_buffer.erase_before(una);
             this->sender_buffer.shrink();
         }
@@ -134,16 +137,24 @@ namespace imkcpp {
 
         /// Sends all scheduled acknowledgements and clears the acknowledgement list.
         void flush_acks(FlushResult& flush_result, const output_callback_t& output, Segment& base_segment) {
+            size_t count = 0;
+
             for (const Ack& ack : this->acklist) {
+                if (ack.sn < this->rmt_una) {
+                    continue;
+                }
+
                 flush_result.total_bytes_sent += this->flusher.flush_if_full(output);
 
                 base_segment.header.sn = ack.sn;
                 base_segment.header.ts = ack.ts;
 
                 this->flusher.emplace_segment(base_segment);
+
+                ++count;
             }
 
-            flush_result.cmd_ack_count += this->acklist.size();
+            flush_result.cmd_ack_count += count;
 
             this->acklist.clear();
         }
