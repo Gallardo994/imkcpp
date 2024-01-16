@@ -1,0 +1,31 @@
+\hypertarget{classimkcpp_1_1AckController}{}\doxysection{imkcpp\+::Ack\+Controller$<$ MTU $>$ Class Template Reference}
+\label{classimkcpp_1_1AckController}\index{imkcpp::AckController$<$ MTU $>$@{imkcpp::AckController$<$ MTU $>$}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1AckController_a135032444a5bdd1ffef21efbe9c29aa1}\label{classimkcpp_1_1AckController_a135032444a5bdd1ffef21efbe9c29aa1}} 
+{\bfseries Ack\+Controller} (\mbox{\hyperlink{classimkcpp_1_1Flusher}{Flusher}}$<$ MTU $>$ \&flusher, \mbox{\hyperlink{classimkcpp_1_1RtoCalculator}{Rto\+Calculator}} \&rto\+\_\+calculator, \mbox{\hyperlink{classimkcpp_1_1SenderBuffer}{Sender\+Buffer}} \&sender\+\_\+buffer, \mbox{\hyperlink{classimkcpp_1_1SegmentTracker}{Segment\+Tracker}} \&segment\+\_\+tracker)
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1AckController_a9f50143efe75fa99710c689d4bd58309}\label{classimkcpp_1_1AckController_a9f50143efe75fa99710c689d4bd58309}} 
+void {\bfseries acknowledge\+\_\+fastack} (const \mbox{\hyperlink{classimkcpp_1_1FastAckCtx}{Fast\+Ack\+Ctx}} \&fastack\+\_\+ctx)
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1AckController_a954d6f2ddef12e261eadcf0504dcaaf1}\label{classimkcpp_1_1AckController_a954d6f2ddef12e261eadcf0504dcaaf1}} 
+void {\bfseries ack\+\_\+received} (const u32 current, const u32 sn, const u32 ts)
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1AckController_af20dfdd824f921c2f40c4d67f80437df}\label{classimkcpp_1_1AckController_af20dfdd824f921c2f40c4d67f80437df}} 
+void {\bfseries una\+\_\+received} (const u32 una)
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1AckController_a8248bf43c2505438432f18a61e1f53c0}\label{classimkcpp_1_1AckController_a8248bf43c2505438432f18a61e1f53c0}} 
+void {\bfseries schedule\+\_\+ack} (const u32 sn, const u32 ts)
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1AckController_add05b2e2f553692866c99f884d8cddc5}\label{classimkcpp_1_1AckController_add05b2e2f553692866c99f884d8cddc5}} 
+void {\bfseries reserve} (const size\+\_\+t size)
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1AckController_affe420b637cc63fc4c103ab0b1138108}\label{classimkcpp_1_1AckController_affe420b637cc63fc4c103ab0b1138108}} 
+void {\bfseries flush\+\_\+acks} (\mbox{\hyperlink{structimkcpp_1_1FlushResult}{Flush\+Result}} \&flush\+\_\+result, const output\+\_\+callback\+\_\+t \&output, \mbox{\hyperlink{structimkcpp_1_1Segment}{Segment}} \&base\+\_\+segment)
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+imkcpp/include/ack\+\_\+controller.\+hpp\end{DoxyCompactItemize}
