@@ -1,5 +1,9 @@
 # imkcpp
-C++20 header-only implementation of KCP protocol with improvements ontop
+
+ImKcpp is a C++20 header-only implementation of KCP protocol with improvements ontop.
+
+Original protocol explanation is available [here](https://github.com/skywind3000/kcp/blob/master/README.en.md), but in general the explanation is as follows:
+> KCP is a fast and reliable protocol that can achieve the transmission effect of a reduction of the average latency by 30% to 40% and reduction of the maximum delay by a factor of three, at the cost of 10% to 20% more bandwidth wasted than TCP. It is implemented by using the pure algorithm, and is not responsible for the sending and receiving of the underlying protocol (such as UDP), requiring the users to define their own transmission mode for the underlying data packet, and provide it to KCP in the way of callback. Even the clock needs to be passed in from the outside, without any internal system calls.
 
 # Why?
 - Upstream implementation is written in C and is hard to read and modify
