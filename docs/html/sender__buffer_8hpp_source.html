@@ -99,7 +99,7 @@ $(function() {
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keywordtype">void</span> shrink() {</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            <span class="keywordflow">if</span> (!this-&gt;snd_buf.empty()) {</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                <span class="keyword">const</span> <a class="code" href="structimkcpp_1_1Segment.html">Segment</a>&amp; seg = this-&gt;snd_buf.front();</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;                this-&gt;segment_tracker.set_snd_una(seg.header.sn);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;                this-&gt;segment_tracker.set_snd_una(seg.header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a>);</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                this-&gt;segment_tracker.reset_snd_una();</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;            }</div>
@@ -140,45 +140,45 @@ $(function() {
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            }</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        }</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="comment">// Returns nearest delta from current time to the earliest resend time of a segment in the buffer.</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="comment">// If there are no segments in the buffer, returns std::nullopt</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        [[nodiscard]] std::optional&lt;u32&gt; get_earliest_transmit_delta(<span class="keyword">const</span> u32 current)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            <span class="keywordflow">if</span> (this-&gt;snd_buf.empty()) {</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                <span class="keywordflow">return</span> std::nullopt;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            }</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            constexpr u32 default_value = std::numeric_limits&lt;u32&gt;::max();</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            u32 tm_packet = default_value;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">const</span> <a class="code" href="structimkcpp_1_1Segment.html">Segment</a>&amp; seg : this-&gt;snd_buf) {</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                <span class="keywordflow">if</span> (seg.metadata.resendts &lt;= current) {</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                    <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                }</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                tm_packet = std::min&lt;u32&gt;(tm_packet, seg.metadata.resendts - current);</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            }</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            <span class="keywordflow">if</span> (tm_packet == default_value) {</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                <span class="keywordflow">return</span> std::nullopt;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            }</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            <span class="keywordflow">return</span> tm_packet;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        }</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        [[nodiscard]] <span class="keywordtype">bool</span> empty()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            <span class="keywordflow">return</span> this-&gt;snd_buf.empty();</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        }</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="comment">// TODO: Get rid of this</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        std::deque&lt;Segment&gt;&amp; get() {</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            <span class="keywordflow">return</span> this-&gt;snd_buf;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        }</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    };</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;}</div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="classimkcpp_1_1SenderBuffer.html#a03e8217503764d1ed7fc73dc0924525c">   76</a></span>&#160;        [[nodiscard]] std::optional&lt;u32&gt; <a class="code" href="classimkcpp_1_1SenderBuffer.html#a03e8217503764d1ed7fc73dc0924525c">get_earliest_transmit_delta</a>(<span class="keyword">const</span> u32 current)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <span class="keywordflow">if</span> (this-&gt;snd_buf.empty()) {</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                <span class="keywordflow">return</span> std::nullopt;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            constexpr u32 default_value = std::numeric_limits&lt;u32&gt;::max();</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            u32 tm_packet = default_value;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">const</span> <a class="code" href="structimkcpp_1_1Segment.html">Segment</a>&amp; seg : this-&gt;snd_buf) {</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                <span class="keywordflow">if</span> (seg.metadata.resendts &lt;= current) {</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                    <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                }</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                tm_packet = std::min&lt;u32&gt;(tm_packet, seg.metadata.resendts - current);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            <span class="keywordflow">if</span> (tm_packet == default_value) {</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                <span class="keywordflow">return</span> std::nullopt;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            }</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            <span class="keywordflow">return</span> tm_packet;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        }</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        [[nodiscard]] <span class="keywordtype">bool</span> empty()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            <span class="keywordflow">return</span> this-&gt;snd_buf.empty();</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        }</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <span class="comment">// TODO: Get rid of this</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        std::deque&lt;Segment&gt;&amp; get() {</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            <span class="keywordflow">return</span> this-&gt;snd_buf;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        }</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    };</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;}</div>
 <div class="ttc" id="aclassimkcpp_1_1SegmentTracker_html"><div class="ttname"><a href="classimkcpp_1_1SegmentTracker.html">imkcpp::SegmentTracker</a></div><div class="ttdef"><b>Definition:</b> segment_tracker.hpp:7</div></div>
 <div class="ttc" id="aclassimkcpp_1_1SenderBuffer_html"><div class="ttname"><a href="classimkcpp_1_1SenderBuffer.html">imkcpp::SenderBuffer</a></div><div class="ttdef"><b>Definition:</b> sender_buffer.hpp:12</div></div>
+<div class="ttc" id="aclassimkcpp_1_1SenderBuffer_html_a03e8217503764d1ed7fc73dc0924525c"><div class="ttname"><a href="classimkcpp_1_1SenderBuffer.html#a03e8217503764d1ed7fc73dc0924525c">imkcpp::SenderBuffer::get_earliest_transmit_delta</a></div><div class="ttdeci">std::optional&lt; u32 &gt; get_earliest_transmit_delta(const u32 current) const</div><div class="ttdef"><b>Definition:</b> sender_buffer.hpp:76</div></div>
 <div class="ttc" id="aclassimkcpp_1_1SharedCtx_html"><div class="ttname"><a href="classimkcpp_1_1SharedCtx.html">imkcpp::SharedCtx</a></div><div class="ttdef"><b>Definition:</b> shared_ctx.hpp:6</div></div>
-<div class="ttc" id="astructimkcpp_1_1Segment_html"><div class="ttname"><a href="structimkcpp_1_1Segment.html">imkcpp::Segment</a></div><div class="ttdef"><b>Definition:</b> segment.hpp:82</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_a6546abc6b9bdfbd1b778147526da60ff"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">imkcpp::SegmentHeader::sn</a></div><div class="ttdeci">u32 sn</div><div class="ttdoc">Sequence number.</div><div class="ttdef"><b>Definition:</b> segment.hpp:27</div></div>
+<div class="ttc" id="astructimkcpp_1_1Segment_html"><div class="ttname"><a href="structimkcpp_1_1Segment.html">imkcpp::Segment</a></div><div class="ttdef"><b>Definition:</b> segment.hpp:104</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

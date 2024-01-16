@@ -7,59 +7,59 @@
 {\bfseries Im\+Kcpp} (const u32 conv) noexcept
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_a39e4b5b1d3699bd72c2b83a0c299b551}\label{classimkcpp_1_1ImKcpp_a39e4b5b1d3699bd72c2b83a0c299b551}} 
-auto {\bfseries set\+\_\+interval} (const u32 interval) noexcept -\/$>$ void
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_a39e4b5b1d3699bd72c2b83a0c299b551}{set\+\_\+interval}} (const u32 interval) noexcept -\/$>$ void
+\begin{DoxyCompactList}\small\item\em Sets the internal clock interval in milliseconds. Must be between 10 and 5000. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_ad8bfd7d095e9db024bd06019e70a93bd}\label{classimkcpp_1_1ImKcpp_ad8bfd7d095e9db024bd06019e70a93bd}} 
 auto {\bfseries set\+\_\+nodelay} (const u32 nodelay) noexcept -\/$>$ void
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_a54fd670f7cc80da993cdf95505965040}\label{classimkcpp_1_1ImKcpp_a54fd670f7cc80da993cdf95505965040}} 
-auto {\bfseries set\+\_\+fastresend} (const u32 fastresend) noexcept -\/$>$ void
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_a54fd670f7cc80da993cdf95505965040}{set\+\_\+fastresend}} (const u32 fastresend) noexcept -\/$>$ void
+\begin{DoxyCompactList}\small\item\em Sets the number of non-\/sequential acks required to trigger fast resend. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_ab7b31b2f2f65f3ca1badf29a7525948e}\label{classimkcpp_1_1ImKcpp_ab7b31b2f2f65f3ca1badf29a7525948e}} 
-auto {\bfseries set\+\_\+fastlimit} (const u32 limit) noexcept -\/$>$ void
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_ab7b31b2f2f65f3ca1badf29a7525948e}{set\+\_\+fastlimit}} (const u32 limit) noexcept -\/$>$ void
+\begin{DoxyCompactList}\small\item\em Sets the maximum count of fast resends per segment. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_a2c8c4afadb64d6abb92a36f51c0cd50e}\label{classimkcpp_1_1ImKcpp_a2c8c4afadb64d6abb92a36f51c0cd50e}} 
-auto {\bfseries set\+\_\+send\+\_\+window} (const u32 sndwnd) noexcept -\/$>$ void
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_a2c8c4afadb64d6abb92a36f51c0cd50e}{set\+\_\+send\+\_\+window}} (const u32 sndwnd) noexcept -\/$>$ void
+\begin{DoxyCompactList}\small\item\em Sets the maximum number of segments that can be sent in a single \mbox{\hyperlink{classimkcpp_1_1ImKcpp_a3906619f232041399ab5dc8f4520c1df}{update()}} call. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_a53fb2ca7ec9b917fc77594a6dc2014f9}\label{classimkcpp_1_1ImKcpp_a53fb2ca7ec9b917fc77594a6dc2014f9}} 
-auto {\bfseries set\+\_\+receive\+\_\+window} (const u32 rcvwnd) noexcept -\/$>$ void
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_a53fb2ca7ec9b917fc77594a6dc2014f9}{set\+\_\+receive\+\_\+window}} (const u32 rcvwnd) noexcept -\/$>$ void
+\begin{DoxyCompactList}\small\item\em Sets the maximum number of segments that can be queued in the receive buffer. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_a364556555eb62abef81280618a3c20a6}\label{classimkcpp_1_1ImKcpp_a364556555eb62abef81280618a3c20a6}} 
-auto {\bfseries set\+\_\+congestion\+\_\+window\+\_\+enabled} (const bool state) noexcept -\/$>$ void
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_a364556555eb62abef81280618a3c20a6}{set\+\_\+congestion\+\_\+window\+\_\+enabled}} (const bool state) noexcept -\/$>$ void
+\begin{DoxyCompactList}\small\item\em Enables or disables congestion window. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_ae944bf496cebc9b07489a620b3eac842}\label{classimkcpp_1_1ImKcpp_ae944bf496cebc9b07489a620b3eac842}} 
-auto {\bfseries set\+\_\+deadlink} (const u32 threshold) noexcept -\/$>$ void
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_ae944bf496cebc9b07489a620b3eac842}{set\+\_\+deadlink}} (const u32 threshold) noexcept -\/$>$ void
+\begin{DoxyCompactList}\small\item\em Sets maximum retransmission count for a single segment until it\textquotesingle{}s considered lost. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_aa04bb44ef611302810fa04fe05edca80}\label{classimkcpp_1_1ImKcpp_aa04bb44ef611302810fa04fe05edca80}} 
-auto {\bfseries input} (const std\+::span$<$ const std\+::byte $>$ data) noexcept -\/$>$ tl\+::expected$<$ \mbox{\hyperlink{structimkcpp_1_1InputResult}{Input\+Result}}, error $>$
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_aa04bb44ef611302810fa04fe05edca80}{input}} (const std\+::span$<$ const std\+::byte $>$ data) noexcept -\/$>$ tl\+::expected$<$ \mbox{\hyperlink{structimkcpp_1_1InputResult}{Input\+Result}}, error $>$
+\begin{DoxyCompactList}\small\item\em Receives data from the transport layer. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_ae9c9fa39935cbb52a1280007b04ca101}\label{classimkcpp_1_1ImKcpp_ae9c9fa39935cbb52a1280007b04ca101}} 
-auto {\bfseries recv} (const std\+::span$<$ std\+::byte $>$ buffer) noexcept -\/$>$ tl\+::expected$<$ size\+\_\+t, error $>$
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_ae9c9fa39935cbb52a1280007b04ca101}{recv}} (const std\+::span$<$ std\+::byte $>$ buffer) noexcept -\/$>$ tl\+::expected$<$ size\+\_\+t, error $>$
+\begin{DoxyCompactList}\small\item\em Reads data from the receive queue. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_a6e939c6e6e0052b0496636cc6e3ec787}\label{classimkcpp_1_1ImKcpp_a6e939c6e6e0052b0496636cc6e3ec787}} 
-auto {\bfseries send} (const std\+::span$<$ const std\+::byte $>$ buffer) noexcept -\/$>$ tl\+::expected$<$ size\+\_\+t, error $>$
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_a6e939c6e6e0052b0496636cc6e3ec787}{send}} (const std\+::span$<$ const std\+::byte $>$ buffer) noexcept -\/$>$ tl\+::expected$<$ size\+\_\+t, error $>$
+\begin{DoxyCompactList}\small\item\em Sends data. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_af8acdc987aa7504d804c68eea6abec4e}\label{classimkcpp_1_1ImKcpp_af8acdc987aa7504d804c68eea6abec4e}} 
-auto {\bfseries check} (const u32 current) noexcept -\/$>$ u32
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_af8acdc987aa7504d804c68eea6abec4e}{check}} (const u32 current) noexcept -\/$>$ u32
+\begin{DoxyCompactList}\small\item\em Checks when the next \mbox{\hyperlink{classimkcpp_1_1ImKcpp_a3906619f232041399ab5dc8f4520c1df}{update()}} should be called. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_a3906619f232041399ab5dc8f4520c1df}\label{classimkcpp_1_1ImKcpp_a3906619f232041399ab5dc8f4520c1df}} 
-auto {\bfseries update} (const u32 current, const output\+\_\+callback\+\_\+t \&callback) noexcept -\/$>$ \mbox{\hyperlink{structimkcpp_1_1FlushResult}{Flush\+Result}}
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_a3906619f232041399ab5dc8f4520c1df}{update}} (const u32 current, const output\+\_\+callback\+\_\+t \&callback) noexcept -\/$>$ \mbox{\hyperlink{structimkcpp_1_1FlushResult}{Flush\+Result}}
+\begin{DoxyCompactList}\small\item\em Updates the state and performs flush if necessary. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_ae9e4147b4cff9fa866afe3c1fd9d86d7}\label{classimkcpp_1_1ImKcpp_ae9e4147b4cff9fa866afe3c1fd9d86d7}} 
-auto {\bfseries flush} (const output\+\_\+callback\+\_\+t \&callback) noexcept -\/$>$ \mbox{\hyperlink{structimkcpp_1_1FlushResult}{Flush\+Result}}
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_ae9e4147b4cff9fa866afe3c1fd9d86d7}{flush}} (const output\+\_\+callback\+\_\+t \&callback) noexcept -\/$>$ \mbox{\hyperlink{structimkcpp_1_1FlushResult}{Flush\+Result}}
+\begin{DoxyCompactList}\small\item\em Flushes the data to the output callback. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_ab655fdecc11e4a91ffe523d6bd969171}\label{classimkcpp_1_1ImKcpp_ab655fdecc11e4a91ffe523d6bd969171}} 
-auto {\bfseries get\+\_\+state} () const noexcept -\/$>$ State
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_ab655fdecc11e4a91ffe523d6bd969171}{get\+\_\+state}} () const noexcept -\/$>$ State
+\begin{DoxyCompactList}\small\item\em Gets the current state. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_a8bb8b4a4eb684f8732c8c613c207e9c3}\label{classimkcpp_1_1ImKcpp_a8bb8b4a4eb684f8732c8c613c207e9c3}} 
-auto {\bfseries peek\+\_\+size} () const noexcept -\/$>$ tl\+::expected$<$ size\+\_\+t, error $>$
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_a8bb8b4a4eb684f8732c8c613c207e9c3}{peek\+\_\+size}} () const noexcept -\/$>$ tl\+::expected$<$ size\+\_\+t, error $>$
+\begin{DoxyCompactList}\small\item\em Gets bytes count of the available data in the receive queue. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_a32fa85febe38c626eac94ca766737f50}\label{classimkcpp_1_1ImKcpp_a32fa85febe38c626eac94ca766737f50}} 
-auto {\bfseries estimate\+\_\+segments\+\_\+count} (const size\+\_\+t size) const noexcept -\/$>$ size\+\_\+t
-\item 
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_a32fa85febe38c626eac94ca766737f50}{estimate\+\_\+segments\+\_\+count}} (const size\+\_\+t size) const noexcept -\/$>$ size\+\_\+t
+\begin{DoxyCompactList}\small\item\em Calculates the number of segments required to send the given amount of data. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1ImKcpp_afc220615ca474842669cb1af3d23476c}\label{classimkcpp_1_1ImKcpp_afc220615ca474842669cb1af3d23476c}} 
-auto {\bfseries estimate\+\_\+max\+\_\+payload\+\_\+size} () const noexcept -\/$>$ size\+\_\+t
-\end{DoxyCompactItemize}
+auto \mbox{\hyperlink{classimkcpp_1_1ImKcpp_afc220615ca474842669cb1af3d23476c}{estimate\+\_\+max\+\_\+payload\+\_\+size}} () const noexcept -\/$>$ size\+\_\+t
+\begin{DoxyCompactList}\small\item\em Calculates the maximum payload size that can be sent in a single \mbox{\hyperlink{classimkcpp_1_1ImKcpp_a6e939c6e6e0052b0496636cc6e3ec787}{send()}} call. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

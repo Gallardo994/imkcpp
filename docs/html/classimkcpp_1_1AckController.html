@@ -83,21 +83,54 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>acknowledge_fastack</b> (const <a class="el" href="classimkcpp_1_1FastAckCtx.html">FastAckCtx</a> &amp;fastack_ctx)</td></tr>
 <tr class="separator:a9f50143efe75fa99710c689d4bd58309"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a954d6f2ddef12e261eadcf0504dcaaf1"><td class="memItemLeft" align="right" valign="top"><a id="a954d6f2ddef12e261eadcf0504dcaaf1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>ack_received</b> (const u32 current, const u32 sn, const u32 ts)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1AckController.html#a954d6f2ddef12e261eadcf0504dcaaf1">ack_received</a> (const u32 current, const u32 sn, const u32 ts)</td></tr>
+<tr class="memdesc:a954d6f2ddef12e261eadcf0504dcaaf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the RTO and removes acknowledged segments from the sender buffer. <br /></td></tr>
 <tr class="separator:a954d6f2ddef12e261eadcf0504dcaaf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af20dfdd824f921c2f40c4d67f80437df"><td class="memItemLeft" align="right" valign="top"><a id="af20dfdd824f921c2f40c4d67f80437df"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>una_received</b> (const u32 una)</td></tr>
+<tr class="memitem:af20dfdd824f921c2f40c4d67f80437df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1AckController.html#af20dfdd824f921c2f40c4d67f80437df">una_received</a> (const u32 una)</td></tr>
 <tr class="separator:af20dfdd824f921c2f40c4d67f80437df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8248bf43c2505438432f18a61e1f53c0"><td class="memItemLeft" align="right" valign="top"><a id="a8248bf43c2505438432f18a61e1f53c0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>schedule_ack</b> (const u32 sn, const u32 ts)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1AckController.html#a8248bf43c2505438432f18a61e1f53c0">schedule_ack</a> (const u32 sn, const u32 ts)</td></tr>
+<tr class="memdesc:a8248bf43c2505438432f18a61e1f53c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a segment to the acknowledgement list to be sent later. <br /></td></tr>
 <tr class="separator:a8248bf43c2505438432f18a61e1f53c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add05b2e2f553692866c99f884d8cddc5"><td class="memItemLeft" align="right" valign="top"><a id="add05b2e2f553692866c99f884d8cddc5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>reserve</b> (const size_t size)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1AckController.html#add05b2e2f553692866c99f884d8cddc5">reserve</a> (const size_t size)</td></tr>
+<tr class="memdesc:add05b2e2f553692866c99f884d8cddc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserves space in the acknowledgement vector. <br /></td></tr>
 <tr class="separator:add05b2e2f553692866c99f884d8cddc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affe420b637cc63fc4c103ab0b1138108"><td class="memItemLeft" align="right" valign="top"><a id="affe420b637cc63fc4c103ab0b1138108"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>flush_acks</b> (<a class="el" href="structimkcpp_1_1FlushResult.html">FlushResult</a> &amp;flush_result, const output_callback_t &amp;output, <a class="el" href="structimkcpp_1_1Segment.html">Segment</a> &amp;base_segment)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1AckController.html#affe420b637cc63fc4c103ab0b1138108">flush_acks</a> (<a class="el" href="structimkcpp_1_1FlushResult.html">FlushResult</a> &amp;flush_result, const output_callback_t &amp;output, <a class="el" href="structimkcpp_1_1Segment.html">Segment</a> &amp;base_segment)</td></tr>
+<tr class="memdesc:affe420b637cc63fc4c103ab0b1138108"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends all scheduled acknowledgements and clears the acknowledgement list. <br /></td></tr>
 <tr class="separator:affe420b637cc63fc4c103ab0b1138108"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="af20dfdd824f921c2f40c4d67f80437df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af20dfdd824f921c2f40c4d67f80437df">&#9670;&nbsp;</a></span>una_received()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t MTU&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classimkcpp_1_1AckController.html">imkcpp::AckController</a>&lt; MTU &gt;::una_received </td>
+          <td>(</td>
+          <td class="paramtype">const u32&#160;</td>
+          <td class="paramname"><em>una</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Removes acknowledged segments from the sender buffer according to remote una (unacknowledged segment number). </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>imkcpp/include/<a class="el" href="ack__controller_8hpp_source.html">ack_controller.hpp</a></li>
 </ul>

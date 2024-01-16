@@ -93,8 +93,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>erase_before</b> (con
 <tr class="memitem:a26ce398a16481596fcd44a176b92f047"><td class="memItemLeft" align="right" valign="top"><a id="a26ce398a16481596fcd44a176b92f047"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>increment_fastack_before</b> (const u32 sn)</td></tr>
 <tr class="separator:a26ce398a16481596fcd44a176b92f047"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03e8217503764d1ed7fc73dc0924525c"><td class="memItemLeft" align="right" valign="top"><a id="a03e8217503764d1ed7fc73dc0924525c"></a>
-std::optional&lt; u32 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>get_earliest_transmit_delta</b> (const u32 current) const</td></tr>
+<tr class="memitem:a03e8217503764d1ed7fc73dc0924525c"><td class="memItemLeft" align="right" valign="top">std::optional&lt; u32 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1SenderBuffer.html#a03e8217503764d1ed7fc73dc0924525c">get_earliest_transmit_delta</a> (const u32 current) const</td></tr>
 <tr class="separator:a03e8217503764d1ed7fc73dc0924525c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09d14563338afdfaeaad3d170ea606a2"><td class="memItemLeft" align="right" valign="top"><a id="a09d14563338afdfaeaad3d170ea606a2"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>empty</b> () const</td></tr>
@@ -103,6 +102,34 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>empty</b> () const</t
 std::deque&lt; <a class="el" href="structimkcpp_1_1Segment.html">Segment</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> ()</td></tr>
 <tr class="separator:a36753d5642a40d9055783eb11e67e164"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a03e8217503764d1ed7fc73dc0924525c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03e8217503764d1ed7fc73dc0924525c">&#9670;&nbsp;</a></span>get_earliest_transmit_delta()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;u32&gt; imkcpp::SenderBuffer::get_earliest_transmit_delta </td>
+          <td>(</td>
+          <td class="paramtype">const u32&#160;</td>
+          <td class="paramname"><em>current</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Returns nearest delta from current time to the earliest resend time of a segment in the buffer. If there are no segments in the buffer, returns std::nullopt </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>imkcpp/include/<a class="el" href="sender__buffer_8hpp_source.html">sender_buffer.hpp</a></li>
 </ul>

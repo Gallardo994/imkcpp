@@ -237,21 +237,21 @@ $(function() {
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        <span class="keywordtype">void</span> flush_probes(<a class="code" href="structimkcpp_1_1FlushResult.html">FlushResult</a>&amp; flush_result, <span class="keyword">const</span> output_callback_t&amp; output, <a class="code" href="structimkcpp_1_1Segment.html">Segment</a>&amp; base_segment) {</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            <span class="keywordflow">if</span> (this-&gt;has_probe_flag(constants::IKCP_ASK_SEND)) {</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                flush_result.total_bytes_sent += this-&gt;flusher.flush_if_full(output);</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                flush_result.<a class="code" href="structimkcpp_1_1FlushResult.html#a107002545388dbb0f8f1dea8dabfaa7b">total_bytes_sent</a> += this-&gt;flusher.<a class="code" href="classimkcpp_1_1Flusher.html#a5796819623d057e670931603c9cb3463">flush_if_full</a>(output);</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                base_segment.header.cmd = commands::IKCP_CMD_WASK;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                this-&gt;flusher.emplace_segment(base_segment);</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                base_segment.header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#af535f6c8b13dc29db94c5b8926a39d4c">cmd</a> = commands::IKCP_CMD_WASK;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                this-&gt;flusher.<a class="code" href="classimkcpp_1_1Flusher.html#a8494a29dfcbac170c9dd059101b888ef">emplace_segment</a>(base_segment);</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                flush_result.cmd_wask_count++;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                flush_result.<a class="code" href="structimkcpp_1_1FlushResult.html#a04f635a03301cda35edc41d67c104573">cmd_wask_count</a>++;</div>
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;            }</div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;            <span class="keywordflow">if</span> (this-&gt;has_probe_flag(constants::IKCP_ASK_TELL)) {</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                flush_result.total_bytes_sent +=this-&gt;flusher.flush_if_full(output);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                flush_result.<a class="code" href="structimkcpp_1_1FlushResult.html#a107002545388dbb0f8f1dea8dabfaa7b">total_bytes_sent</a> +=this-&gt;flusher.<a class="code" href="classimkcpp_1_1Flusher.html#a5796819623d057e670931603c9cb3463">flush_if_full</a>(output);</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                base_segment.header.cmd = commands::IKCP_CMD_WINS;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                this-&gt;flusher.emplace_segment(base_segment);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                base_segment.header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#af535f6c8b13dc29db94c5b8926a39d4c">cmd</a> = commands::IKCP_CMD_WINS;</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                this-&gt;flusher.<a class="code" href="classimkcpp_1_1Flusher.html#a8494a29dfcbac170c9dd059101b888ef">emplace_segment</a>(base_segment);</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;                flush_result.cmd_wins_count++;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;                flush_result.<a class="code" href="structimkcpp_1_1FlushResult.html#aff0c1fd8d870fe0f8718b6623aaa5a26">cmd_wins_count</a>++;</div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;            }</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;            this-&gt;reset_probe_flags();</div>
@@ -260,9 +260,15 @@ $(function() {
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;}</div>
 <div class="ttc" id="aclassimkcpp_1_1CongestionController_html"><div class="ttname"><a href="classimkcpp_1_1CongestionController.html">imkcpp::CongestionController</a></div><div class="ttdef"><b>Definition:</b> congestion_controller.hpp:13</div></div>
 <div class="ttc" id="aclassimkcpp_1_1Flusher_html"><div class="ttname"><a href="classimkcpp_1_1Flusher.html">imkcpp::Flusher</a></div><div class="ttdef"><b>Definition:</b> flusher.hpp:11</div></div>
+<div class="ttc" id="aclassimkcpp_1_1Flusher_html_a5796819623d057e670931603c9cb3463"><div class="ttname"><a href="classimkcpp_1_1Flusher.html#a5796819623d057e670931603c9cb3463">imkcpp::Flusher::flush_if_full</a></div><div class="ttdeci">size_t flush_if_full(const output_callback_t &amp;target)</div><div class="ttdoc">Flushes the buffer to the given output if it exceeds Max Segment Size.</div><div class="ttdef"><b>Definition:</b> flusher.hpp:36</div></div>
+<div class="ttc" id="aclassimkcpp_1_1Flusher_html_a8494a29dfcbac170c9dd059101b888ef"><div class="ttname"><a href="classimkcpp_1_1Flusher.html#a8494a29dfcbac170c9dd059101b888ef">imkcpp::Flusher::emplace_segment</a></div><div class="ttdeci">void emplace_segment(const Segment &amp;segment)</div><div class="ttdoc">Emplaces the given segment into the buffer.</div><div class="ttdef"><b>Definition:</b> flusher.hpp:63</div></div>
 <div class="ttc" id="aclassimkcpp_1_1SegmentTracker_html"><div class="ttname"><a href="classimkcpp_1_1SegmentTracker.html">imkcpp::SegmentTracker</a></div><div class="ttdef"><b>Definition:</b> segment_tracker.hpp:7</div></div>
-<div class="ttc" id="astructimkcpp_1_1FlushResult_html"><div class="ttname"><a href="structimkcpp_1_1FlushResult.html">imkcpp::FlushResult</a></div><div class="ttdef"><b>Definition:</b> results.hpp:37</div></div>
-<div class="ttc" id="astructimkcpp_1_1Segment_html"><div class="ttname"><a href="structimkcpp_1_1Segment.html">imkcpp::Segment</a></div><div class="ttdef"><b>Definition:</b> segment.hpp:82</div></div>
+<div class="ttc" id="astructimkcpp_1_1FlushResult_html"><div class="ttname"><a href="structimkcpp_1_1FlushResult.html">imkcpp::FlushResult</a></div><div class="ttdef"><b>Definition:</b> results.hpp:46</div></div>
+<div class="ttc" id="astructimkcpp_1_1FlushResult_html_a04f635a03301cda35edc41d67c104573"><div class="ttname"><a href="structimkcpp_1_1FlushResult.html#a04f635a03301cda35edc41d67c104573">imkcpp::FlushResult::cmd_wask_count</a></div><div class="ttdeci">u32 cmd_wask_count</div><div class="ttdoc">Number of WASK commands sent.</div><div class="ttdef"><b>Definition:</b> results.hpp:51</div></div>
+<div class="ttc" id="astructimkcpp_1_1FlushResult_html_a107002545388dbb0f8f1dea8dabfaa7b"><div class="ttname"><a href="structimkcpp_1_1FlushResult.html#a107002545388dbb0f8f1dea8dabfaa7b">imkcpp::FlushResult::total_bytes_sent</a></div><div class="ttdeci">size_t total_bytes_sent</div><div class="ttdoc">Total number of bytes sent.</div><div class="ttdef"><b>Definition:</b> results.hpp:66</div></div>
+<div class="ttc" id="astructimkcpp_1_1FlushResult_html_aff0c1fd8d870fe0f8718b6623aaa5a26"><div class="ttname"><a href="structimkcpp_1_1FlushResult.html#aff0c1fd8d870fe0f8718b6623aaa5a26">imkcpp::FlushResult::cmd_wins_count</a></div><div class="ttdeci">u32 cmd_wins_count</div><div class="ttdoc">Number of WINS commands sent.</div><div class="ttdef"><b>Definition:</b> results.hpp:54</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_af535f6c8b13dc29db94c5b8926a39d4c"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#af535f6c8b13dc29db94c5b8926a39d4c">imkcpp::SegmentHeader::cmd</a></div><div class="ttdeci">u8 cmd</div><div class="ttdoc">Command type.</div><div class="ttdef"><b>Definition:</b> segment.hpp:15</div></div>
+<div class="ttc" id="astructimkcpp_1_1Segment_html"><div class="ttname"><a href="structimkcpp_1_1Segment.html">imkcpp::Segment</a></div><div class="ttdef"><b>Definition:</b> segment.hpp:104</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

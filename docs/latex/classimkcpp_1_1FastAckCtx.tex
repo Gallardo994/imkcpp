@@ -1,21 +1,33 @@
 \hypertarget{classimkcpp_1_1FastAckCtx}{}\doxysection{imkcpp\+::Fast\+Ack\+Ctx Class Reference}
 \label{classimkcpp_1_1FastAckCtx}\index{imkcpp::FastAckCtx@{imkcpp::FastAckCtx}}
+
+
+\mbox{\hyperlink{classimkcpp_1_1FastAckCtx}{Fast\+Ack\+Ctx}} is used to track the latest received segment and its timestamp.  
+
+
+
+
+{\ttfamily \#include $<$ack\+\_\+controller.\+hpp$>$}
+
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1FastAckCtx_ad71f29a4466262fde5b7b3b62dd60256}\label{classimkcpp_1_1FastAckCtx_ad71f29a4466262fde5b7b3b62dd60256}} 
-bool {\bfseries is\+\_\+valid} () const
-\item 
+bool \mbox{\hyperlink{classimkcpp_1_1FastAckCtx_ad71f29a4466262fde5b7b3b62dd60256}{is\+\_\+valid}} () const
+\begin{DoxyCompactList}\small\item\em Returns true if at least one ack has been received. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1FastAckCtx_aeffc3b1b8d71510f9d4040e50db754ae}\label{classimkcpp_1_1FastAckCtx_aeffc3b1b8d71510f9d4040e50db754ae}} 
-void {\bfseries update} (const u32 sn, const u32 ts)
-\item 
+void \mbox{\hyperlink{classimkcpp_1_1FastAckCtx_aeffc3b1b8d71510f9d4040e50db754ae}{update}} (const u32 sn, const u32 ts)
+\begin{DoxyCompactList}\small\item\em Updates the latest received segment number and its timestamp. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1FastAckCtx_add0ed1d3326f196bf4979b7f8d82c6da}\label{classimkcpp_1_1FastAckCtx_add0ed1d3326f196bf4979b7f8d82c6da}} 
-u32 {\bfseries get\+\_\+maxack} () const
-\item 
+u32 \mbox{\hyperlink{classimkcpp_1_1FastAckCtx_add0ed1d3326f196bf4979b7f8d82c6da}{get\+\_\+maxack}} () const
+\begin{DoxyCompactList}\small\item\em Returns the latest received segment number. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1FastAckCtx_aea0c191dbb74c06d60927ae194253f14}\label{classimkcpp_1_1FastAckCtx_aea0c191dbb74c06d60927ae194253f14}} 
-u32 {\bfseries get\+\_\+latest\+\_\+ts} () const
-\end{DoxyCompactItemize}
+u32 \mbox{\hyperlink{classimkcpp_1_1FastAckCtx_aea0c191dbb74c06d60927ae194253f14}{get\+\_\+latest\+\_\+ts}} () const
+\begin{DoxyCompactList}\small\item\em Returns the timestamp of the latest received segment. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classimkcpp_1_1FastAckCtx}{Fast\+Ack\+Ctx}} is used to track the latest received segment and its timestamp. 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

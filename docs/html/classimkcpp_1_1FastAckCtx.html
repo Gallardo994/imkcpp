@@ -72,23 +72,34 @@ $(function() {
 <div class="title">imkcpp::FastAckCtx Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><a class="el" href="classimkcpp_1_1FastAckCtx.html" title="FastAckCtx is used to track the latest received segment and its timestamp.">FastAckCtx</a> is used to track the latest received segment and its timestamp.  
+ <a href="classimkcpp_1_1FastAckCtx.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="ack__controller_8hpp_source.html">ack_controller.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ad71f29a4466262fde5b7b3b62dd60256"><td class="memItemLeft" align="right" valign="top"><a id="ad71f29a4466262fde5b7b3b62dd60256"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_valid</b> () const</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1FastAckCtx.html#ad71f29a4466262fde5b7b3b62dd60256">is_valid</a> () const</td></tr>
+<tr class="memdesc:ad71f29a4466262fde5b7b3b62dd60256"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if at least one ack has been received. <br /></td></tr>
 <tr class="separator:ad71f29a4466262fde5b7b3b62dd60256"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeffc3b1b8d71510f9d4040e50db754ae"><td class="memItemLeft" align="right" valign="top"><a id="aeffc3b1b8d71510f9d4040e50db754ae"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>update</b> (const u32 sn, const u32 ts)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1FastAckCtx.html#aeffc3b1b8d71510f9d4040e50db754ae">update</a> (const u32 sn, const u32 ts)</td></tr>
+<tr class="memdesc:aeffc3b1b8d71510f9d4040e50db754ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the latest received segment number and its timestamp. <br /></td></tr>
 <tr class="separator:aeffc3b1b8d71510f9d4040e50db754ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add0ed1d3326f196bf4979b7f8d82c6da"><td class="memItemLeft" align="right" valign="top"><a id="add0ed1d3326f196bf4979b7f8d82c6da"></a>
-u32&#160;</td><td class="memItemRight" valign="bottom"><b>get_maxack</b> () const</td></tr>
+u32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1FastAckCtx.html#add0ed1d3326f196bf4979b7f8d82c6da">get_maxack</a> () const</td></tr>
+<tr class="memdesc:add0ed1d3326f196bf4979b7f8d82c6da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the latest received segment number. <br /></td></tr>
 <tr class="separator:add0ed1d3326f196bf4979b7f8d82c6da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea0c191dbb74c06d60927ae194253f14"><td class="memItemLeft" align="right" valign="top"><a id="aea0c191dbb74c06d60927ae194253f14"></a>
-u32&#160;</td><td class="memItemRight" valign="bottom"><b>get_latest_ts</b> () const</td></tr>
+u32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1FastAckCtx.html#aea0c191dbb74c06d60927ae194253f14">get_latest_ts</a> () const</td></tr>
+<tr class="memdesc:aea0c191dbb74c06d60927ae194253f14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the timestamp of the latest received segment. <br /></td></tr>
 <tr class="separator:aea0c191dbb74c06d60927ae194253f14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p><a class="el" href="classimkcpp_1_1FastAckCtx.html" title="FastAckCtx is used to track the latest received segment and its timestamp.">FastAckCtx</a> is used to track the latest received segment and its timestamp. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>imkcpp/include/<a class="el" href="ack__controller_8hpp_source.html">ack_controller.hpp</a></li>
 </ul>
 </div><!-- contents -->

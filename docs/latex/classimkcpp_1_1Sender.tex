@@ -7,14 +7,14 @@
 {\bfseries Sender} (\mbox{\hyperlink{classimkcpp_1_1SharedCtx}{Shared\+Ctx}} \&shared\+\_\+ctx, \mbox{\hyperlink{classimkcpp_1_1CongestionController}{Congestion\+Controller}}$<$ MTU $>$ \&congestion\+\_\+controller, \mbox{\hyperlink{classimkcpp_1_1RtoCalculator}{Rto\+Calculator}} \&rto\+\_\+calculator, \mbox{\hyperlink{classimkcpp_1_1Flusher}{Flusher}}$<$ MTU $>$ \&flusher, \mbox{\hyperlink{classimkcpp_1_1SenderBuffer}{Sender\+Buffer}} \&sender\+\_\+buffer, \mbox{\hyperlink{classimkcpp_1_1SegmentTracker}{Segment\+Tracker}} \&segment\+\_\+tracker)
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1Sender_af2024f6ca276be3a316315972aac46a4}\label{classimkcpp_1_1Sender_af2024f6ca276be3a316315972aac46a4}} 
-tl\+::expected$<$ size\+\_\+t, error $>$ {\bfseries send} (const std\+::span$<$ const std\+::byte $>$ buffer)
-\item 
+tl\+::expected$<$ size\+\_\+t, error $>$ \mbox{\hyperlink{classimkcpp_1_1Sender_af2024f6ca276be3a316315972aac46a4}{send}} (const std\+::span$<$ const std\+::byte $>$ buffer)
+\begin{DoxyCompactList}\small\item\em Takes the payload, splits it into segments and puts them into the send queue. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1Sender_ac473d7b7a7a2a4f9ed15cc163e16cc5e}\label{classimkcpp_1_1Sender_ac473d7b7a7a2a4f9ed15cc163e16cc5e}} 
-void {\bfseries move\+\_\+send\+\_\+queue\+\_\+to\+\_\+buffer} (const u32 cwnd, const u32 current, const i32 unused\+\_\+receive\+\_\+window)
-\item 
+void \mbox{\hyperlink{classimkcpp_1_1Sender_ac473d7b7a7a2a4f9ed15cc163e16cc5e}{move\+\_\+send\+\_\+queue\+\_\+to\+\_\+buffer}} (const u32 cwnd, const u32 current, const i32 unused\+\_\+receive\+\_\+window)
+\begin{DoxyCompactList}\small\item\em Flushes data segments from the send queue to the sender buffer. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1Sender_a400d7ca01a9dac02752fc665d2a05cdd}\label{classimkcpp_1_1Sender_a400d7ca01a9dac02752fc665d2a05cdd}} 
-size\+\_\+t {\bfseries estimate\+\_\+segments\+\_\+count} (const size\+\_\+t size) const
-\item 
+size\+\_\+t \mbox{\hyperlink{classimkcpp_1_1Sender_a400d7ca01a9dac02752fc665d2a05cdd}{estimate\+\_\+segments\+\_\+count}} (const size\+\_\+t size) const
+\begin{DoxyCompactList}\small\item\em Given current max segment size, estimates the number of segments needed to fit the payload. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1Sender_a0b98187bc100da78d4253670e1b1412a}\label{classimkcpp_1_1Sender_a0b98187bc100da78d4253670e1b1412a}} 
 void {\bfseries set\+\_\+fastresend} (const u32 value)
 \item 
@@ -28,8 +28,8 @@ void {\bfseries set\+\_\+nodelay} (const u32 value)
 void {\bfseries set\+\_\+deadlink} (const u32 value)
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1Sender_aa2927e2cc2a6367156cc9a2d12769a4a}\label{classimkcpp_1_1Sender_aa2927e2cc2a6367156cc9a2d12769a4a}} 
-void {\bfseries flush\+\_\+data\+\_\+segments} (\mbox{\hyperlink{structimkcpp_1_1FlushResult}{Flush\+Result}} \&flush\+\_\+result, const output\+\_\+callback\+\_\+t \&output, const u32 current, const i32 unused\+\_\+receive\+\_\+window)
-\end{DoxyCompactItemize}
+void \mbox{\hyperlink{classimkcpp_1_1Sender_aa2927e2cc2a6367156cc9a2d12769a4a}{flush\+\_\+data\+\_\+segments}} (\mbox{\hyperlink{structimkcpp_1_1FlushResult}{Flush\+Result}} \&flush\+\_\+result, const output\+\_\+callback\+\_\+t \&output, const u32 current, const i32 unused\+\_\+receive\+\_\+window)
+\begin{DoxyCompactList}\small\item\em Flushes data segments from the send queue to the output callback. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

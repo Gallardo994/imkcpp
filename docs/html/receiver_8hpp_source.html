@@ -106,11 +106,11 @@ $(function() {
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <span class="keyword">const</span> <a class="code" href="structimkcpp_1_1Segment.html">Segment</a>&amp; front = this-&gt;rcv_queue.front();</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            <span class="keywordflow">if</span> (front.header.frg == 0) {</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            <span class="keywordflow">if</span> (front.header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#adae83ab066d221bdc0d925c01d6c1737">frg</a> == 0) {</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                <span class="keywordflow">return</span> front.data_size();</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            }</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <span class="keywordflow">if</span> (this-&gt;rcv_queue.size() &lt; <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(front.header.frg) + 1) {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <span class="keywordflow">if</span> (this-&gt;rcv_queue.size() &lt; <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(front.header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#adae83ab066d221bdc0d925c01d6c1737">frg</a>) + 1) {</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                <span class="keywordflow">return</span> tl::unexpected(error::waiting_for_fragment);</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            }</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
@@ -142,7 +142,7 @@ $(function() {
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            <span class="keywordtype">size_t</span> offset = 0;</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span> it = this-&gt;rcv_queue.begin(); it != this-&gt;rcv_queue.end();) {</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                <a class="code" href="structimkcpp_1_1Segment.html">Segment</a>&amp; segment = *it;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                <span class="keyword">const</span> u8 fragment = segment.header.frg;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                <span class="keyword">const</span> u8 fragment = segment.header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#adae83ab066d221bdc0d925c01d6c1737">frg</a>;</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">size_t</span> copy_len = std::min(segment.data_size(), buffer.size() - offset);</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                segment.data.encode_to(buffer, offset, copy_len);</div>
@@ -182,7 +182,8 @@ $(function() {
 <div class="ttc" id="aclassimkcpp_1_1CongestionController_html"><div class="ttname"><a href="classimkcpp_1_1CongestionController.html">imkcpp::CongestionController</a></div><div class="ttdef"><b>Definition:</b> congestion_controller.hpp:13</div></div>
 <div class="ttc" id="aclassimkcpp_1_1ReceiverBuffer_html"><div class="ttname"><a href="classimkcpp_1_1ReceiverBuffer.html">imkcpp::ReceiverBuffer</a></div><div class="ttdef"><b>Definition:</b> receiver_buffer.hpp:11</div></div>
 <div class="ttc" id="aclassimkcpp_1_1Receiver_html"><div class="ttname"><a href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a></div><div class="ttdef"><b>Definition:</b> receiver.hpp:16</div></div>
-<div class="ttc" id="astructimkcpp_1_1Segment_html"><div class="ttname"><a href="structimkcpp_1_1Segment.html">imkcpp::Segment</a></div><div class="ttdef"><b>Definition:</b> segment.hpp:82</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_adae83ab066d221bdc0d925c01d6c1737"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#adae83ab066d221bdc0d925c01d6c1737">imkcpp::SegmentHeader::frg</a></div><div class="ttdeci">u8 frg</div><div class="ttdoc">Fragment. Indicates how many next SNs are following this one in the same packet.</div><div class="ttdef"><b>Definition:</b> segment.hpp:18</div></div>
+<div class="ttc" id="astructimkcpp_1_1Segment_html"><div class="ttname"><a href="structimkcpp_1_1Segment.html">imkcpp::Segment</a></div><div class="ttdef"><b>Definition:</b> segment.hpp:104</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

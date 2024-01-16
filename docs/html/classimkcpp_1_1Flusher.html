@@ -76,19 +76,24 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a00e54342f66c3467b67fcd9a7d3ab902"><td class="memItemLeft" align="right" valign="top"><a id="a00e54342f66c3467b67fcd9a7d3ab902"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_empty</b> () const</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1Flusher.html#a00e54342f66c3467b67fcd9a7d3ab902">is_empty</a> () const</td></tr>
+<tr class="memdesc:a00e54342f66c3467b67fcd9a7d3ab902"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the buffer is empty. <br /></td></tr>
 <tr class="separator:a00e54342f66c3467b67fcd9a7d3ab902"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5796819623d057e670931603c9cb3463"><td class="memItemLeft" align="right" valign="top"><a id="a5796819623d057e670931603c9cb3463"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>flush_if_full</b> (const output_callback_t &amp;target)</td></tr>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1Flusher.html#a5796819623d057e670931603c9cb3463">flush_if_full</a> (const output_callback_t &amp;target)</td></tr>
+<tr class="memdesc:a5796819623d057e670931603c9cb3463"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flushes the buffer to the given output if it exceeds Max <a class="el" href="structimkcpp_1_1Segment.html">Segment</a> Size. <br /></td></tr>
 <tr class="separator:a5796819623d057e670931603c9cb3463"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aecce0268159541adfc8535344cb3a2e4"><td class="memItemLeft" align="right" valign="top"><a id="aecce0268159541adfc8535344cb3a2e4"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>flush_if_does_not_fit</b> (const output_callback_t &amp;target, const size_t size)</td></tr>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1Flusher.html#aecce0268159541adfc8535344cb3a2e4">flush_if_does_not_fit</a> (const output_callback_t &amp;target, const size_t size)</td></tr>
+<tr class="memdesc:aecce0268159541adfc8535344cb3a2e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flushes the buffer to the given output if adding "size" bytes to the buffer would exceed Max <a class="el" href="structimkcpp_1_1Segment.html">Segment</a> Size. <br /></td></tr>
 <tr class="separator:aecce0268159541adfc8535344cb3a2e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae0e8cf7a714fb610b729b15e23436b4"><td class="memItemLeft" align="right" valign="top"><a id="aae0e8cf7a714fb610b729b15e23436b4"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>flush_if_not_empty</b> (const output_callback_t &amp;target)</td></tr>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1Flusher.html#aae0e8cf7a714fb610b729b15e23436b4">flush_if_not_empty</a> (const output_callback_t &amp;target)</td></tr>
+<tr class="memdesc:aae0e8cf7a714fb610b729b15e23436b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flushes the buffer to the given output if it's not empty. <br /></td></tr>
 <tr class="separator:aae0e8cf7a714fb610b729b15e23436b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8494a29dfcbac170c9dd059101b888ef"><td class="memItemLeft" align="right" valign="top"><a id="a8494a29dfcbac170c9dd059101b888ef"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>emplace_segment</b> (const <a class="el" href="structimkcpp_1_1Segment.html">Segment</a> &amp;segment)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1Flusher.html#a8494a29dfcbac170c9dd059101b888ef">emplace_segment</a> (const <a class="el" href="structimkcpp_1_1Segment.html">Segment</a> &amp;segment)</td></tr>
+<tr class="memdesc:a8494a29dfcbac170c9dd059101b888ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emplaces the given segment into the buffer. <br /></td></tr>
 <tr class="separator:a8494a29dfcbac170c9dd059101b888ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>

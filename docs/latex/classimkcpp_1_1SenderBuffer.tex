@@ -21,8 +21,7 @@ void {\bfseries erase\+\_\+before} (const u32 sn)
 \mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_a26ce398a16481596fcd44a176b92f047}\label{classimkcpp_1_1SenderBuffer_a26ce398a16481596fcd44a176b92f047}} 
 void {\bfseries increment\+\_\+fastack\+\_\+before} (const u32 sn)
 \item 
-\mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_a03e8217503764d1ed7fc73dc0924525c}\label{classimkcpp_1_1SenderBuffer_a03e8217503764d1ed7fc73dc0924525c}} 
-std\+::optional$<$ u32 $>$ {\bfseries get\+\_\+earliest\+\_\+transmit\+\_\+delta} (const u32 current) const
+std\+::optional$<$ u32 $>$ \mbox{\hyperlink{classimkcpp_1_1SenderBuffer_a03e8217503764d1ed7fc73dc0924525c}{get\+\_\+earliest\+\_\+transmit\+\_\+delta}} (const u32 current) const
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_a09d14563338afdfaeaad3d170ea606a2}\label{classimkcpp_1_1SenderBuffer_a09d14563338afdfaeaad3d170ea606a2}} 
 bool {\bfseries empty} () const
@@ -31,6 +30,15 @@ bool {\bfseries empty} () const
 std\+::deque$<$ \mbox{\hyperlink{structimkcpp_1_1Segment}{Segment}} $>$ \& {\bfseries get} ()
 \end{DoxyCompactItemize}
 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_a03e8217503764d1ed7fc73dc0924525c}\label{classimkcpp_1_1SenderBuffer_a03e8217503764d1ed7fc73dc0924525c}} 
+\index{imkcpp::SenderBuffer@{imkcpp::SenderBuffer}!get\_earliest\_transmit\_delta@{get\_earliest\_transmit\_delta}}
+\index{get\_earliest\_transmit\_delta@{get\_earliest\_transmit\_delta}!imkcpp::SenderBuffer@{imkcpp::SenderBuffer}}
+\doxysubsubsection{\texorpdfstring{get\_earliest\_transmit\_delta()}{get\_earliest\_transmit\_delta()}}
+{\footnotesize\ttfamily std\+::optional$<$u32$>$ imkcpp\+::\+Sender\+Buffer\+::get\+\_\+earliest\+\_\+transmit\+\_\+delta (\begin{DoxyParamCaption}\item[{const u32}]{current }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns nearest delta from current time to the earliest resend time of a segment in the buffer. If there are no segments in the buffer, returns std\+::nullopt 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

@@ -10,21 +10,30 @@
 void {\bfseries acknowledge\+\_\+fastack} (const \mbox{\hyperlink{classimkcpp_1_1FastAckCtx}{Fast\+Ack\+Ctx}} \&fastack\+\_\+ctx)
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1AckController_a954d6f2ddef12e261eadcf0504dcaaf1}\label{classimkcpp_1_1AckController_a954d6f2ddef12e261eadcf0504dcaaf1}} 
-void {\bfseries ack\+\_\+received} (const u32 current, const u32 sn, const u32 ts)
-\item 
-\mbox{\Hypertarget{classimkcpp_1_1AckController_af20dfdd824f921c2f40c4d67f80437df}\label{classimkcpp_1_1AckController_af20dfdd824f921c2f40c4d67f80437df}} 
-void {\bfseries una\+\_\+received} (const u32 una)
+void \mbox{\hyperlink{classimkcpp_1_1AckController_a954d6f2ddef12e261eadcf0504dcaaf1}{ack\+\_\+received}} (const u32 current, const u32 sn, const u32 ts)
+\begin{DoxyCompactList}\small\item\em Updates the RTO and removes acknowledged segments from the sender buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classimkcpp_1_1AckController_af20dfdd824f921c2f40c4d67f80437df}{una\+\_\+received}} (const u32 una)
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1AckController_a8248bf43c2505438432f18a61e1f53c0}\label{classimkcpp_1_1AckController_a8248bf43c2505438432f18a61e1f53c0}} 
-void {\bfseries schedule\+\_\+ack} (const u32 sn, const u32 ts)
-\item 
+void \mbox{\hyperlink{classimkcpp_1_1AckController_a8248bf43c2505438432f18a61e1f53c0}{schedule\+\_\+ack}} (const u32 sn, const u32 ts)
+\begin{DoxyCompactList}\small\item\em Adds a segment to the acknowledgement list to be sent later. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1AckController_add05b2e2f553692866c99f884d8cddc5}\label{classimkcpp_1_1AckController_add05b2e2f553692866c99f884d8cddc5}} 
-void {\bfseries reserve} (const size\+\_\+t size)
-\item 
+void \mbox{\hyperlink{classimkcpp_1_1AckController_add05b2e2f553692866c99f884d8cddc5}{reserve}} (const size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Reserves space in the acknowledgement vector. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1AckController_affe420b637cc63fc4c103ab0b1138108}\label{classimkcpp_1_1AckController_affe420b637cc63fc4c103ab0b1138108}} 
-void {\bfseries flush\+\_\+acks} (\mbox{\hyperlink{structimkcpp_1_1FlushResult}{Flush\+Result}} \&flush\+\_\+result, const output\+\_\+callback\+\_\+t \&output, \mbox{\hyperlink{structimkcpp_1_1Segment}{Segment}} \&base\+\_\+segment)
-\end{DoxyCompactItemize}
+void \mbox{\hyperlink{classimkcpp_1_1AckController_affe420b637cc63fc4c103ab0b1138108}{flush\+\_\+acks}} (\mbox{\hyperlink{structimkcpp_1_1FlushResult}{Flush\+Result}} \&flush\+\_\+result, const output\+\_\+callback\+\_\+t \&output, \mbox{\hyperlink{structimkcpp_1_1Segment}{Segment}} \&base\+\_\+segment)
+\begin{DoxyCompactList}\small\item\em Sends all scheduled acknowledgements and clears the acknowledgement list. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classimkcpp_1_1AckController_af20dfdd824f921c2f40c4d67f80437df}\label{classimkcpp_1_1AckController_af20dfdd824f921c2f40c4d67f80437df}} 
+\index{imkcpp::AckController$<$ MTU $>$@{imkcpp::AckController$<$ MTU $>$}!una\_received@{una\_received}}
+\index{una\_received@{una\_received}!imkcpp::AckController$<$ MTU $>$@{imkcpp::AckController$<$ MTU $>$}}
+\doxysubsubsection{\texorpdfstring{una\_received()}{una\_received()}}
+{\footnotesize\ttfamily template$<$size\+\_\+t MTU$>$ \\
+void \mbox{\hyperlink{classimkcpp_1_1AckController}{imkcpp\+::\+Ack\+Controller}}$<$ MTU $>$\+::una\+\_\+received (\begin{DoxyParamCaption}\item[{const u32}]{una }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Removes acknowledged segments from the sender buffer according to remote una (unacknowledged segment number). 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

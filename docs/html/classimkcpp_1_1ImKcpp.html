@@ -79,58 +79,75 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>ImKcpp</b> (const u32 conv) noexcept</td></tr>
 <tr class="separator:a9d3826075ebe377471b822e5f0642d1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39e4b5b1d3699bd72c2b83a0c299b551"><td class="memItemLeft" align="right" valign="top"><a id="a39e4b5b1d3699bd72c2b83a0c299b551"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>set_interval</b> (const u32 interval) noexcept -&gt; void</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#a39e4b5b1d3699bd72c2b83a0c299b551">set_interval</a> (const u32 interval) noexcept -&gt; void</td></tr>
+<tr class="memdesc:a39e4b5b1d3699bd72c2b83a0c299b551"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the internal clock interval in milliseconds. Must be between 10 and 5000. <br /></td></tr>
 <tr class="separator:a39e4b5b1d3699bd72c2b83a0c299b551"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8bfd7d095e9db024bd06019e70a93bd"><td class="memItemLeft" align="right" valign="top"><a id="ad8bfd7d095e9db024bd06019e70a93bd"></a>
 auto&#160;</td><td class="memItemRight" valign="bottom"><b>set_nodelay</b> (const u32 nodelay) noexcept -&gt; void</td></tr>
 <tr class="separator:ad8bfd7d095e9db024bd06019e70a93bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54fd670f7cc80da993cdf95505965040"><td class="memItemLeft" align="right" valign="top"><a id="a54fd670f7cc80da993cdf95505965040"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>set_fastresend</b> (const u32 fastresend) noexcept -&gt; void</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#a54fd670f7cc80da993cdf95505965040">set_fastresend</a> (const u32 fastresend) noexcept -&gt; void</td></tr>
+<tr class="memdesc:a54fd670f7cc80da993cdf95505965040"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the number of non-sequential acks required to trigger fast resend. <br /></td></tr>
 <tr class="separator:a54fd670f7cc80da993cdf95505965040"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7b31b2f2f65f3ca1badf29a7525948e"><td class="memItemLeft" align="right" valign="top"><a id="ab7b31b2f2f65f3ca1badf29a7525948e"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>set_fastlimit</b> (const u32 limit) noexcept -&gt; void</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#ab7b31b2f2f65f3ca1badf29a7525948e">set_fastlimit</a> (const u32 limit) noexcept -&gt; void</td></tr>
+<tr class="memdesc:ab7b31b2f2f65f3ca1badf29a7525948e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the maximum count of fast resends per segment. <br /></td></tr>
 <tr class="separator:ab7b31b2f2f65f3ca1badf29a7525948e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c8c4afadb64d6abb92a36f51c0cd50e"><td class="memItemLeft" align="right" valign="top"><a id="a2c8c4afadb64d6abb92a36f51c0cd50e"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>set_send_window</b> (const u32 sndwnd) noexcept -&gt; void</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#a2c8c4afadb64d6abb92a36f51c0cd50e">set_send_window</a> (const u32 sndwnd) noexcept -&gt; void</td></tr>
+<tr class="memdesc:a2c8c4afadb64d6abb92a36f51c0cd50e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the maximum number of segments that can be sent in a single <a class="el" href="classimkcpp_1_1ImKcpp.html#a3906619f232041399ab5dc8f4520c1df" title="Updates the state and performs flush if necessary.">update()</a> call. <br /></td></tr>
 <tr class="separator:a2c8c4afadb64d6abb92a36f51c0cd50e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53fb2ca7ec9b917fc77594a6dc2014f9"><td class="memItemLeft" align="right" valign="top"><a id="a53fb2ca7ec9b917fc77594a6dc2014f9"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>set_receive_window</b> (const u32 rcvwnd) noexcept -&gt; void</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#a53fb2ca7ec9b917fc77594a6dc2014f9">set_receive_window</a> (const u32 rcvwnd) noexcept -&gt; void</td></tr>
+<tr class="memdesc:a53fb2ca7ec9b917fc77594a6dc2014f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the maximum number of segments that can be queued in the receive buffer. <br /></td></tr>
 <tr class="separator:a53fb2ca7ec9b917fc77594a6dc2014f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a364556555eb62abef81280618a3c20a6"><td class="memItemLeft" align="right" valign="top"><a id="a364556555eb62abef81280618a3c20a6"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>set_congestion_window_enabled</b> (const bool state) noexcept -&gt; void</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#a364556555eb62abef81280618a3c20a6">set_congestion_window_enabled</a> (const bool state) noexcept -&gt; void</td></tr>
+<tr class="memdesc:a364556555eb62abef81280618a3c20a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables or disables congestion window. <br /></td></tr>
 <tr class="separator:a364556555eb62abef81280618a3c20a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae944bf496cebc9b07489a620b3eac842"><td class="memItemLeft" align="right" valign="top"><a id="ae944bf496cebc9b07489a620b3eac842"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>set_deadlink</b> (const u32 threshold) noexcept -&gt; void</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#ae944bf496cebc9b07489a620b3eac842">set_deadlink</a> (const u32 threshold) noexcept -&gt; void</td></tr>
+<tr class="memdesc:ae944bf496cebc9b07489a620b3eac842"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets maximum retransmission count for a single segment until it's considered lost. <br /></td></tr>
 <tr class="separator:ae944bf496cebc9b07489a620b3eac842"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa04bb44ef611302810fa04fe05edca80"><td class="memItemLeft" align="right" valign="top"><a id="aa04bb44ef611302810fa04fe05edca80"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>input</b> (const std::span&lt; const std::byte &gt; data) noexcept -&gt; tl::expected&lt; <a class="el" href="structimkcpp_1_1InputResult.html">InputResult</a>, error &gt;</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#aa04bb44ef611302810fa04fe05edca80">input</a> (const std::span&lt; const std::byte &gt; data) noexcept -&gt; tl::expected&lt; <a class="el" href="structimkcpp_1_1InputResult.html">InputResult</a>, error &gt;</td></tr>
+<tr class="memdesc:aa04bb44ef611302810fa04fe05edca80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receives data from the transport layer. <br /></td></tr>
 <tr class="separator:aa04bb44ef611302810fa04fe05edca80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9c9fa39935cbb52a1280007b04ca101"><td class="memItemLeft" align="right" valign="top"><a id="ae9c9fa39935cbb52a1280007b04ca101"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>recv</b> (const std::span&lt; std::byte &gt; buffer) noexcept -&gt; tl::expected&lt; size_t, error &gt;</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#ae9c9fa39935cbb52a1280007b04ca101">recv</a> (const std::span&lt; std::byte &gt; buffer) noexcept -&gt; tl::expected&lt; size_t, error &gt;</td></tr>
+<tr class="memdesc:ae9c9fa39935cbb52a1280007b04ca101"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads data from the receive queue. <br /></td></tr>
 <tr class="separator:ae9c9fa39935cbb52a1280007b04ca101"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e939c6e6e0052b0496636cc6e3ec787"><td class="memItemLeft" align="right" valign="top"><a id="a6e939c6e6e0052b0496636cc6e3ec787"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>send</b> (const std::span&lt; const std::byte &gt; buffer) noexcept -&gt; tl::expected&lt; size_t, error &gt;</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#a6e939c6e6e0052b0496636cc6e3ec787">send</a> (const std::span&lt; const std::byte &gt; buffer) noexcept -&gt; tl::expected&lt; size_t, error &gt;</td></tr>
+<tr class="memdesc:a6e939c6e6e0052b0496636cc6e3ec787"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends data. <br /></td></tr>
 <tr class="separator:a6e939c6e6e0052b0496636cc6e3ec787"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8acdc987aa7504d804c68eea6abec4e"><td class="memItemLeft" align="right" valign="top"><a id="af8acdc987aa7504d804c68eea6abec4e"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>check</b> (const u32 current) noexcept -&gt; u32</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#af8acdc987aa7504d804c68eea6abec4e">check</a> (const u32 current) noexcept -&gt; u32</td></tr>
+<tr class="memdesc:af8acdc987aa7504d804c68eea6abec4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks when the next <a class="el" href="classimkcpp_1_1ImKcpp.html#a3906619f232041399ab5dc8f4520c1df" title="Updates the state and performs flush if necessary.">update()</a> should be called. <br /></td></tr>
 <tr class="separator:af8acdc987aa7504d804c68eea6abec4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3906619f232041399ab5dc8f4520c1df"><td class="memItemLeft" align="right" valign="top"><a id="a3906619f232041399ab5dc8f4520c1df"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>update</b> (const u32 current, const output_callback_t &amp;callback) noexcept -&gt; <a class="el" href="structimkcpp_1_1FlushResult.html">FlushResult</a></td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#a3906619f232041399ab5dc8f4520c1df">update</a> (const u32 current, const output_callback_t &amp;callback) noexcept -&gt; <a class="el" href="structimkcpp_1_1FlushResult.html">FlushResult</a></td></tr>
+<tr class="memdesc:a3906619f232041399ab5dc8f4520c1df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the state and performs flush if necessary. <br /></td></tr>
 <tr class="separator:a3906619f232041399ab5dc8f4520c1df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9e4147b4cff9fa866afe3c1fd9d86d7"><td class="memItemLeft" align="right" valign="top"><a id="ae9e4147b4cff9fa866afe3c1fd9d86d7"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>flush</b> (const output_callback_t &amp;callback) noexcept -&gt; <a class="el" href="structimkcpp_1_1FlushResult.html">FlushResult</a></td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#ae9e4147b4cff9fa866afe3c1fd9d86d7">flush</a> (const output_callback_t &amp;callback) noexcept -&gt; <a class="el" href="structimkcpp_1_1FlushResult.html">FlushResult</a></td></tr>
+<tr class="memdesc:ae9e4147b4cff9fa866afe3c1fd9d86d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flushes the data to the output callback. <br /></td></tr>
 <tr class="separator:ae9e4147b4cff9fa866afe3c1fd9d86d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab655fdecc11e4a91ffe523d6bd969171"><td class="memItemLeft" align="right" valign="top"><a id="ab655fdecc11e4a91ffe523d6bd969171"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>get_state</b> () const noexcept -&gt; State</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#ab655fdecc11e4a91ffe523d6bd969171">get_state</a> () const noexcept -&gt; State</td></tr>
+<tr class="memdesc:ab655fdecc11e4a91ffe523d6bd969171"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the current state. <br /></td></tr>
 <tr class="separator:ab655fdecc11e4a91ffe523d6bd969171"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8bb8b4a4eb684f8732c8c613c207e9c3"><td class="memItemLeft" align="right" valign="top"><a id="a8bb8b4a4eb684f8732c8c613c207e9c3"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>peek_size</b> () const noexcept -&gt; tl::expected&lt; size_t, error &gt;</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#a8bb8b4a4eb684f8732c8c613c207e9c3">peek_size</a> () const noexcept -&gt; tl::expected&lt; size_t, error &gt;</td></tr>
+<tr class="memdesc:a8bb8b4a4eb684f8732c8c613c207e9c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets bytes count of the available data in the receive queue. <br /></td></tr>
 <tr class="separator:a8bb8b4a4eb684f8732c8c613c207e9c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32fa85febe38c626eac94ca766737f50"><td class="memItemLeft" align="right" valign="top"><a id="a32fa85febe38c626eac94ca766737f50"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>estimate_segments_count</b> (const size_t size) const noexcept -&gt; size_t</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#a32fa85febe38c626eac94ca766737f50">estimate_segments_count</a> (const size_t size) const noexcept -&gt; size_t</td></tr>
+<tr class="memdesc:a32fa85febe38c626eac94ca766737f50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the number of segments required to send the given amount of data. <br /></td></tr>
 <tr class="separator:a32fa85febe38c626eac94ca766737f50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc220615ca474842669cb1af3d23476c"><td class="memItemLeft" align="right" valign="top"><a id="afc220615ca474842669cb1af3d23476c"></a>
-auto&#160;</td><td class="memItemRight" valign="bottom"><b>estimate_max_payload_size</b> () const noexcept -&gt; size_t</td></tr>
+auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1ImKcpp.html#afc220615ca474842669cb1af3d23476c">estimate_max_payload_size</a> () const noexcept -&gt; size_t</td></tr>
+<tr class="memdesc:afc220615ca474842669cb1af3d23476c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the maximum payload size that can be sent in a single <a class="el" href="classimkcpp_1_1ImKcpp.html#a6e939c6e6e0052b0496636cc6e3ec787" title="Sends data.">send()</a> call. <br /></td></tr>
 <tr class="separator:afc220615ca474842669cb1af3d23476c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
