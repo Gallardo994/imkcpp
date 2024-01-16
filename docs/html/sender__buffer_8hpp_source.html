@@ -131,9 +131,9 @@ $(function() {
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        }</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keywordtype">void</span> increment_fastack_before(<span class="keyword">const</span> u32 sn) {</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> it = this-&gt;snd_buf.begin(); it != this-&gt;snd_buf.end();) {</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                <span class="keywordflow">if</span> (it-&gt;header.sn &lt; sn) {</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                    it-&gt;metadata.fastack++;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <span class="keywordflow">for</span> (<a class="code" href="structimkcpp_1_1Segment.html">Segment</a>&amp; seg : this-&gt;snd_buf) {</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                <span class="keywordflow">if</span> (seg.header.sn &lt; sn) {</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                    seg.metadata.fastack++;</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                    <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                }</div>

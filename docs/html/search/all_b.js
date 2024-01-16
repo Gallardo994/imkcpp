@@ -13,7 +13,7 @@ var searchData=
   ['set_5fdeadlink_55',['set_deadlink',['../classimkcpp_1_1ImKcpp.html#ae944bf496cebc9b07489a620b3eac842',1,'imkcpp::ImKcpp']]],
   ['set_5ffastlimit_56',['set_fastlimit',['../classimkcpp_1_1ImKcpp.html#ab7b31b2f2f65f3ca1badf29a7525948e',1,'imkcpp::ImKcpp']]],
   ['set_5ffastresend_57',['set_fastresend',['../classimkcpp_1_1ImKcpp.html#a54fd670f7cc80da993cdf95505965040',1,'imkcpp::ImKcpp']]],
-  ['set_5finterval_58',['set_interval',['../classimkcpp_1_1ImKcpp.html#a39e4b5b1d3699bd72c2b83a0c299b551',1,'imkcpp::ImKcpp']]],
+  ['set_5finterval_58',['set_interval',['../classimkcpp_1_1ImKcpp.html#a3e618afac6167fe4109d14769cad1895',1,'imkcpp::ImKcpp']]],
   ['set_5freceive_5fwindow_59',['set_receive_window',['../classimkcpp_1_1ImKcpp.html#a53fb2ca7ec9b917fc77594a6dc2014f9',1,'imkcpp::ImKcpp']]],
   ['set_5fsend_5fwindow_60',['set_send_window',['../classimkcpp_1_1ImKcpp.html#a2c8c4afadb64d6abb92a36f51c0cd50e',1,'imkcpp::ImKcpp']]],
   ['set_5fstate_61',['set_state',['../classimkcpp_1_1SharedCtx.html#ace2de781af6b3b4023bf42ce748c1119',1,'imkcpp::SharedCtx']]],

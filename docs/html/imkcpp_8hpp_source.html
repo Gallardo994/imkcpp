@@ -111,8 +111,8 @@ $(function() {
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <a class="code" href="classimkcpp_1_1Receiver.html">Receiver&lt;MTU&gt;</a> receiver{receiver_buffer, congestion_controller};</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <a class="code" href="classimkcpp_1_1SenderBuffer.html">SenderBuffer</a> sender_buffer{shared_ctx, segment_tracker};</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <a class="code" href="classimkcpp_1_1RtoCalculator.html">RtoCalculator</a> rto_calculator{shared_ctx};</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <a class="code" href="classimkcpp_1_1AckController.html">AckController&lt;MTU&gt;</a> ack_controller{flusher, rto_calculator, sender_buffer, segment_tracker};</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <a class="code" href="classimkcpp_1_1RtoCalculator.html">RtoCalculator</a> rto_calculator{};</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <a class="code" href="classimkcpp_1_1AckController.html">AckController&lt;MTU&gt;</a> ack_controller{flusher, sender_buffer, segment_tracker};</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <a class="code" href="classimkcpp_1_1Sender.html">Sender&lt;MTU&gt;</a> sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, segment_tracker};</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keywordtype">bool</span> updated = <span class="keyword">false</span>; <span class="comment">// Whether update() was called at least once</span></div>
@@ -142,278 +142,280 @@ $(function() {
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            this-&gt;<a class="code" href="classimkcpp_1_1ImKcpp.html#a2c8c4afadb64d6abb92a36f51c0cd50e">set_send_window</a>(constants::IKCP_WND_SND);</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        }</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a39e4b5b1d3699bd72c2b83a0c299b551">   76</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a39e4b5b1d3699bd72c2b83a0c299b551">set_interval</a>(<span class="keyword">const</span> u32 interval) noexcept -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            this-&gt;shared_ctx.set_interval(std::clamp(interval, <span class="keyword">static_cast&lt;</span>u32<span class="keyword">&gt;</span>(10), <span class="keyword">static_cast&lt;</span>u32<span class="keyword">&gt;</span>(5000)));</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        }</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keyword">auto</span> set_nodelay(<span class="keyword">const</span> u32 nodelay) noexcept -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            this-&gt;sender.set_nodelay(nodelay);</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        }</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a54fd670f7cc80da993cdf95505965040">   85</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a54fd670f7cc80da993cdf95505965040">set_fastresend</a>(<span class="keyword">const</span> u32 fastresend) noexcept -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            this-&gt;sender.set_fastresend(fastresend);</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        }</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#ab7b31b2f2f65f3ca1badf29a7525948e">   90</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#ab7b31b2f2f65f3ca1badf29a7525948e">set_fastlimit</a>(<span class="keyword">const</span> u32 limit) noexcept -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            this-&gt;sender.set_fastlimit(limit);</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        }</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a2c8c4afadb64d6abb92a36f51c0cd50e">   95</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a2c8c4afadb64d6abb92a36f51c0cd50e">set_send_window</a>(<span class="keyword">const</span> u32 sndwnd) noexcept -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            assert(sndwnd &gt; 0);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            this-&gt;congestion_controller.set_send_window(sndwnd);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            this-&gt;congestion_controller.set_remote_window(sndwnd);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        }</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a53fb2ca7ec9b917fc77594a6dc2014f9">  103</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a53fb2ca7ec9b917fc77594a6dc2014f9">set_receive_window</a>(<span class="keyword">const</span> u32 rcvwnd) noexcept -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            assert(rcvwnd &gt; 0);</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            this-&gt;congestion_controller.set_receive_window(rcvwnd);</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            this-&gt;ack_controller.reserve(rcvwnd);</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        }</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a364556555eb62abef81280618a3c20a6">  111</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a364556555eb62abef81280618a3c20a6">set_congestion_window_enabled</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> state) noexcept -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            this-&gt;congestion_controller.set_congestion_window_enabled(state);</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        }</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#ae944bf496cebc9b07489a620b3eac842">  116</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#ae944bf496cebc9b07489a620b3eac842">set_deadlink</a>(<span class="keyword">const</span> u32 threshold) noexcept -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            this-&gt;sender.set_deadlink(threshold);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        }</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#aa04bb44ef611302810fa04fe05edca80">  121</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#aa04bb44ef611302810fa04fe05edca80">input</a>(<span class="keyword">const</span> std::span&lt;const std::byte&gt; data) noexcept -&gt; tl::expected&lt;InputResult, error&gt; {</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            <span class="keywordflow">if</span> (data.size() &lt; constants::IKCP_OVERHEAD) {</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                <span class="keywordflow">return</span> tl::unexpected(error::less_than_header_size);</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            }</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            <a class="code" href="structimkcpp_1_1InputResult.html">InputResult</a> input_result{};</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            <span class="keyword">const</span> u32 prev_una = this-&gt;segment_tracker.get_snd_una();</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            <a class="code" href="classimkcpp_1_1FastAckCtx.html">FastAckCtx</a> fastack_ctx{};</div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a3e618afac6167fe4109d14769cad1895">   76</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a3e618afac6167fe4109d14769cad1895">set_interval</a>(u32 interval) noexcept -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            interval = std::clamp(interval, <span class="keyword">static_cast&lt;</span>u32<span class="keyword">&gt;</span>(10), <span class="keyword">static_cast&lt;</span>u32<span class="keyword">&gt;</span>(5000));</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            this-&gt;shared_ctx.set_interval(interval);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            this-&gt;rto_calculator.set_interval(interval);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        }</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keyword">auto</span> set_nodelay(<span class="keyword">const</span> u32 nodelay) noexcept -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            this-&gt;sender.set_nodelay(nodelay);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a54fd670f7cc80da993cdf95505965040">   88</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a54fd670f7cc80da993cdf95505965040">set_fastresend</a>(<span class="keyword">const</span> u32 fastresend) noexcept -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            this-&gt;sender.set_fastresend(fastresend);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#ab7b31b2f2f65f3ca1badf29a7525948e">   93</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#ab7b31b2f2f65f3ca1badf29a7525948e">set_fastlimit</a>(<span class="keyword">const</span> u32 limit) noexcept -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            this-&gt;sender.set_fastlimit(limit);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        }</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a2c8c4afadb64d6abb92a36f51c0cd50e">   98</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a2c8c4afadb64d6abb92a36f51c0cd50e">set_send_window</a>(<span class="keyword">const</span> u32 sndwnd) noexcept -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            assert(sndwnd &gt; 0);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            this-&gt;congestion_controller.set_send_window(sndwnd);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            this-&gt;congestion_controller.set_remote_window(sndwnd);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        }</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a53fb2ca7ec9b917fc77594a6dc2014f9">  106</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a53fb2ca7ec9b917fc77594a6dc2014f9">set_receive_window</a>(<span class="keyword">const</span> u32 rcvwnd) noexcept -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            assert(rcvwnd &gt; 0);</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            this-&gt;congestion_controller.set_receive_window(rcvwnd);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            this-&gt;ack_controller.reserve(rcvwnd);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        }</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a364556555eb62abef81280618a3c20a6">  114</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a364556555eb62abef81280618a3c20a6">set_congestion_window_enabled</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> state) noexcept -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;            this-&gt;congestion_controller.set_congestion_window_enabled(state);</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        }</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#ae944bf496cebc9b07489a620b3eac842">  119</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#ae944bf496cebc9b07489a620b3eac842">set_deadlink</a>(<span class="keyword">const</span> u32 threshold) noexcept -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            this-&gt;sender.set_deadlink(threshold);</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        }</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
+<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#aa04bb44ef611302810fa04fe05edca80">  124</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#aa04bb44ef611302810fa04fe05edca80">input</a>(<span class="keyword">const</span> std::span&lt;const std::byte&gt; data) noexcept -&gt; tl::expected&lt;InputResult, error&gt; {</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            <span class="keywordflow">if</span> (data.size() &lt; constants::IKCP_OVERHEAD) {</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;                <span class="keywordflow">return</span> tl::unexpected(error::less_than_header_size);</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            }</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            <a class="code" href="structimkcpp_1_1InputResult.html">InputResult</a> input_result{};</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            <a class="code" href="structimkcpp_1_1SegmentHeader.html">SegmentHeader</a> header;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            <span class="keywordtype">size_t</span> offset = 0;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            <span class="keyword">const</span> u32 prev_una = this-&gt;segment_tracker.get_snd_una();</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            <a class="code" href="classimkcpp_1_1FastAckCtx.html">FastAckCtx</a> fastack_ctx{};</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            <span class="keyword">const</span> <span class="keyword">auto</span> drop_push = [&amp;] {</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;                offset += header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">len</a>;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;                input_result.dropped_push_count++;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;            };</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;            <span class="keyword">const</span> <span class="keyword">auto</span> data_size = data.size();</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;                <span class="keywordflow">if</span> (data_size - offset &lt; constants::IKCP_OVERHEAD) {</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                }</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                header.decode_from(data, offset);</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                <span class="keywordflow">if</span> (header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#af990348ad8cea08df3f33fbdf3e7d1cb">conv</a> != this-&gt;shared_ctx.get_conv()) {</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                    <span class="keywordflow">return</span> tl::unexpected(error::conv_mismatch);</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                }</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                <span class="keywordflow">if</span> (header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">len</a> &gt; data.size() - offset) {</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                    <span class="keywordflow">return</span> tl::unexpected(error::header_and_payload_length_mismatch);</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                }</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                <span class="keywordflow">if</span> (!commands::is_valid(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#af535f6c8b13dc29db94c5b8926a39d4c">cmd</a>)) {</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                    <span class="keywordflow">return</span> tl::unexpected(error::unknown_command);</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                }</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                this-&gt;congestion_controller.set_remote_window(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a092b9b075c703aad8d1c1322cac1e04c">wnd</a>);</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                this-&gt;ack_controller.una_received(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a08992ae80206006966482d1cf7fd804d">una</a>);</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            <a class="code" href="structimkcpp_1_1SegmentHeader.html">SegmentHeader</a> header;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            <span class="keywordtype">size_t</span> offset = 0;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;            <span class="keyword">const</span> <span class="keyword">auto</span> drop_push = [&amp;] {</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;                offset += header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">len</a>;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;                input_result.dropped_push_count++;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            };</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            <span class="keyword">const</span> <span class="keyword">auto</span> data_size = data.size();</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                <span class="keywordflow">if</span> (data_size - offset &lt; constants::IKCP_OVERHEAD) {</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                }</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                header.decode_from(data, offset);</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                <span class="keywordflow">if</span> (header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#af990348ad8cea08df3f33fbdf3e7d1cb">conv</a> != this-&gt;shared_ctx.get_conv()) {</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                    <span class="keywordflow">return</span> tl::unexpected(error::conv_mismatch);</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                }</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;                <span class="keywordflow">if</span> (header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">len</a> &gt; data.size() - offset) {</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                    <span class="keywordflow">return</span> tl::unexpected(error::header_and_payload_length_mismatch);</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                }</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                <span class="keywordflow">if</span> (!commands::is_valid(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#af535f6c8b13dc29db94c5b8926a39d4c">cmd</a>)) {</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                    <span class="keywordflow">return</span> tl::unexpected(error::unknown_command);</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                }</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;                <span class="keywordflow">switch</span> (header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#af535f6c8b13dc29db94c5b8926a39d4c">cmd</a>) {</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                    <span class="keywordflow">case</span> commands::IKCP_CMD_PUSH: {</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                        <span class="keywordflow">if</span> (!this-&gt;congestion_controller.fits_receive_window(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a>)) {</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;                            drop_push();</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                        }</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                        this-&gt;ack_controller.schedule_ack(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a>, header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">ts</a>);</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                        <span class="keywordflow">if</span> (this-&gt;segment_tracker.should_receive(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a>)) {</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                            <a class="code" href="structimkcpp_1_1SegmentData.html">SegmentData</a> segment_data;</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;                            segment_data.decode_from(data, offset, header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">len</a>);</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160; </div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                            this-&gt;receiver_buffer.emplace_segment(header, segment_data);</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;                            this-&gt;receiver.move_receive_buffer_to_queue();</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                            drop_push();</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                        }</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                    }</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;                    <span class="keywordflow">case</span> commands::IKCP_CMD_ACK: {</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                        this-&gt;ack_controller.ack_received(this-&gt;current, header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a>, header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">ts</a>);</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;                        fastack_ctx.update(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a>, header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">ts</a>);</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;                        input_result.cmd_ack_count++;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                    }</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                    <span class="keywordflow">case</span> commands::IKCP_CMD_WASK: {</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                        this-&gt;congestion_controller.set_probe_flag(constants::IKCP_ASK_TELL);</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                        input_result.cmd_wask_count++;</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                        <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                    }</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                    <span class="keywordflow">case</span> commands::IKCP_CMD_WINS: {</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                        input_result.cmd_wins_count++;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;                this-&gt;congestion_controller.set_remote_window(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a092b9b075c703aad8d1c1322cac1e04c">wnd</a>);</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                this-&gt;ack_controller.una_received(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a08992ae80206006966482d1cf7fd804d">una</a>);</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160; </div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;                <span class="keywordflow">switch</span> (header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#af535f6c8b13dc29db94c5b8926a39d4c">cmd</a>) {</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                    <span class="keywordflow">case</span> commands::IKCP_CMD_PUSH: {</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                        <span class="keywordflow">if</span> (!this-&gt;congestion_controller.fits_receive_window(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a>)) {</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                            drop_push();</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                        }</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;                        this-&gt;ack_controller.schedule_ack(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a>, header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">ts</a>);</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                        <span class="keywordflow">if</span> (this-&gt;segment_tracker.should_receive(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a>)) {</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                            <a class="code" href="structimkcpp_1_1SegmentData.html">SegmentData</a> segment_data;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;                            segment_data.decode_from(data, offset, header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">len</a>);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                            this-&gt;receiver_buffer.emplace_segment(header, segment_data);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                            this-&gt;receiver.move_receive_buffer_to_queue();</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                            drop_push();</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;                        }</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;                    }</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;                    <span class="keywordflow">case</span> commands::IKCP_CMD_ACK: {</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                        this-&gt;rto_calculator.update_rtt(this-&gt;current, header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">ts</a>);</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                        this-&gt;ack_controller.ack_received(this-&gt;current, header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a>, header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">ts</a>);</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                        fastack_ctx.update(header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a>, header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">ts</a>);</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                        input_result.cmd_ack_count++;</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                    }</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                    <span class="keywordflow">case</span> commands::IKCP_CMD_WASK: {</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                        this-&gt;congestion_controller.set_probe_flag(constants::IKCP_ASK_TELL);</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                        input_result.cmd_wask_count++;</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                        <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                    }</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                    <span class="keywordflow">default</span>: {</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                        <span class="keywordflow">return</span> tl::unexpected(error::unknown_command);</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                    }</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                }</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;            }</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160; </div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;            this-&gt;ack_controller.acknowledge_fastack(fastack_ctx);</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160; </div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;            <span class="keywordflow">if</span> (this-&gt;segment_tracker.get_snd_una() &gt; prev_una) {</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;                this-&gt;congestion_controller.adjust_parameters();</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;            }</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                    <span class="keywordflow">case</span> commands::IKCP_CMD_WINS: {</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                        input_result.cmd_wins_count++;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                        <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                    }</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                    <span class="keywordflow">default</span>: {</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                        <span class="keywordflow">return</span> tl::unexpected(error::unknown_command);</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                    }</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                }</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;            }</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160; </div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;            this-&gt;ack_controller.acknowledge_fastack(fastack_ctx);</div>
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160; </div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;            input_result.total_bytes_received = offset;</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160; </div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;            <span class="keywordflow">return</span> input_result;</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        }</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160; </div>
-<div class="line"><a name="l00216"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#ae9c9fa39935cbb52a1280007b04ca101">  216</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#ae9c9fa39935cbb52a1280007b04ca101">recv</a>(<span class="keyword">const</span> std::span&lt;std::byte&gt; buffer) noexcept -&gt; tl::expected&lt;size_t, error&gt; {</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;            assert(!buffer.empty());</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;            <span class="keywordflow">if</span> (this-&gt;segment_tracker.get_snd_una() &gt; prev_una) {</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                this-&gt;congestion_controller.adjust_parameters();</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;            }</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160; </div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;            input_result.total_bytes_received = offset;</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;            <span class="keywordflow">return</span> input_result;</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        }</div>
 <div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160; </div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            <span class="keywordflow">return</span> this-&gt;receiver.recv(buffer);</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        }</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
-<div class="line"><a name="l00223"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a6e939c6e6e0052b0496636cc6e3ec787">  223</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a6e939c6e6e0052b0496636cc6e3ec787">send</a>(<span class="keyword">const</span> std::span&lt;const std::byte&gt; buffer) noexcept -&gt; tl::expected&lt;size_t, error&gt; {</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;            <span class="keywordflow">return</span> this-&gt;sender.send(buffer);</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        }</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
-<div class="line"><a name="l00228"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#af8acdc987aa7504d804c68eea6abec4e">  228</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#af8acdc987aa7504d804c68eea6abec4e">check</a>(<span class="keyword">const</span> u32 current) noexcept -&gt; u32 {</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;            <span class="keywordflow">if</span> (!this-&gt;updated) {</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                <span class="keywordflow">return</span> current;</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            }</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            <span class="keywordflow">if</span> (std::abs(time_delta(current, this-&gt;ts_flush)) &gt;= 10000) {</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;                this-&gt;ts_flush = current;</div>
+<div class="line"><a name="l00220"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#ae9c9fa39935cbb52a1280007b04ca101">  220</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#ae9c9fa39935cbb52a1280007b04ca101">recv</a>(<span class="keyword">const</span> std::span&lt;std::byte&gt; buffer) noexcept -&gt; tl::expected&lt;size_t, error&gt; {</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            assert(!buffer.empty());</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; </div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;            <span class="keywordflow">return</span> this-&gt;receiver.recv(buffer);</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        }</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
+<div class="line"><a name="l00227"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a6e939c6e6e0052b0496636cc6e3ec787">  227</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a6e939c6e6e0052b0496636cc6e3ec787">send</a>(<span class="keyword">const</span> std::span&lt;const std::byte&gt; buffer) noexcept -&gt; tl::expected&lt;size_t, error&gt; {</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;            <span class="keywordflow">return</span> this-&gt;sender.send(buffer);</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        }</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
+<div class="line"><a name="l00232"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#af8acdc987aa7504d804c68eea6abec4e">  232</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#af8acdc987aa7504d804c68eea6abec4e">check</a>(<span class="keyword">const</span> u32 current) noexcept -&gt; u32 {</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            <span class="keywordflow">if</span> (!this-&gt;updated) {</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;                <span class="keywordflow">return</span> current;</div>
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;            }</div>
 <div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            <span class="keywordflow">if</span> (time_delta(current, this-&gt;ts_flush) &gt;= 0) {</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;                <span class="keywordflow">return</span> current;</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            <span class="keywordflow">if</span> (std::abs(time_delta(current, this-&gt;ts_flush)) &gt;= 10000) {</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;                this-&gt;ts_flush = current;</div>
 <div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;            }</div>
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;            <span class="keyword">const</span> u32 next_flush = <span class="keyword">static_cast&lt;</span>u32<span class="keyword">&gt;</span>(std::max(0, time_delta(this-&gt;ts_flush, current)));</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;            <span class="keyword">const</span> std::optional&lt;u32&gt; earliest_transmit = this-&gt;sender_buffer.<a class="code" href="classimkcpp_1_1SenderBuffer.html#a03e8217503764d1ed7fc73dc0924525c">get_earliest_transmit_delta</a>(current);</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;            u32 minimal = 0;</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;            <span class="keywordflow">if</span> (earliest_transmit.has_value()) {</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                minimal = earliest_transmit.value() &lt; next_flush ? earliest_transmit.value() : next_flush;</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;                minimal = next_flush;</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            }</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;            <span class="keywordflow">return</span> current + std::min(this-&gt;shared_ctx.get_interval(), minimal);</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        }</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160; </div>
-<div class="line"><a name="l00256"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a3906619f232041399ab5dc8f4520c1df">  256</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a3906619f232041399ab5dc8f4520c1df">update</a>(<span class="keyword">const</span> u32 current, <span class="keyword">const</span> output_callback_t&amp; callback) noexcept -&gt; <a class="code" href="structimkcpp_1_1FlushResult.html">FlushResult</a> {</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;            this-&gt;current = current;</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;            <span class="keywordflow">if</span> (time_delta(current, this-&gt;ts_flush) &gt;= 0) {</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;                <span class="keywordflow">return</span> current;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            }</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            <span class="keyword">const</span> u32 next_flush = <span class="keyword">static_cast&lt;</span>u32<span class="keyword">&gt;</span>(std::max(0, time_delta(this-&gt;ts_flush, current)));</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;            <span class="keyword">const</span> std::optional&lt;u32&gt; earliest_transmit = this-&gt;sender_buffer.<a class="code" href="classimkcpp_1_1SenderBuffer.html#a03e8217503764d1ed7fc73dc0924525c">get_earliest_transmit_delta</a>(current);</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;            u32 minimal = 0;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            <span class="keywordflow">if</span> (earliest_transmit.has_value()) {</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;                minimal = earliest_transmit.value() &lt; next_flush ? earliest_transmit.value() : next_flush;</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                minimal = next_flush;</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            }</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            <span class="keywordflow">return</span> current + std::min(this-&gt;shared_ctx.get_interval(), minimal);</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        }</div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160; </div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            <span class="keywordflow">if</span> (!this-&gt;updated) {</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                this-&gt;updated = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                this-&gt;ts_flush = this-&gt;current;</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;            }</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;            i32 slap = time_delta(this-&gt;current, this-&gt;ts_flush);</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            <span class="keywordflow">if</span> (slap &gt;= 10000 || slap &lt; -10000) {</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                this-&gt;ts_flush = this-&gt;current;</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                slap = 0;</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;            }</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160; </div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;            <span class="keywordflow">if</span> (slap &gt;= 0) {</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                <span class="keyword">const</span> <span class="keyword">auto</span> interval = this-&gt;shared_ctx.get_interval();</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160; </div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;                this-&gt;ts_flush += interval;</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                <span class="keywordflow">if</span> (time_delta(this-&gt;current, this-&gt;ts_flush) &gt;= 0) {</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;                    this-&gt;ts_flush = this-&gt;current + interval;</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;                }</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160; </div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                <span class="keywordflow">return</span> this-&gt;<a class="code" href="classimkcpp_1_1ImKcpp.html#ae9e4147b4cff9fa866afe3c1fd9d86d7">flush</a>(callback);</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;            }</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;            <span class="keywordflow">return</span> {};</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        }</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160; </div>
-<div class="line"><a name="l00286"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#ae9e4147b4cff9fa866afe3c1fd9d86d7">  286</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#ae9e4147b4cff9fa866afe3c1fd9d86d7">flush</a>(<span class="keyword">const</span> output_callback_t&amp; callback) noexcept -&gt; <a class="code" href="structimkcpp_1_1FlushResult.html">FlushResult</a> {</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;            <a class="code" href="structimkcpp_1_1FlushResult.html">FlushResult</a> flush_result{};</div>
+<div class="line"><a name="l00260"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a3906619f232041399ab5dc8f4520c1df">  260</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a3906619f232041399ab5dc8f4520c1df">update</a>(<span class="keyword">const</span> u32 current, <span class="keyword">const</span> output_callback_t&amp; callback) noexcept -&gt; <a class="code" href="structimkcpp_1_1FlushResult.html">FlushResult</a> {</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            this-&gt;current = current;</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;            <span class="keywordflow">if</span> (!this-&gt;updated) {</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                this-&gt;updated = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                this-&gt;ts_flush = this-&gt;current;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            }</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;            i32 slap = time_delta(this-&gt;current, this-&gt;ts_flush);</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;            <span class="keywordflow">if</span> (slap &gt;= 10000 || slap &lt; -10000) {</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                this-&gt;ts_flush = this-&gt;current;</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                slap = 0;</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;            }</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160; </div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;            <span class="keywordflow">if</span> (slap &gt;= 0) {</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;                <span class="keyword">const</span> <span class="keyword">auto</span> interval = this-&gt;shared_ctx.get_interval();</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                this-&gt;ts_flush += interval;</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                <span class="keywordflow">if</span> (time_delta(this-&gt;current, this-&gt;ts_flush) &gt;= 0) {</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;                    this-&gt;ts_flush = this-&gt;current + interval;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;                }</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                <span class="keywordflow">return</span> this-&gt;<a class="code" href="classimkcpp_1_1ImKcpp.html#ae9e4147b4cff9fa866afe3c1fd9d86d7">flush</a>(callback);</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            }</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160; </div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;            <span class="keywordflow">return</span> {};</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        }</div>
 <div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160; </div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            <span class="keywordflow">if</span> (!this-&gt;updated) {</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                <span class="keywordflow">return</span> flush_result;</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            }</div>
+<div class="line"><a name="l00290"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#ae9e4147b4cff9fa866afe3c1fd9d86d7">  290</a></span>&#160;        <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#ae9e4147b4cff9fa866afe3c1fd9d86d7">flush</a>(<span class="keyword">const</span> output_callback_t&amp; callback) noexcept -&gt; <a class="code" href="structimkcpp_1_1FlushResult.html">FlushResult</a> {</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            <a class="code" href="structimkcpp_1_1FlushResult.html">FlushResult</a> flush_result{};</div>
 <div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            <span class="keyword">const</span> u32 current = this-&gt;current;</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            <span class="keyword">const</span> i32 unused_receive_window = this-&gt;receiver.get_unused_receive_window();</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160; </div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;            <a class="code" href="structimkcpp_1_1Segment.html">Segment</a> seg = this-&gt;create_service_segment(unused_receive_window);</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;            <span class="comment">// Acks</span></div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;            this-&gt;ack_controller.flush_acks(flush_result, callback, seg);</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;            <span class="comment">// Window probes</span></div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;            this-&gt;congestion_controller.update_probe_request(current);</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;            this-&gt;congestion_controller.flush_probes(flush_result, callback, seg);</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            <span class="keywordflow">if</span> (!this-&gt;updated) {</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                <span class="keywordflow">return</span> flush_result;</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;            }</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160; </div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;            <span class="keyword">const</span> u32 current = this-&gt;current;</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;            <span class="keyword">const</span> i32 unused_receive_window = this-&gt;receiver.get_unused_receive_window();</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160; </div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;            <a class="code" href="structimkcpp_1_1Segment.html">Segment</a> seg = this-&gt;create_service_segment(unused_receive_window);</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160; </div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;            <span class="comment">// Acks</span></div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;            this-&gt;ack_controller.flush_acks(flush_result, callback, seg);</div>
 <div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160; </div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;            <span class="comment">// Useful data</span></div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;            this-&gt;sender.flush_data_segments(flush_result, callback, current, unused_receive_window);</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160; </div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;            <span class="comment">// Flush remaining</span></div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;            flush_result.total_bytes_sent += this-&gt;flusher.flush_if_not_empty(callback);</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160; </div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            this-&gt;congestion_controller.ensure_at_least_one_packet_in_flight();</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160; </div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;            <span class="keywordflow">return</span> flush_result;</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        }</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160; </div>
-<div class="line"><a name="l00317"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#ab655fdecc11e4a91ffe523d6bd969171">  317</a></span>&#160;        [[nodiscard]] <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#ab655fdecc11e4a91ffe523d6bd969171">get_state</a>() const noexcept -&gt; State {</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;            <span class="keywordflow">return</span> this-&gt;shared_ctx.<a class="code" href="classimkcpp_1_1SharedCtx.html#a0448a938105f72bace4be54737c9c110">get_state</a>();</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        }</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160; </div>
-<div class="line"><a name="l00322"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a8bb8b4a4eb684f8732c8c613c207e9c3">  322</a></span>&#160;        [[nodiscard]] <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a8bb8b4a4eb684f8732c8c613c207e9c3">peek_size</a>() const noexcept -&gt; tl::expected&lt;<span class="keywordtype">size_t</span>, error&gt; {</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;            <span class="keywordflow">return</span> this-&gt;receiver.peek_size();</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        }</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
-<div class="line"><a name="l00327"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a32fa85febe38c626eac94ca766737f50">  327</a></span>&#160;        [[nodiscard]] <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a32fa85febe38c626eac94ca766737f50">estimate_segments_count</a>(<span class="keyword">const</span> <span class="keywordtype">size_t</span> size) <span class="keyword">const</span> noexcept -&gt; <span class="keywordtype">size_t</span> {</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;            <span class="keywordflow">return</span> this-&gt;sender.estimate_segments_count(size);</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;        }</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
-<div class="line"><a name="l00332"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#afc220615ca474842669cb1af3d23476c">  332</a></span>&#160;        [[nodiscard]] <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#afc220615ca474842669cb1af3d23476c">estimate_max_payload_size</a>() const noexcept -&gt; <span class="keywordtype">size_t</span> {</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">size_t</span> max_segments_count = std::min(</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;                <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(this-&gt;congestion_controller.get_send_window()),</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;                <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(std::numeric_limits&lt;u8&gt;::max())</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;                );</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160; </div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;            <span class="keywordflow">return</span> MAX_SEGMENT_SIZE * max_segments_count;</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        }</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    };</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;}</div>
-<div class="ttc" id="aclassimkcpp_1_1AckController_html"><div class="ttname"><a href="classimkcpp_1_1AckController.html">imkcpp::AckController</a></div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:52</div></div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;            <span class="comment">// Window probes</span></div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;            this-&gt;congestion_controller.update_probe_request(current);</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;            this-&gt;congestion_controller.flush_probes(flush_result, callback, seg);</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160; </div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;            <span class="comment">// Useful data</span></div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;            this-&gt;sender.flush_data_segments(flush_result, callback, current, unused_receive_window);</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160; </div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;            <span class="comment">// Flush remaining</span></div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;            flush_result.total_bytes_sent += this-&gt;flusher.flush_if_not_empty(callback);</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160; </div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;            this-&gt;congestion_controller.ensure_at_least_one_packet_in_flight();</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160; </div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;            <span class="keywordflow">return</span> flush_result;</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;        }</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160; </div>
+<div class="line"><a name="l00321"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#ab655fdecc11e4a91ffe523d6bd969171">  321</a></span>&#160;        [[nodiscard]] <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#ab655fdecc11e4a91ffe523d6bd969171">get_state</a>() const noexcept -&gt; State {</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;            <span class="keywordflow">return</span> this-&gt;shared_ctx.<a class="code" href="classimkcpp_1_1SharedCtx.html#a0448a938105f72bace4be54737c9c110">get_state</a>();</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        }</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160; </div>
+<div class="line"><a name="l00326"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a8bb8b4a4eb684f8732c8c613c207e9c3">  326</a></span>&#160;        [[nodiscard]] <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a8bb8b4a4eb684f8732c8c613c207e9c3">peek_size</a>() const noexcept -&gt; tl::expected&lt;<span class="keywordtype">size_t</span>, error&gt; {</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;            <span class="keywordflow">return</span> this-&gt;receiver.peek_size();</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;        }</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160; </div>
+<div class="line"><a name="l00331"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#a32fa85febe38c626eac94ca766737f50">  331</a></span>&#160;        [[nodiscard]] <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#a32fa85febe38c626eac94ca766737f50">estimate_segments_count</a>(<span class="keyword">const</span> <span class="keywordtype">size_t</span> size) <span class="keyword">const</span> noexcept -&gt; <span class="keywordtype">size_t</span> {</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;            <span class="keywordflow">return</span> this-&gt;sender.estimate_segments_count(size);</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        }</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160; </div>
+<div class="line"><a name="l00336"></a><span class="lineno"><a class="line" href="classimkcpp_1_1ImKcpp.html#afc220615ca474842669cb1af3d23476c">  336</a></span>&#160;        [[nodiscard]] <span class="keyword">auto</span> <a class="code" href="classimkcpp_1_1ImKcpp.html#afc220615ca474842669cb1af3d23476c">estimate_max_payload_size</a>() const noexcept -&gt; <span class="keywordtype">size_t</span> {</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;            <span class="comment">// We use receive window here because it&#39;s the most restrictive value.</span></div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;            <span class="keywordflow">return</span> MAX_SEGMENT_SIZE * std::min(</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(this-&gt;congestion_controller.get_receive_window()),</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;                <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(std::numeric_limits&lt;u8&gt;::max()));</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        }</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    };</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;}</div>
+<div class="ttc" id="aclassimkcpp_1_1AckController_html"><div class="ttname"><a href="classimkcpp_1_1AckController.html">imkcpp::AckController</a></div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:51</div></div>
 <div class="ttc" id="aclassimkcpp_1_1CongestionController_html"><div class="ttname"><a href="classimkcpp_1_1CongestionController.html">imkcpp::CongestionController</a></div><div class="ttdef"><b>Definition:</b> congestion_controller.hpp:13</div></div>
-<div class="ttc" id="aclassimkcpp_1_1FastAckCtx_html"><div class="ttname"><a href="classimkcpp_1_1FastAckCtx.html">imkcpp::FastAckCtx</a></div><div class="ttdoc">FastAckCtx is used to track the latest received segment and its timestamp.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:12</div></div>
+<div class="ttc" id="aclassimkcpp_1_1FastAckCtx_html"><div class="ttname"><a href="classimkcpp_1_1FastAckCtx.html">imkcpp::FastAckCtx</a></div><div class="ttdoc">FastAckCtx is used to track the latest received segment and its timestamp.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:11</div></div>
 <div class="ttc" id="aclassimkcpp_1_1Flusher_html"><div class="ttname"><a href="classimkcpp_1_1Flusher.html">imkcpp::Flusher</a></div><div class="ttdoc">Flusher is used to flush the buffer to the given output if it exceeds Max Segment Size or if it's not...</div><div class="ttdef"><b>Definition:</b> flusher.hpp:12</div></div>
 <div class="ttc" id="aclassimkcpp_1_1ImKcpp_html"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html">imkcpp::ImKcpp</a></div><div class="ttdoc">The main class of the library.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:29</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a2c8c4afadb64d6abb92a36f51c0cd50e"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a2c8c4afadb64d6abb92a36f51c0cd50e">imkcpp::ImKcpp::set_send_window</a></div><div class="ttdeci">auto set_send_window(const u32 sndwnd) noexcept -&gt; void</div><div class="ttdoc">Sets the maximum number of segments that can be sent in a single update() call.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:95</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a32fa85febe38c626eac94ca766737f50"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a32fa85febe38c626eac94ca766737f50">imkcpp::ImKcpp::estimate_segments_count</a></div><div class="ttdeci">auto estimate_segments_count(const size_t size) const noexcept -&gt; size_t</div><div class="ttdoc">Calculates the number of segments required to send the given amount of data.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:327</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a364556555eb62abef81280618a3c20a6"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a364556555eb62abef81280618a3c20a6">imkcpp::ImKcpp::set_congestion_window_enabled</a></div><div class="ttdeci">auto set_congestion_window_enabled(const bool state) noexcept -&gt; void</div><div class="ttdoc">Enables or disables congestion window.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:111</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a3906619f232041399ab5dc8f4520c1df"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a3906619f232041399ab5dc8f4520c1df">imkcpp::ImKcpp::update</a></div><div class="ttdeci">auto update(const u32 current, const output_callback_t &amp;callback) noexcept -&gt; FlushResult</div><div class="ttdoc">Updates the state and performs flush if necessary.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:256</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a39e4b5b1d3699bd72c2b83a0c299b551"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a39e4b5b1d3699bd72c2b83a0c299b551">imkcpp::ImKcpp::set_interval</a></div><div class="ttdeci">auto set_interval(const u32 interval) noexcept -&gt; void</div><div class="ttdoc">Sets the internal clock interval in milliseconds. Must be between 10 and 5000.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:76</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a53fb2ca7ec9b917fc77594a6dc2014f9"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a53fb2ca7ec9b917fc77594a6dc2014f9">imkcpp::ImKcpp::set_receive_window</a></div><div class="ttdeci">auto set_receive_window(const u32 rcvwnd) noexcept -&gt; void</div><div class="ttdoc">Sets the maximum number of segments that can be queued in the receive buffer.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:103</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a54fd670f7cc80da993cdf95505965040"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a54fd670f7cc80da993cdf95505965040">imkcpp::ImKcpp::set_fastresend</a></div><div class="ttdeci">auto set_fastresend(const u32 fastresend) noexcept -&gt; void</div><div class="ttdoc">Sets the number of non-sequential acks required to trigger fast resend.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:85</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a6e939c6e6e0052b0496636cc6e3ec787"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a6e939c6e6e0052b0496636cc6e3ec787">imkcpp::ImKcpp::send</a></div><div class="ttdeci">auto send(const std::span&lt; const std::byte &gt; buffer) noexcept -&gt; tl::expected&lt; size_t, error &gt;</div><div class="ttdoc">Sends data.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:223</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a8bb8b4a4eb684f8732c8c613c207e9c3"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a8bb8b4a4eb684f8732c8c613c207e9c3">imkcpp::ImKcpp::peek_size</a></div><div class="ttdeci">auto peek_size() const noexcept -&gt; tl::expected&lt; size_t, error &gt;</div><div class="ttdoc">Gets bytes count of the available data in the receive queue.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:322</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_aa04bb44ef611302810fa04fe05edca80"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#aa04bb44ef611302810fa04fe05edca80">imkcpp::ImKcpp::input</a></div><div class="ttdeci">auto input(const std::span&lt; const std::byte &gt; data) noexcept -&gt; tl::expected&lt; InputResult, error &gt;</div><div class="ttdoc">Receives data from the transport layer.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:121</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_ab655fdecc11e4a91ffe523d6bd969171"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#ab655fdecc11e4a91ffe523d6bd969171">imkcpp::ImKcpp::get_state</a></div><div class="ttdeci">auto get_state() const noexcept -&gt; State</div><div class="ttdoc">Gets the current state.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:317</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_ab7b31b2f2f65f3ca1badf29a7525948e"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#ab7b31b2f2f65f3ca1badf29a7525948e">imkcpp::ImKcpp::set_fastlimit</a></div><div class="ttdeci">auto set_fastlimit(const u32 limit) noexcept -&gt; void</div><div class="ttdoc">Sets the maximum count of fast resends per segment.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:90</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_ae944bf496cebc9b07489a620b3eac842"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#ae944bf496cebc9b07489a620b3eac842">imkcpp::ImKcpp::set_deadlink</a></div><div class="ttdeci">auto set_deadlink(const u32 threshold) noexcept -&gt; void</div><div class="ttdoc">Sets maximum retransmission count for a single segment until it's considered lost.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:116</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_ae9c9fa39935cbb52a1280007b04ca101"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#ae9c9fa39935cbb52a1280007b04ca101">imkcpp::ImKcpp::recv</a></div><div class="ttdeci">auto recv(const std::span&lt; std::byte &gt; buffer) noexcept -&gt; tl::expected&lt; size_t, error &gt;</div><div class="ttdoc">Reads data from the receive queue.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:216</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_ae9e4147b4cff9fa866afe3c1fd9d86d7"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#ae9e4147b4cff9fa866afe3c1fd9d86d7">imkcpp::ImKcpp::flush</a></div><div class="ttdeci">auto flush(const output_callback_t &amp;callback) noexcept -&gt; FlushResult</div><div class="ttdoc">Flushes the data to the output callback.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:286</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_af8acdc987aa7504d804c68eea6abec4e"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#af8acdc987aa7504d804c68eea6abec4e">imkcpp::ImKcpp::check</a></div><div class="ttdeci">auto check(const u32 current) noexcept -&gt; u32</div><div class="ttdoc">Checks when the next update() should be called.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:228</div></div>
-<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_afc220615ca474842669cb1af3d23476c"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#afc220615ca474842669cb1af3d23476c">imkcpp::ImKcpp::estimate_max_payload_size</a></div><div class="ttdeci">auto estimate_max_payload_size() const noexcept -&gt; size_t</div><div class="ttdoc">Calculates the maximum payload size that can be sent in a single send() call.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:332</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a2c8c4afadb64d6abb92a36f51c0cd50e"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a2c8c4afadb64d6abb92a36f51c0cd50e">imkcpp::ImKcpp::set_send_window</a></div><div class="ttdeci">auto set_send_window(const u32 sndwnd) noexcept -&gt; void</div><div class="ttdoc">Sets the maximum number of segments that can be sent in a single update() call.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:98</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a32fa85febe38c626eac94ca766737f50"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a32fa85febe38c626eac94ca766737f50">imkcpp::ImKcpp::estimate_segments_count</a></div><div class="ttdeci">auto estimate_segments_count(const size_t size) const noexcept -&gt; size_t</div><div class="ttdoc">Calculates the number of segments required to send the given amount of data.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:331</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a364556555eb62abef81280618a3c20a6"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a364556555eb62abef81280618a3c20a6">imkcpp::ImKcpp::set_congestion_window_enabled</a></div><div class="ttdeci">auto set_congestion_window_enabled(const bool state) noexcept -&gt; void</div><div class="ttdoc">Enables or disables congestion window.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:114</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a3906619f232041399ab5dc8f4520c1df"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a3906619f232041399ab5dc8f4520c1df">imkcpp::ImKcpp::update</a></div><div class="ttdeci">auto update(const u32 current, const output_callback_t &amp;callback) noexcept -&gt; FlushResult</div><div class="ttdoc">Updates the state and performs flush if necessary.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:260</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a3e618afac6167fe4109d14769cad1895"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a3e618afac6167fe4109d14769cad1895">imkcpp::ImKcpp::set_interval</a></div><div class="ttdeci">auto set_interval(u32 interval) noexcept -&gt; void</div><div class="ttdoc">Sets the internal clock interval in milliseconds. Must be between 10 and 5000.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:76</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a53fb2ca7ec9b917fc77594a6dc2014f9"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a53fb2ca7ec9b917fc77594a6dc2014f9">imkcpp::ImKcpp::set_receive_window</a></div><div class="ttdeci">auto set_receive_window(const u32 rcvwnd) noexcept -&gt; void</div><div class="ttdoc">Sets the maximum number of segments that can be queued in the receive buffer.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:106</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a54fd670f7cc80da993cdf95505965040"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a54fd670f7cc80da993cdf95505965040">imkcpp::ImKcpp::set_fastresend</a></div><div class="ttdeci">auto set_fastresend(const u32 fastresend) noexcept -&gt; void</div><div class="ttdoc">Sets the number of non-sequential acks required to trigger fast resend.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:88</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a6e939c6e6e0052b0496636cc6e3ec787"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a6e939c6e6e0052b0496636cc6e3ec787">imkcpp::ImKcpp::send</a></div><div class="ttdeci">auto send(const std::span&lt; const std::byte &gt; buffer) noexcept -&gt; tl::expected&lt; size_t, error &gt;</div><div class="ttdoc">Sends data.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:227</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_a8bb8b4a4eb684f8732c8c613c207e9c3"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#a8bb8b4a4eb684f8732c8c613c207e9c3">imkcpp::ImKcpp::peek_size</a></div><div class="ttdeci">auto peek_size() const noexcept -&gt; tl::expected&lt; size_t, error &gt;</div><div class="ttdoc">Gets bytes count of the available data in the receive queue.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:326</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_aa04bb44ef611302810fa04fe05edca80"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#aa04bb44ef611302810fa04fe05edca80">imkcpp::ImKcpp::input</a></div><div class="ttdeci">auto input(const std::span&lt; const std::byte &gt; data) noexcept -&gt; tl::expected&lt; InputResult, error &gt;</div><div class="ttdoc">Receives data from the transport layer.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:124</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_ab655fdecc11e4a91ffe523d6bd969171"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#ab655fdecc11e4a91ffe523d6bd969171">imkcpp::ImKcpp::get_state</a></div><div class="ttdeci">auto get_state() const noexcept -&gt; State</div><div class="ttdoc">Gets the current state.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:321</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_ab7b31b2f2f65f3ca1badf29a7525948e"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#ab7b31b2f2f65f3ca1badf29a7525948e">imkcpp::ImKcpp::set_fastlimit</a></div><div class="ttdeci">auto set_fastlimit(const u32 limit) noexcept -&gt; void</div><div class="ttdoc">Sets the maximum count of fast resends per segment.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:93</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_ae944bf496cebc9b07489a620b3eac842"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#ae944bf496cebc9b07489a620b3eac842">imkcpp::ImKcpp::set_deadlink</a></div><div class="ttdeci">auto set_deadlink(const u32 threshold) noexcept -&gt; void</div><div class="ttdoc">Sets maximum retransmission count for a single segment until it's considered lost.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:119</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_ae9c9fa39935cbb52a1280007b04ca101"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#ae9c9fa39935cbb52a1280007b04ca101">imkcpp::ImKcpp::recv</a></div><div class="ttdeci">auto recv(const std::span&lt; std::byte &gt; buffer) noexcept -&gt; tl::expected&lt; size_t, error &gt;</div><div class="ttdoc">Reads data from the receive queue.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:220</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_ae9e4147b4cff9fa866afe3c1fd9d86d7"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#ae9e4147b4cff9fa866afe3c1fd9d86d7">imkcpp::ImKcpp::flush</a></div><div class="ttdeci">auto flush(const output_callback_t &amp;callback) noexcept -&gt; FlushResult</div><div class="ttdoc">Flushes the data to the output callback.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:290</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_af8acdc987aa7504d804c68eea6abec4e"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#af8acdc987aa7504d804c68eea6abec4e">imkcpp::ImKcpp::check</a></div><div class="ttdeci">auto check(const u32 current) noexcept -&gt; u32</div><div class="ttdoc">Checks when the next update() should be called.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:232</div></div>
+<div class="ttc" id="aclassimkcpp_1_1ImKcpp_html_afc220615ca474842669cb1af3d23476c"><div class="ttname"><a href="classimkcpp_1_1ImKcpp.html#afc220615ca474842669cb1af3d23476c">imkcpp::ImKcpp::estimate_max_payload_size</a></div><div class="ttdeci">auto estimate_max_payload_size() const noexcept -&gt; size_t</div><div class="ttdoc">Calculates the maximum payload size that can be sent in a single send() call.</div><div class="ttdef"><b>Definition:</b> imkcpp.hpp:336</div></div>
 <div class="ttc" id="aclassimkcpp_1_1ReceiverBuffer_html"><div class="ttname"><a href="classimkcpp_1_1ReceiverBuffer.html">imkcpp::ReceiverBuffer</a></div><div class="ttdef"><b>Definition:</b> receiver_buffer.hpp:11</div></div>
 <div class="ttc" id="aclassimkcpp_1_1Receiver_html"><div class="ttname"><a href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a></div><div class="ttdef"><b>Definition:</b> receiver.hpp:16</div></div>
 <div class="ttc" id="aclassimkcpp_1_1RtoCalculator_html"><div class="ttname"><a href="classimkcpp_1_1RtoCalculator.html">imkcpp::RtoCalculator</a></div><div class="ttdoc">RtoCalculator is used to calculate retransmission timeout. It's based on RFC 2988.</div><div class="ttdef"><b>Definition:</b> rto_calculator.hpp:10</div></div>

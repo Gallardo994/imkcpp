@@ -8,22 +8,25 @@
 namespace imkcpp {
     /// RtoCalculator is used to calculate retransmission timeout. It's based on RFC 2988.
     class RtoCalculator final {
+        /// Interval aka G in RFC 2988
         u32 interval = 0;
 
-        /// Smoothed round trip time
+        /// Smoothed round trip time aka SRTT in RFC 2988
         u32 srtt = 0;
 
-        /// Round trip time variation
+        /// Round trip time variation aka RTTVAR in RFC 2988
         u32 rttvar = 0;
 
-        /// Retransmission timeout
+        /// Retransmission timeout aka RTO in RFC 2988
         u32 rto = constants::IKCP_RTO_DEF;
+
+        /// Last measured round trip time
         u32 last_rtt = 0;
 
-        /// Minimum retransmission timeout
+        /// Minimum retransmission timeout aka RTO_MIN in RFC 2988
         u32 minrto = constants::IKCP_RTO_MIN;
 
-        /// Maximum retransmission timeout
+        /// Maximum retransmission timeout aka RTO_MAX in RFC 2988
         u32 maxrto = constants::IKCP_RTO_MAX;
 
     public:
