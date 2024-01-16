@@ -330,6 +330,7 @@ namespace imkcpp {
 
         /// Calculates the maximum payload size that can be sent in a single send() call.
         [[nodiscard]] auto estimate_max_payload_size() const noexcept -> size_t {
+            // We use receive window here because it's the most restrictive value.
             return MAX_SEGMENT_SIZE * std::min(
                 static_cast<size_t>(this->congestion_controller.get_receive_window()),
                 static_cast<size_t>(std::numeric_limits<u8>::max()));
