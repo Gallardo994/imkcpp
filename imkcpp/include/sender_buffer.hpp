@@ -60,9 +60,9 @@ namespace imkcpp {
         }
 
         void increment_fastack_before(const u32 sn) {
-            for (const auto it = this->snd_buf.begin(); it != this->snd_buf.end();) {
-                if (it->header.sn < sn) {
-                    it->metadata.fastack++;
+            for (Segment& seg : this->snd_buf) {
+                if (seg.header.sn < sn) {
+                    seg.metadata.fastack++;
                 } else {
                     break;
                 }
