@@ -29,7 +29,7 @@ namespace imkcpp {
             assert(this->congestion_controller.fits_receive_window(sn));
 
             const auto it = std::find_if(this->rcv_buf.rbegin(), this->rcv_buf.rend(), [sn](const Segment& seg) {
-                return sn <= seg.header.sn;
+                return sn >= seg.header.sn;
             });
 
             if (it == this->rcv_buf.rend() || it->header.sn != sn) {
