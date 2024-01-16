@@ -5,20 +5,16 @@
 
 #include "types.hpp"
 #include "segment.hpp"
-#include "shared_ctx.hpp"
 #include "segment_tracker.hpp"
 
 namespace imkcpp {
     class SenderBuffer final {
-        SharedCtx& shared_ctx;
         SegmentTracker& segment_tracker;
 
         std::deque<Segment> snd_buf{};
 
     public:
-        explicit SenderBuffer(SharedCtx& shared_ctx,
-                              SegmentTracker& segment_tracker) :
-                              shared_ctx(shared_ctx),
+        explicit SenderBuffer(SegmentTracker& segment_tracker) :
                               segment_tracker(segment_tracker) {}
 
         void push_segment(Segment& segment) {
