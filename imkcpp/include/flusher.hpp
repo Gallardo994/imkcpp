@@ -7,6 +7,7 @@
 #include "utility.hpp"
 
 namespace imkcpp {
+    /// Flusher is used to flush the buffer to the given output if it exceeds Max Segment Size or if it's not empty.
     template <size_t MTU>
     class Flusher final {
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();

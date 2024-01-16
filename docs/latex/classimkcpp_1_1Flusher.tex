@@ -1,5 +1,14 @@
 \hypertarget{classimkcpp_1_1Flusher}{}\doxysection{imkcpp\+::Flusher$<$ MTU $>$ Class Template Reference}
 \label{classimkcpp_1_1Flusher}\index{imkcpp::Flusher$<$ MTU $>$@{imkcpp::Flusher$<$ MTU $>$}}
+
+
+\mbox{\hyperlink{classimkcpp_1_1Flusher}{Flusher}} is used to flush the buffer to the given output if it exceeds Max \mbox{\hyperlink{structimkcpp_1_1Segment}{Segment}} Size or if it\textquotesingle{}s not empty.  
+
+
+
+
+{\ttfamily \#include $<$flusher.\+hpp$>$}
+
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -19,6 +28,12 @@ size\+\_\+t \mbox{\hyperlink{classimkcpp_1_1Flusher_aae0e8cf7a714fb610b729b15e23
 void \mbox{\hyperlink{classimkcpp_1_1Flusher_a8494a29dfcbac170c9dd059101b888ef}{emplace\+\_\+segment}} (const \mbox{\hyperlink{structimkcpp_1_1Segment}{Segment}} \&segment)
 \begin{DoxyCompactList}\small\item\em Emplaces the given segment into the buffer. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$size\+\_\+t MTU$>$\newline
+class imkcpp\+::\+Flusher$<$ MTU $>$}
+
+\mbox{\hyperlink{classimkcpp_1_1Flusher}{Flusher}} is used to flush the buffer to the given output if it exceeds Max \mbox{\hyperlink{structimkcpp_1_1Segment}{Segment}} Size or if it\textquotesingle{}s not empty. 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 

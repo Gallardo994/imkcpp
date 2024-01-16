@@ -6,10 +6,7 @@
 #include "shared_ctx.hpp"
 
 namespace imkcpp {
-    /**
-     *https://www.computer-networking.info/1st/html/transport/tcp.html
-     *https://datatracker.ietf.org/doc/html/rfc2988.html#section-2
-     */
+    /// RtoCalculator is used to calculate retransmission timeout. It's based on RFC 2988.
     class RtoCalculator final {
         SharedCtx& shared_ctx;
 

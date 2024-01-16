@@ -24,6 +24,7 @@
 #include "utility.hpp"
 
 namespace imkcpp {
+    /// The main class of the library.
     template <size_t MTU>
     class ImKcpp final {
         static_assert(MTU > constants::IKCP_OVERHEAD, "MTU is too small");

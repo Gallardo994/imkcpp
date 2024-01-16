@@ -1,6 +1,7 @@
 #pragma once
 
 namespace imkcpp {
+    /// Result of calling input() method.
     struct InputResult final {
         /// Number of ACK commands received
         u32 cmd_ack_count = 0;
@@ -43,6 +44,7 @@ namespace imkcpp {
         }
     };
 
+    /// Result of calling flush() or update() method.
     struct FlushResult final {
         /// Number of ACK commands sent
         u32 cmd_ack_count = 0;

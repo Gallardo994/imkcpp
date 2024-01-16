@@ -1,6 +1,7 @@
 #pragma once
 
 namespace imkcpp {
+    /// State of the connection.
     enum class State : i32 {
         Alive = 0,
         DeadLink = 1,

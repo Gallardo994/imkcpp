@@ -3,6 +3,7 @@
 #include "types.hpp"
 
 namespace imkcpp {
+    /// Shared context between the sender and the receiver.
     class SharedCtx final {
         /// Current state of the connection.
         State state = State::Alive;
