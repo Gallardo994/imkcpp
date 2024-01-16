@@ -7,6 +7,7 @@
 namespace imkcpp {
     // TODO: Too many public members, make them private. Also, make the Segment class a friend of the SegmentHeader class.
     // TODO: The logic is heavily reliant on the fact that everything is public. Rework this.
+    /// SegmentHeader is used to store the header of the segment.
     struct SegmentHeader final {
         /// Conversation ID.
         u32 conv = 0;  // TODO: Does this need to be 4 bytes?
@@ -59,6 +60,7 @@ namespace imkcpp {
         }
     };
 
+    /// SegmentMetadata is used to track the state of the segment in the send queue for (re)transmission purposes.
     struct SegmentMetadata final {
         /// Timestamp for retransmission.
         u32 resendts = 0;
@@ -73,6 +75,7 @@ namespace imkcpp {
         u32 xmit = 0;
     };
 
+    /// SegmentData is used to store the payload of the segment.
     struct SegmentData final {
         std::vector<std::byte> data{};
 
