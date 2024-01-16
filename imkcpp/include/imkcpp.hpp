@@ -184,7 +184,7 @@ namespace imkcpp {
                         break;
                     }
                     case commands::IKCP_CMD_ACK: {
-                        this->rto_calculator.update_rtt(this->current, header.ts);
+                        this->rto_calculator.update_rto(this->current, header.ts);
                         this->ack_controller.ack_received(this->current, header.sn, header.ts);
                         fastack_ctx.update(header.sn, header.ts);
                         input_result.cmd_ack_count++;

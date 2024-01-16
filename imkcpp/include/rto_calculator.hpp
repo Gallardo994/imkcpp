@@ -34,7 +34,7 @@ namespace imkcpp {
             this->interval = interval;
         }
 
-        void update_rtt(const u32 current, const u32 ts) {
+        void update_rto(const u32 current, const u32 ts) {
             const i32 rtt = time_delta(current, ts);
 
             if (rtt < 0) {
