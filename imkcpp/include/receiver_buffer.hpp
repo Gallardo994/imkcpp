@@ -15,8 +15,8 @@ namespace imkcpp {
     public:
         explicit ReceiverBuffer(SegmentTracker& segment_tracker) : segment_tracker(segment_tracker) {}
 
-        void set_queue_limit(const u32 rcv_wnd) {
-            this->queue_limit = rcv_wnd;
+        void set_queue_limit(const u32 value) {
+            this->queue_limit = value;
         }
 
         void emplace_segment(const SegmentHeader& header, SegmentData& data) {
