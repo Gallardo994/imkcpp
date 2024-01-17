@@ -24,16 +24,22 @@ namespace imkcpp {
 
             assert(this->segment_tracker.should_receive(sn));
 
-            const auto it = std::find_if(this->rcv_buf.rbegin(), this->rcv_buf.rend(), [sn](const Segment& seg) {
-                return sn >= seg.header.sn;
+            const auto rit = std::find_if(this->rcv_buf.rbegin(), this->rcv_buf.rend(), [sn](const Segment& seg) {
+                return seg.header.sn < sn;
             });
 
-            if (it == this->rcv_buf.rend() || it->header.sn != sn) {
-                this->rcv_buf.emplace(it.base(), header, data);
+            const auto it = rit.base();
+
+            if (it != this->rcv_buf.end() && it->header.sn == sn) {
+                return;
             }
+
+            this->rcv_buf.emplace(it, header, data);
         }
 
-        void move_receive_buffer_to_queue(std::deque<Segment>& rcv_queue) {
+        size_t move_receive_buffer_to_queue(std::deque<Segment>& rcv_queue) {
+            size_t count = 0;
+
             while (!this->rcv_buf.empty()) {
                 Segment& seg = rcv_buf.front();
                 if (seg.header.sn != segment_tracker.get_rcv_nxt() || rcv_queue.size() >= this->queue_limit) {
@@ -44,7 +50,11 @@ namespace imkcpp {
 
                 this->rcv_buf.pop_front();
                 this->segment_tracker.increment_rcv_nxt();
+
+                count++;
             }
+
+            return count;
         }
     };
 }
