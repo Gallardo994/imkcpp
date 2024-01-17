@@ -41,7 +41,7 @@ namespace imkcpp {
         WindowProber<MTU> window_prober{flusher};
 
         ReceiverBuffer<MTU> receiver_buffer{congestion_controller, segment_tracker};
-        Receiver<MTU> receiver{receiver_buffer, congestion_controller, window_prober};
+        Receiver<MTU> receiver{receiver_buffer};
 
         SenderBuffer sender_buffer{segment_tracker};
 
@@ -221,9 +221,20 @@ namespace imkcpp {
 
         /// Reads data from the receive queue.
         auto recv(const std::span<std::byte> buffer) noexcept -> tl::expected<size_t, error> {
-            assert(!buffer.empty());
+            const auto rcv_wnd = this->congestion_controller.get_receive_window();
+            const auto result = this->receiver.recv(buffer, rcv_wnd);
 
-            return this->receiver.recv(buffer);
+            if (result.has_value()) {
+                const auto& result_value = result.value();
+
+                if (result_value.recovered) {
+                    this->window_prober.set_flag(constants::IKCP_ASK_TELL);
+                }
+
+                return result_value.size;
+            }
+
+            return tl::unexpected(result.error());
         }
 
         /// Sends data.

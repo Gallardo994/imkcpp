@@ -91,4 +91,12 @@ namespace imkcpp {
             return *this;
         }
     };
+
+    struct ReceiveResult final {
+        /// Bytes size written to the buffer
+        size_t size;
+
+        /// Has recovered from full receive window
+        bool recovered;
+    };
 }

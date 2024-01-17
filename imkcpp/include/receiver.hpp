@@ -6,9 +6,9 @@
 #include "types.hpp"
 #include "errors.hpp"
 #include "segment.hpp"
-#include "congestion_controller.hpp"
 #include "receiver_buffer.hpp"
 #include "utility.hpp"
+#include "results.hpp"
 
 namespace imkcpp {
     // TODO: Benchmark against std::vector instead of std::deque
@@ -17,19 +17,12 @@ namespace imkcpp {
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
 
         ReceiverBuffer<MTU>& receiver_buffer;
-        CongestionController<MTU>& congestion_controller;
-        WindowProber<MTU>& window_prober;
 
         std::deque<Segment> rcv_queue{}; // TODO: Does not need to be Segment as we don't use metadata
 
     public:
 
-        explicit Receiver(ReceiverBuffer<MTU>& receiver_buffer,
-                          CongestionController<MTU>& congestion_controller,
-                          WindowProber<MTU>& window_prober) :
-                          receiver_buffer(receiver_buffer),
-                          congestion_controller(congestion_controller),
-                          window_prober(window_prober) {}
+        explicit Receiver(ReceiverBuffer<MTU>& receiver_buffer) : receiver_buffer(receiver_buffer) {}
 
         [[nodiscard]] tl::expected<size_t, error> peek_size() const {
             if (this->rcv_queue.empty()) {
@@ -58,7 +51,7 @@ namespace imkcpp {
             return length;
         }
 
-        tl::expected<size_t, error> recv(const std::span<std::byte> buffer) {
+        tl::expected<ReceiveResult, error> recv(const std::span<std::byte> buffer, const u32 rcv_wnd) {
             const auto peeksize = this->peek_size();
 
             if (!peeksize.has_value()) {
@@ -69,7 +62,7 @@ namespace imkcpp {
                 return tl::unexpected(error::buffer_too_small);
             }
 
-            const bool recover = this->rcv_queue.size() >= this->congestion_controller.get_receive_window();
+            const bool is_full = this->rcv_queue.size() >= rcv_wnd;
 
             size_t offset = 0;
             for (auto it = this->rcv_queue.begin(); it != this->rcv_queue.end();) {
@@ -94,11 +87,12 @@ namespace imkcpp {
 
             this->move_receive_buffer_to_queue();
 
-            if (this->congestion_controller.get_receive_window() > this->rcv_queue.size() && recover) {
-                this->window_prober.set_flag(constants::IKCP_ASK_TELL);
-            }
+            const ReceiveResult result{
+                .size = offset,
+                .recovered = rcv_wnd > this->rcv_queue.size() && is_full,
+            };
 
-            return offset;
+            return result;
         }
 
         void move_receive_buffer_to_queue() {
