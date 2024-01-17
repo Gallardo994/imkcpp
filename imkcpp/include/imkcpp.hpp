@@ -40,8 +40,8 @@ namespace imkcpp {
         CongestionController<MTU> congestion_controller{segment_tracker};
         WindowProber<MTU> window_prober{flusher};
 
-        ReceiverBuffer<MTU> receiver_buffer{congestion_controller, segment_tracker};
-        Receiver<MTU> receiver{receiver_buffer};
+        ReceiverBuffer receiver_buffer{segment_tracker};
+        Receiver receiver{receiver_buffer};
 
         SenderBuffer sender_buffer{segment_tracker};
 
@@ -111,6 +111,7 @@ namespace imkcpp {
 
             this->congestion_controller.set_receive_window(rcvwnd);
             this->ack_controller.reserve(rcvwnd);
+            this->receiver_buffer.set_queue_limit(rcvwnd);
         }
 
         /// Enables or disables congestion window.

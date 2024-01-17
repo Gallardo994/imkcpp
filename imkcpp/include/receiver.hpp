@@ -7,22 +7,18 @@
 #include "errors.hpp"
 #include "segment.hpp"
 #include "receiver_buffer.hpp"
-#include "utility.hpp"
 #include "results.hpp"
 
 namespace imkcpp {
     // TODO: Benchmark against std::vector instead of std::deque
-    template <size_t MTU>
     class Receiver final {
-        constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
-
-        ReceiverBuffer<MTU>& receiver_buffer;
+        ReceiverBuffer& receiver_buffer;
 
         std::deque<Segment> rcv_queue{}; // TODO: Does not need to be Segment as we don't use metadata
 
     public:
 
-        explicit Receiver(ReceiverBuffer<MTU>& receiver_buffer) : receiver_buffer(receiver_buffer) {}
+        explicit Receiver(ReceiverBuffer& receiver_buffer) : receiver_buffer(receiver_buffer) {}
 
         [[nodiscard]] tl::expected<size_t, error> peek_size() const {
             if (this->rcv_queue.empty()) {
