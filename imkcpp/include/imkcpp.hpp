@@ -298,7 +298,7 @@ namespace imkcpp {
             }
 
             const u32 current = this->current;
-            const i32 unused_receive_window = this->receiver.get_unused_receive_window();
+            const i32 unused_receive_window = std::max(static_cast<i32>(this->congestion_controller.get_receive_window()) - static_cast<i32>(this->receiver.size()), 0);
 
             Segment seg = this->create_service_segment(unused_receive_window);
 

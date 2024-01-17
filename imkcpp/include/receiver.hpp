@@ -105,9 +105,8 @@ namespace imkcpp {
             this->receiver_buffer.move_receive_buffer_to_queue(this->rcv_queue);
         }
 
-        // TODO: This has to be a u16 as in SegmentHeader
-        [[nodiscard]] i32 get_unused_receive_window() const {
-            return std::max(static_cast<i32>(this->congestion_controller.get_receive_window()) - static_cast<i32>(this->rcv_queue.size()), 0);
+        [[nodiscard]] size_t size() const {
+            return this->rcv_queue.size();
         }
     };
 }
