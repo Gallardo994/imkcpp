@@ -1,7 +1,5 @@
 #include <gtest/gtest.h>
-#include "constants.hpp"
-#include "rto_calculator.hpp"
-#include "types.hpp"
+#include "imkcpp.hpp"
 
 class RtoCalculatorTest : public testing::Test {
 protected:
