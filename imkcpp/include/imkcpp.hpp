@@ -52,20 +52,20 @@ namespace imkcpp {
         u32 current = 0; // Current / last time we updated the state
         u32 ts_flush = constants::IKCP_INTERVAL; // Time when we will probably flush the data next time
 
-        // Creates a new service segment for non-data packets.
-        [[nodiscard]] auto create_service_segment(const i32 unused_receive_window) const noexcept -> Segment {
-            Segment seg;
+        // Creates a new service header for non-data packets.
+        [[nodiscard]] auto create_service_header(const i32 unused_receive_window) const noexcept -> SegmentHeader {
+            SegmentHeader header;
 
-            seg.header.conv = this->shared_ctx.get_conv();
-            seg.header.cmd = commands::IKCP_CMD_ACK;
-            seg.header.frg = 0;
-            seg.header.wnd = unused_receive_window;
-            seg.header.una = this->segment_tracker.get_rcv_nxt();
-            seg.header.sn = 0;
-            seg.header.ts = 0;
-            seg.header.len = 0;
+            header.conv = this->shared_ctx.get_conv();
+            header.cmd = commands::IKCP_CMD_ACK;
+            header.frg = 0;
+            header.wnd = unused_receive_window;
+            header.una = this->segment_tracker.get_rcv_nxt();
+            header.sn = 0;
+            header.ts = 0;
+            header.len = 0;
 
-            return seg;
+            return header;
         }
 
     public:
@@ -312,14 +312,14 @@ namespace imkcpp {
             const u32 current = this->current;
             const i32 unused_receive_window = std::max(static_cast<i32>(this->congestion_controller.get_receive_window()) - static_cast<i32>(this->receiver.size()), 0);
 
-            Segment seg = this->create_service_segment(unused_receive_window);
+            SegmentHeader header = this->create_service_header(unused_receive_window);
 
             // Acks
-            this->ack_controller.flush_acks(flush_result, callback, seg);
+            this->ack_controller.flush_acks(flush_result, callback, header);
 
             // Window probes
             this->window_prober.update(current, this->congestion_controller.get_remote_window());
-            this->window_prober.flush(flush_result, callback, seg);
+            this->window_prober.flush(flush_result, callback, header);
 
             // Useful data
             this->sender.flush_data_segments(flush_result, callback, current, unused_receive_window);

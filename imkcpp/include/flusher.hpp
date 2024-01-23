@@ -60,11 +60,17 @@ namespace imkcpp {
             return 0;
         }
 
-        /// Emplaces the given segment into the buffer
-        void emplace_segment(const Segment& segment) {
-            assert(this->offset + segment.size() <= this->buffer.size());
+        /// Emplaces the given segment header into the buffer
+        void emplace(const SegmentHeader& header) {
+            header.encode_to(this->buffer, this->offset);
+        }
 
-            segment.encode_to(this->buffer, this->offset);
+        /// Emplaces the given segment into the buffer
+        void emplace(const SegmentHeader& header, const SegmentData& data) {
+            assert(this->offset + data.size() <= this->buffer.size());
+
+            header.encode_to(this->buffer, this->offset);
+            data.encode_to(this->buffer, this->offset, header.len);
         }
     };
 }

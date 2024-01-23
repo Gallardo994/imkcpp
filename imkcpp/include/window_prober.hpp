@@ -64,12 +64,12 @@ namespace imkcpp {
             this->probe = 0;
         }
 
-        void flush(FlushResult& flush_result, const output_callback_t& output, Segment& base_segment) {
+        void flush(FlushResult& flush_result, const output_callback_t& output, SegmentHeader& header) {
             if (this->has_flag(constants::IKCP_ASK_SEND)) {
                 flush_result.total_bytes_sent += this->flusher.flush_if_full(output);
 
-                base_segment.header.cmd = commands::IKCP_CMD_WASK;
-                this->flusher.emplace_segment(base_segment);
+                header.cmd = commands::IKCP_CMD_WASK;
+                this->flusher.emplace(header);
 
                 flush_result.cmd_wask_count++;
             }
@@ -77,8 +77,8 @@ namespace imkcpp {
             if (this->has_flag(constants::IKCP_ASK_TELL)) {
                 flush_result.total_bytes_sent +=this->flusher.flush_if_full(output);
 
-                base_segment.header.cmd = commands::IKCP_CMD_WINS;
-                this->flusher.emplace_segment(base_segment);
+                header.cmd = commands::IKCP_CMD_WINS;
+                this->flusher.emplace(header);
 
                 flush_result.cmd_wins_count++;
             }

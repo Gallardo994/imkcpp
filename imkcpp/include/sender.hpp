@@ -184,7 +184,7 @@ namespace imkcpp {
                     segment.header.una = this->segment_tracker.get_rcv_nxt();
 
                     flush_result.total_bytes_sent += this->flusher.flush_if_does_not_fit(output, segment.data_size());
-                    this->flusher.emplace_segment(segment);
+                    this->flusher.emplace(segment.header, segment.data);
 
                     if (segment.metadata.xmit >= this->dead_link) {
                         this->shared_ctx.set_state(State::DeadLink);
