@@ -17,6 +17,9 @@ namespace imkcpp {
         explicit SenderBuffer(SegmentTracker& segment_tracker) :
                               segment_tracker(segment_tracker) {}
 
+        std::deque<Segment>::iterator begin() { return snd_buf.begin(); }
+        std::deque<Segment>::iterator end() { return snd_buf.end(); }
+
         void push_segment(Segment& segment) {
             this->snd_buf.push_back(std::move(segment));
         }
@@ -94,11 +97,6 @@ namespace imkcpp {
 
         [[nodiscard]] bool empty() const {
             return this->snd_buf.empty();
-        }
-
-        // TODO: Get rid of this
-        std::deque<Segment>& get() {
-            return this->snd_buf;
         }
     };
 }

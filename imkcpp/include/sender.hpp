@@ -190,8 +190,6 @@ namespace imkcpp {
                 }
             };
 
-            auto& snd_buf = this->sender_buffer.get();
-
             auto process_segment = [&](Segment& segment) -> bool {
                 if (has_never_been_sent(segment)) {
                     prepare_for_first_send(segment);
@@ -214,7 +212,10 @@ namespace imkcpp {
                 return false;
             };
 
-            std::for_each(snd_buf.begin(), snd_buf.end(), [&](Segment& segment) {
+            const auto begin = this->sender_buffer.begin();
+            const auto end = this->sender_buffer.end();
+
+            std::for_each(begin, end, [&](Segment& segment) {
                 if (process_segment(segment)) {
                     send_segment(segment);
                     flush_result.cmd_push_count++;
