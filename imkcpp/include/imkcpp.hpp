@@ -37,13 +37,12 @@ namespace imkcpp {
         SegmentTracker segment_tracker{};
         RtoCalculator rto_calculator{};
         ReceiverBuffer receiver_buffer{};
+        SenderBuffer sender_buffer{};
 
         CongestionController<MTU> congestion_controller{segment_tracker};
         WindowProber<MTU> window_prober{flusher};
 
         Receiver receiver{segment_tracker, receiver_buffer};
-
-        SenderBuffer sender_buffer{segment_tracker};
 
         AckController<MTU> ack_controller{flusher, sender_buffer, segment_tracker};
         Sender<MTU> sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, segment_tracker};
@@ -189,7 +188,7 @@ namespace imkcpp {
                     }
                     case commands::IKCP_CMD_ACK: {
                         this->rto_calculator.update_rto(this->current, header.ts);
-                        this->ack_controller.ack_received(this->current, header.sn, header.ts);
+                        this->ack_controller.ack_received(header.sn);
                         fastack_ctx.update(header.sn, header.ts);
                         input_result.cmd_ack_count++;
                         break;

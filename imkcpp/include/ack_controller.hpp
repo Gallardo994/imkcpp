@@ -98,11 +98,19 @@ namespace imkcpp {
             this->sender_buffer.increment_fastack_before(maxack);
         }
 
-        /// Updates the RTO and removes acknowledged segments from the sender buffer.
-        void ack_received(const u32 current, const u32 sn, const u32 ts) {
+        void update_remote_una() {
+            if (const std::optional<u32> first_sn = this->sender_buffer.get_first_sequence_number_in_flight(); first_sn.has_value()) {
+                this->segment_tracker.set_snd_una(first_sn.value());
+            } else {
+                this->segment_tracker.reset_snd_una();
+            }
+        }
+
+        /// Removes acknowledged segments from the sender buffer.
+        void ack_received(const u32 sn) {
             if (this->should_acknowledge(sn)) {
                 this->sender_buffer.erase(sn);
-                this->sender_buffer.shrink();
+                this->update_remote_una();
             }
         }
 
@@ -114,7 +122,7 @@ namespace imkcpp {
             rmt_una = std::max(rmt_una, una);
 
             this->sender_buffer.erase_before(una);
-            this->sender_buffer.shrink();
+            this->update_remote_una();
         }
 
         /// Adds a segment to the acknowledgement list to be sent later.

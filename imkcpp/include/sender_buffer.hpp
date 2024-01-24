@@ -5,18 +5,12 @@
 
 #include "types.hpp"
 #include "segment.hpp"
-#include "segment_tracker.hpp"
 
 namespace imkcpp {
     class SenderBuffer final {
-        SegmentTracker& segment_tracker;
-
         std::deque<Segment> snd_buf{};
 
     public:
-        explicit SenderBuffer(SegmentTracker& segment_tracker) :
-                              segment_tracker(segment_tracker) {}
-
         std::deque<Segment>::iterator begin() { return snd_buf.begin(); }
         std::deque<Segment>::iterator end() { return snd_buf.end(); }
 
@@ -24,13 +18,13 @@ namespace imkcpp {
             this->snd_buf.push_back(std::move(segment));
         }
 
-        void shrink() {
+        [[nodiscard]] std::optional<u32> get_first_sequence_number_in_flight() const {
             if (!this->snd_buf.empty()) {
                 const Segment& seg = this->snd_buf.front();
-                this->segment_tracker.set_snd_una(seg.header.sn);
-            } else {
-                this->segment_tracker.reset_snd_una();
+                return seg.header.sn;
             }
+
+            return std::nullopt;
         }
 
         void erase(const u32 sn) {
