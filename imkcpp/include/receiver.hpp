@@ -12,13 +12,16 @@
 namespace imkcpp {
     // TODO: Benchmark against std::vector instead of std::deque
     class Receiver final {
+        SegmentTracker& segment_tracker;
         ReceiverBuffer& receiver_buffer;
 
         std::deque<Segment> rcv_queue{}; // TODO: Does not need to be Segment as we don't use metadata
 
     public:
 
-        explicit Receiver(ReceiverBuffer& receiver_buffer) : receiver_buffer(receiver_buffer) {}
+        explicit Receiver(SegmentTracker& segment_tracker, ReceiverBuffer& receiver_buffer) :
+            segment_tracker(segment_tracker),
+            receiver_buffer(receiver_buffer) {}
 
         [[nodiscard]] tl::expected<size_t, error> peek_size() const {
             if (this->rcv_queue.empty()) {
@@ -92,7 +95,19 @@ namespace imkcpp {
         }
 
         void move_receive_buffer_to_queue() {
-            this->receiver_buffer.move_receive_buffer_to_queue(this->rcv_queue);
+            const u32 queue_limit = this->receiver_buffer.get_queue_limit();
+
+            while (!this->receiver_buffer.empty()) {
+                Segment& seg = this->receiver_buffer.front();
+                if (seg.header.sn != this->segment_tracker.get_rcv_nxt() || this->rcv_queue.size() >= queue_limit) {
+                    break;
+                }
+
+                this->rcv_queue.push_back(std::move(seg));
+
+                this->receiver_buffer.pop_front();
+                this->segment_tracker.increment_rcv_nxt();
+            }
         }
 
         [[nodiscard]] size_t size() const {

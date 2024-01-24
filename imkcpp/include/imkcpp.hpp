@@ -36,12 +36,12 @@ namespace imkcpp {
         Flusher<MTU> flusher{};
         SegmentTracker segment_tracker{};
         RtoCalculator rto_calculator{};
+        ReceiverBuffer receiver_buffer{};
 
         CongestionController<MTU> congestion_controller{segment_tracker};
         WindowProber<MTU> window_prober{flusher};
 
-        ReceiverBuffer receiver_buffer{segment_tracker};
-        Receiver receiver{receiver_buffer};
+        Receiver receiver{segment_tracker, receiver_buffer};
 
         SenderBuffer sender_buffer{segment_tracker};
 
