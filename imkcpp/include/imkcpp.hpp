@@ -36,10 +36,10 @@ namespace imkcpp {
         Flusher<MTU> flusher{};
         SegmentTracker segment_tracker{};
         RtoCalculator rto_calculator{};
+        CongestionController<MTU> congestion_controller{};
         ReceiverBuffer receiver_buffer{};
         SenderBuffer sender_buffer{};
 
-        CongestionController<MTU> congestion_controller{segment_tracker};
         WindowProber<MTU> window_prober{flusher};
 
         Receiver receiver{segment_tracker, receiver_buffer};
@@ -168,7 +168,7 @@ namespace imkcpp {
 
                 switch (header.cmd) {
                     case commands::IKCP_CMD_PUSH: {
-                        if (!this->congestion_controller.fits_receive_window(header.sn)) {
+                        if (!this->congestion_controller.fits_receive_window(this->segment_tracker.get_rcv_nxt(), header.sn)) {
                             drop_push();
                             break;
                         }

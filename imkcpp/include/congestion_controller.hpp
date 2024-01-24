@@ -1,17 +1,13 @@
 #pragma once
 
-
 #include "types.hpp"
 #include "constants.hpp"
 #include "utility.hpp"
-#include "segment_tracker.hpp"
 
 namespace imkcpp {
     template <size_t MTU>
     class CongestionController final {
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
-
-        SegmentTracker& segment_tracker;
 
         bool congestion_window = true; // Congestion Window Enabled
 
@@ -30,9 +26,6 @@ namespace imkcpp {
         u32 probe_wait = 0; // How long we should wait before probing again
 
     public:
-        explicit CongestionController(SegmentTracker& segment_tracker) :
-                                      segment_tracker(segment_tracker) {}
-
         void set_congestion_window_enabled(const bool state) {
             this->congestion_window = state;
         }
@@ -45,8 +38,8 @@ namespace imkcpp {
             return this->rcv_wnd;
         }
 
-        [[nodiscard]] bool fits_receive_window(const u32 sn) const {
-            return sn < this->segment_tracker.get_rcv_nxt() + this->get_receive_window();
+        [[nodiscard]] bool fits_receive_window(const u32 rcv_nxt, const u32 sn) const {
+            return sn < rcv_nxt + this->get_receive_window();
         }
 
         void set_remote_window(const u32 rmt_wnd) {

@@ -8,6 +8,7 @@
 #include "segment.hpp"
 #include "receiver_buffer.hpp"
 #include "results.hpp"
+#include "segment_tracker.hpp"
 
 namespace imkcpp {
     // TODO: Benchmark against std::vector instead of std::deque
