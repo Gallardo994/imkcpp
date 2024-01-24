@@ -35,7 +35,6 @@ TEST_F(ReceiverBufferTest, AddAndCheckFront) {
     ASSERT_EQ(buffer.front().header.sn, header.sn);
 }
 
-// Test pop_front
 TEST_F(ReceiverBufferTest, PopFront) {
     using namespace imkcpp;
 

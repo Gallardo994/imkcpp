@@ -58,6 +58,10 @@ namespace imkcpp {
             return this->snd_wnd;
         }
 
+        [[nodiscard]] u32 get_ssthresh() const {
+            return this->ssthresh;
+        }
+
         // Closely resembles TCP Reno algorithm.
         void packets_resent(const u32 packets_in_flight, const u32 resent) {
             this->ssthresh = std::max(packets_in_flight / 2, constants::IKCP_THRESH_MIN);
