@@ -101,6 +101,13 @@ namespace imkcpp::encoder {
         offset += sizeof(T);
     }
 
+    template<>
+    inline void encode<u8>(std::span<std::byte>& buf, size_t& offset, const u8 value) {
+        assert(buf.size() >= offset + sizeof(u8));
+        std::memcpy(buf.data() + offset, &value, sizeof(u8));
+        offset += sizeof(u8);
+    }
+
     template<typename T>
     void decode(const std::span<const std::byte>& buf, size_t& offset, T& value) {
         static_assert(is_allowed_type<T>::value, "Type not allowed. Allowed types are u8, u16, u32.");
@@ -110,5 +117,12 @@ namespace imkcpp::encoder {
         std::memcpy(&networkValue, buf.data() + offset, sizeof(T));
         value = ntoh(networkValue);
         offset += sizeof(T);
+    }
+
+    template<>
+    inline void decode<u8>(const std::span<const std::byte>& buf, size_t& offset, u8& value) {
+        assert(buf.size() >= offset + sizeof(u8));
+        std::memcpy(&value, buf.data() + offset, sizeof(u8));
+        offset += sizeof(u8);
     }
 }
