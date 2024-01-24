@@ -12,6 +12,7 @@
 #include "sender_buffer.hpp"
 #include "utility.hpp"
 #include "results.hpp"
+#include "flusher.hpp"
 
 namespace imkcpp {
     template <size_t MTU>

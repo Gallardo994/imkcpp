@@ -39,12 +39,11 @@ namespace imkcpp {
         CongestionController<MTU> congestion_controller{};
         ReceiverBuffer receiver_buffer{};
         SenderBuffer sender_buffer{};
-
-        WindowProber<MTU> window_prober{flusher};
+        WindowProber window_prober{};
 
         Receiver receiver{segment_tracker, receiver_buffer};
 
-        AckController<MTU> ack_controller{flusher, sender_buffer, segment_tracker};
+        AckController ack_controller{sender_buffer, segment_tracker};
         Sender<MTU> sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, segment_tracker};
 
         bool updated = false; // Whether update() was called at least once
@@ -313,12 +312,49 @@ namespace imkcpp {
 
             SegmentHeader header = this->create_service_header(unused_receive_window);
 
+            const auto flush_acks = [&] {
+                for (const Ack& ack : this->ack_controller) {
+                    flush_result.total_bytes_sent += this->flusher.flush_if_full(callback);
+
+                    header.sn = ack.sn;
+                    header.ts = ack.ts;
+
+                    this->flusher.emplace(header);
+                }
+
+                flush_result.cmd_ack_count += this->ack_controller.size();
+                this->ack_controller.clear();
+            };
+
+            const auto flush_probes = [&] {
+                this->window_prober.update(current, this->congestion_controller.get_remote_window());
+
+                if (this->window_prober.has_flag(constants::IKCP_ASK_SEND)) {
+                    flush_result.total_bytes_sent += this->flusher.flush_if_full(callback);
+
+                    header.cmd = commands::IKCP_CMD_WASK;
+                    this->flusher.emplace(header);
+
+                    flush_result.cmd_wask_count++;
+                }
+
+                if (this->window_prober.has_flag(constants::IKCP_ASK_TELL)) {
+                    flush_result.total_bytes_sent +=this->flusher.flush_if_full(callback);
+
+                    header.cmd = commands::IKCP_CMD_WINS;
+                    this->flusher.emplace(header);
+
+                    flush_result.cmd_wins_count++;
+                }
+
+                this->window_prober.reset_flags();
+            };
+
             // Acks
-            this->ack_controller.flush_acks(flush_result, callback, header);
+            flush_acks();
 
             // Window probes
-            this->window_prober.update(current, this->congestion_controller.get_remote_window());
-            this->window_prober.flush(flush_result, callback, header);
+            flush_probes();
 
             // Useful data
             this->sender.flush_data_segments(flush_result, callback, current, unused_receive_window);
