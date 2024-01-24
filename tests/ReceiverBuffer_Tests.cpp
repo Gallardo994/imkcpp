@@ -50,15 +50,23 @@ TEST_F(ReceiverBufferTest, PopFront) {
 TEST_F(ReceiverBufferTest, SegmentOrder) {
     using namespace imkcpp;
 
-    constexpr SegmentHeader header1 { .sn = 0 }, header2{ .sn = 1 };
-    SegmentData data1{}, data2{};
+    constexpr SegmentHeader header1 { .sn = 1 }, header2{ .sn = 2 }, header3 { .sn = 3 };
+    SegmentData data1{}, data2{}, data3{};
 
+    buffer.emplace_segment(header3, data3);
     buffer.emplace_segment(header1, data1);
     buffer.emplace_segment(header2, data2);
 
     ASSERT_EQ(buffer.front().header.sn, header1.sn);
     buffer.pop_front();
+
     ASSERT_EQ(buffer.front().header.sn, header2.sn);
+    buffer.pop_front();
+
+    ASSERT_EQ(buffer.front().header.sn, header3.sn);
+    buffer.pop_front();
+
+    ASSERT_TRUE(buffer.empty());
 }
 
 TEST_F(ReceiverBufferTest, NoDuplicateSegments) {
