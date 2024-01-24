@@ -12,6 +12,7 @@ add_executable(imkcpp_tests
         Send_Tests.cpp
         RtoCalculator_Tests.cpp
         Flusher_Tests.cpp
+        ReceiverBuffer_Tests.cpp
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/imkcpp/include)

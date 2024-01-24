@@ -27,6 +27,10 @@ namespace imkcpp {
             return this->rcv_buf.front();
         }
 
+        [[nodiscard]] size_t size() const {
+            return this->rcv_buf.size();
+        }
+
         void pop_front() {
             this->rcv_buf.pop_front();
         }
