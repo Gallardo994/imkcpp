@@ -106,8 +106,8 @@ namespace imkcpp {
 
     struct Segment final {
         SegmentHeader header{};
-        SegmentMetadata metadata{};
         SegmentData data{};
+        SegmentMetadata metadata{};
 
         explicit Segment() = default;
         explicit Segment(const SegmentHeader& header, SegmentData& data) : header(header), data(std::move(data)) { }
