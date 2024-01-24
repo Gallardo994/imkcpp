@@ -18,6 +18,10 @@ namespace imkcpp {
             this->snd_buf.push_back(std::move(segment));
         }
 
+        [[nodiscard]] size_t size() const {
+            return this->snd_buf.size();
+        }
+
         [[nodiscard]] std::optional<u32> get_first_sequence_number_in_flight() const {
             if (!this->snd_buf.empty()) {
                 const Segment& seg = this->snd_buf.front();
