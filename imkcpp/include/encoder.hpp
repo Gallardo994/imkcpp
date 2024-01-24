@@ -7,45 +7,65 @@
 #include "types.hpp"
 
 namespace imkcpp::encoder {
-    /// Encodes a u8 value into the buffer at the given offset and increments the offset by sizeof(u8).
-    inline void encode8u(std::span<std::byte>& buf, size_t& offset, const u8 value) {
-        assert(buf.size() >= offset + sizeof(u8));
-        std::memcpy(buf.data() + offset, &value, sizeof(u8));
-        offset += sizeof(u8);
+    inline u16 htons(const u16 hostshort) {
+        return hostshort >> 8 |
+               hostshort << 8;
     }
 
-    /// Decodes a u8 value from the buffer at the given offset and increments the offset by sizeof(u8).
-    inline void decode8u(const std::span<const std::byte>& buf, size_t& offset, u8& value) {
-        assert(buf.size() >= offset + sizeof(u8));
-        std::memcpy(&value, buf.data() + offset, sizeof(u8));
-        offset += sizeof(u8);
+    inline u16 ntohs(const uint16_t netshort) {
+        return htons(netshort);
     }
 
-    /// Encodes a u16 value into the buffer at the given offset and increments the offset by sizeof(u16).
-    inline void encode16u(std::span<std::byte>& buf, size_t& offset, const u16 value) {
-        assert(buf.size() >= offset + sizeof(u16));
-        std::memcpy(buf.data() + offset, &value, sizeof(u16));
-        offset += sizeof(u16);
+    inline u32 htonl(const u32 hostlong) {
+        return hostlong >> 24 & 0xFF |
+               hostlong << 8 & 0xFF0000 |
+               hostlong >> 8 & 0xFF00 |
+               hostlong << 24 & 0xFF000000;
     }
 
-    /// Decodes a u16 value from the buffer at the given offset and increments the offset by sizeof(u16).
-    inline void decode16u(const std::span<const std::byte>& buf, size_t& offset, u16& value) {
-        assert(buf.size() >= offset + sizeof(u16));
-        std::memcpy(&value, buf.data() + offset, sizeof(u16));
-        offset += sizeof(u16);
+    inline u32 ntohl(const uint32_t netlong) {
+        return htonl(netlong);
     }
 
-    /// Encodes a u32 value into the buffer at the given offset and increments the offset by sizeof(u32).
-    inline void encode32u(std::span<std::byte>& buf, size_t& offset, const u32 value) {
-        assert(buf.size() >= offset + sizeof(u32));
-        std::memcpy(buf.data() + offset, &value, sizeof(u32));
-        offset += sizeof(u32);
+    template<typename T>
+    using is_allowed_type = std::disjunction<std::is_same<T, u8>, std::is_same<T, u16>, std::is_same<T, u32>>;
+
+    template<typename T>
+    T hton(T value) {
+        static_assert(is_allowed_type<T>::value, "Type not allowed. Allowed types are u8, u16, u32.");
+
+        if constexpr (std::is_same_v<T, u16>) return htons(value);
+        else if constexpr (std::is_same_v<T, u32>) return htonl(value);
+        else return value;
     }
 
-    /// Decodes a u32 value from the buffer at the given offset and increments the offset by sizeof(u32).
-    inline void decode32u(const std::span<const std::byte>& buf, size_t& offset, u32& value) {
-        assert(buf.size() >= offset + sizeof(u32));
-        std::memcpy(&value, buf.data() + offset, sizeof(u32));
-        offset += sizeof(u32);
+    template<typename T>
+    T ntoh(T value) {
+        static_assert(is_allowed_type<T>::value, "Type not allowed. Allowed types are u8, u16, u32.");
+
+        if constexpr (std::is_same_v<T, u16>) return ntohs(value);
+        else if constexpr (std::is_same_v<T, u32>) return ntohl(value);
+        else return value;
+    }
+
+    template<typename T>
+    void encode(std::span<std::byte>& buf, size_t& offset, const T value) {
+        static_assert(is_allowed_type<T>::value, "Type not allowed. Allowed types are u8, u16, u32.");
+        assert(buf.size() >= offset + sizeof(T));
+
+        T networkValue = hton(value);
+        std::memcpy(buf.data() + offset, &networkValue, sizeof(T));
+        offset += sizeof(T);
+    }
+
+    template<typename T>
+    void decode(const std::span<const std::byte>& buf, size_t& offset, T& value) {
+        static_assert(is_allowed_type<T>::value, "Type not allowed. Allowed types are u8, u16, u32.");
+        assert(buf.size() >= offset + sizeof(T));
+
+        T networkValue;
+        std::memcpy(&networkValue, buf.data() + offset, sizeof(T));
+        value = ntoh(networkValue);
+        offset += sizeof(T);
     }
 }

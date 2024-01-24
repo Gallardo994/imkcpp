@@ -36,27 +36,27 @@ namespace imkcpp {
         void encode_to(std::span<std::byte> buf, size_t& offset) const {
             assert(buf.size() >= constants::IKCP_OVERHEAD);
 
-            encoder::encode32u(buf, offset, this->conv);
-            encoder::encode8u(buf, offset, this->cmd);
-            encoder::encode8u(buf, offset, this->frg);
-            encoder::encode16u(buf, offset, this->wnd);
-            encoder::encode32u(buf, offset, this->ts);
-            encoder::encode32u(buf, offset, this->sn);
-            encoder::encode32u(buf, offset, this->una);
-            encoder::encode32u(buf, offset, this->len);
+            encoder::encode<u32>(buf, offset, this->conv);
+            encoder::encode<u8>(buf, offset, this->cmd);
+            encoder::encode<u8>(buf, offset, this->frg);
+            encoder::encode<u16>(buf, offset, this->wnd);
+            encoder::encode<u32>(buf, offset, this->ts);
+            encoder::encode<u32>(buf, offset, this->sn);
+            encoder::encode<u32>(buf, offset, this->una);
+            encoder::encode<u32>(buf, offset, this->len);
         }
 
         void decode_from(const std::span<const std::byte> buf, size_t& offset) {
             assert(buf.size() >= constants::IKCP_OVERHEAD);
 
-            encoder::decode32u(buf, offset, this->conv);
-            encoder::decode8u(buf, offset, this->cmd);
-            encoder::decode8u(buf, offset, this->frg);
-            encoder::decode16u(buf, offset, this->wnd);
-            encoder::decode32u(buf, offset, this->ts);
-            encoder::decode32u(buf, offset, this->sn);
-            encoder::decode32u(buf, offset, this->una);
-            encoder::decode32u(buf, offset, this->len);
+            encoder::decode<u32>(buf, offset, this->conv);
+            encoder::decode<u8>(buf, offset, this->cmd);
+            encoder::decode<u8>(buf, offset, this->frg);
+            encoder::decode<u16>(buf, offset, this->wnd);
+            encoder::decode<u32>(buf, offset, this->ts);
+            encoder::decode<u32>(buf, offset, this->sn);
+            encoder::decode<u32>(buf, offset, this->una);
+            encoder::decode<u32>(buf, offset, this->len);
         }
     };
 
