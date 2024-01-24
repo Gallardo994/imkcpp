@@ -107,6 +107,7 @@ namespace imkcpp {
         }
 
         /// Given current max segment size, estimates the number of segments needed to fit the payload.
+        // ReSharper disable once CppMemberFunctionMayBeStatic
         [[nodiscard]] size_t estimate_segments_count(const size_t size) const {
             return std::max(static_cast<size_t>(1), (size + MAX_SEGMENT_SIZE - 1) / MAX_SEGMENT_SIZE);
         }
@@ -134,71 +135,97 @@ namespace imkcpp {
             this->move_send_queue_to_buffer(cwnd, current, unused_receive_window);
 
             bool change = false;
-            bool lost = false;
 
             const u32 resent = (this->fastresend > 0) ? this->fastresend : 0xffffffff;
             const u32 rtomin = (this->nodelay == 0) ? (this->rto_calculator.get_rto() >> 3) : 0;
 
+            const auto has_never_been_sent = [](const Segment& segment) -> bool {
+                return segment.metadata.xmit == 0;
+            };
+
+            const auto prepare_for_first_send = [&](Segment& segment) -> void {
+                segment.metadata.xmit++;
+                segment.metadata.rto = this->rto_calculator.get_rto();
+                segment.metadata.resendts = current + segment.metadata.rto + rtomin;
+            };
+
+            const auto has_timed_out = [&](const Segment& segment) -> bool {
+                return time_delta(current, segment.metadata.resendts) >= 0;
+            };
+
+            const auto prepare_segment_for_resend = [&](Segment& segment) -> void {
+                segment.metadata.xmit++;
+                ++this->xmit;
+
+                if (this->nodelay == 0) {
+                    segment.metadata.rto += std::max(segment.metadata.rto, this->rto_calculator.get_rto());
+                } else {
+                    const u32 step = this->nodelay < 2? segment.metadata.rto : this->rto_calculator.get_rto();
+                    segment.metadata.rto += step / 2;
+                }
+
+                segment.metadata.resendts = current + segment.metadata.rto;
+            };
+
+            const auto can_fast_resend = [&](const Segment& segment) -> bool {
+                return resent < segment.metadata.fastack && (segment.metadata.xmit < this->fastlimit || this->fastlimit == 0);
+            };
+
+            const auto prepare_segment_for_fast_resend = [&](Segment& segment) {
+                segment.metadata.xmit++;
+                segment.metadata.fastack = 0;
+                segment.metadata.resendts = current + segment.metadata.rto;
+            };
+
+            const auto send_segment = [&](Segment& segment) -> void {
+                segment.header.ts = current;
+                segment.header.wnd = unused_receive_window;
+                segment.header.una = this->segment_tracker.get_rcv_nxt();
+
+                flush_result.total_bytes_sent += this->flusher.flush_if_does_not_fit(output, segment.data_size());
+                this->flusher.emplace(segment.header, segment.data);
+
+                if (segment.metadata.xmit >= this->dead_link) {
+                    this->shared_ctx.set_state(State::DeadLink);
+                }
+            };
+
             auto& snd_buf = this->sender_buffer.get();
 
-            for (Segment& segment : snd_buf) {
-                bool needsend = false;
-
-                if (segment.metadata.xmit == 0) {
-                    needsend = true;
-                    segment.metadata.xmit++;
-                    segment.metadata.rto = this->rto_calculator.get_rto();
-                    segment.metadata.resendts = current + segment.metadata.rto + rtomin;
-                } else if (time_delta(current, segment.metadata.resendts) >= 0) {
-                    needsend = true;
-                    segment.metadata.xmit++;
-                    ++this->xmit;
-
-                    if (this->nodelay == 0) {
-                        segment.metadata.rto += std::max(segment.metadata.rto, this->rto_calculator.get_rto());
-                    } else {
-                        const u32 step = this->nodelay < 2? segment.metadata.rto : this->rto_calculator.get_rto();
-                        segment.metadata.rto += step / 2;
-                    }
-
-                    segment.metadata.resendts = current + segment.metadata.rto;
-                    lost = true;
-
-                    flush_result.timeout_retransmitted_count++;
-                } else if (resent < segment.metadata.fastack) {
-                    if (segment.metadata.xmit <= this->fastlimit || this->fastlimit == 0) {
-                        needsend = true;
-                        change = true;
-
-                        segment.metadata.xmit++;
-                        segment.metadata.fastack = 0;
-                        segment.metadata.resendts = current + segment.metadata.rto;
-
-                        flush_result.fast_retransmitted_count++;
-                    }
+            auto process_segment = [&](Segment& segment) -> bool {
+                if (has_never_been_sent(segment)) {
+                    prepare_for_first_send(segment);
+                    return true;
                 }
 
-                if (needsend) {
-                    segment.header.ts = current;
-                    segment.header.wnd = unused_receive_window;
-                    segment.header.una = this->segment_tracker.get_rcv_nxt();
+                if (has_timed_out(segment)) {
+                    prepare_segment_for_resend(segment);
+                    flush_result.timeout_retransmitted_count++;
+                    return true;
+                }
 
-                    flush_result.total_bytes_sent += this->flusher.flush_if_does_not_fit(output, segment.data_size());
-                    this->flusher.emplace(segment.header, segment.data);
+                if (can_fast_resend(segment)) {
+                    prepare_segment_for_fast_resend(segment);
+                    flush_result.fast_retransmitted_count++;
+                    change = true;
+                    return true;
+                }
 
-                    if (segment.metadata.xmit >= this->dead_link) {
-                        this->shared_ctx.set_state(State::DeadLink);
-                    }
+                return false;
+            };
 
+            std::for_each(snd_buf.begin(), snd_buf.end(), [&](Segment& segment) {
+                if (process_segment(segment)) {
+                    send_segment(segment);
                     flush_result.cmd_push_count++;
                 }
-            }
+            });
 
             if (change) {
                 this->congestion_controller.packets_resent(this->segment_tracker.get_packets_in_flight_count(), resent);
             }
 
-            if (lost) {
+            if (flush_result.timeout_retransmitted_count > 0) {
                 this->congestion_controller.packet_lost();
             }
         }
