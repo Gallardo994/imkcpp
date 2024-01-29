@@ -37,12 +37,10 @@ namespace imkcpp {
         SegmentTracker segment_tracker{};
         RtoCalculator rto_calculator{};
         CongestionController<MTU> congestion_controller{};
-        ReceiverBuffer receiver_buffer{};
-        SenderBuffer sender_buffer{};
         WindowProber window_prober{};
+        Receiver receiver{};
 
-        Receiver receiver{segment_tracker, receiver_buffer};
-
+        SenderBuffer sender_buffer{};
         AckController ack_controller{sender_buffer, segment_tracker};
         Sender<MTU> sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, segment_tracker};
 
@@ -58,7 +56,7 @@ namespace imkcpp {
             header.cmd = commands::IKCP_CMD_ACK;
             header.frg = 0;
             header.wnd = unused_receive_window;
-            header.una = this->segment_tracker.get_rcv_nxt();
+            header.una = this->receiver.get_rcv_nxt();
             header.sn = 0;
             header.ts = 0;
             header.len = 0;
@@ -109,7 +107,7 @@ namespace imkcpp {
 
             this->congestion_controller.set_receive_window(rcvwnd);
             this->ack_controller.reserve(rcvwnd);
-            this->receiver_buffer.set_queue_limit(rcvwnd);
+            this->receiver.set_queue_limit(rcvwnd);
         }
 
         /// Enables or disables congestion window.
@@ -167,19 +165,18 @@ namespace imkcpp {
 
                 switch (header.cmd) {
                     case commands::IKCP_CMD_PUSH: {
-                        if (!this->congestion_controller.fits_receive_window(this->segment_tracker.get_rcv_nxt(), header.sn)) {
+                        if (!this->congestion_controller.fits_receive_window(this->receiver.get_rcv_nxt(), header.sn)) {
                             drop_push();
                             break;
                         }
 
                         this->ack_controller.schedule_ack(header.sn, header.ts);
 
-                        if (this->segment_tracker.should_receive(header.sn)) {
+                        if (this->receiver.should_receive(header.sn)) {
                             SegmentData segment_data;
                             segment_data.decode_from(data, offset, header.len);
 
-                            this->receiver_buffer.emplace_segment(header, segment_data);
-                            this->receiver.move_receive_buffer_to_queue();
+                            this->receiver.emplace_segment(header, segment_data);
                         } else {
                             drop_push();
                         }
@@ -357,7 +354,8 @@ namespace imkcpp {
             flush_probes();
 
             // Useful data
-            this->sender.flush_data_segments(flush_result, callback, current, unused_receive_window);
+            const u32 rcv_nxt = this->receiver.get_rcv_nxt();
+            this->sender.flush_data_segments(flush_result, callback, current, unused_receive_window, rcv_nxt);
 
             // Flush remaining
             flush_result.total_bytes_sent += this->flusher.flush_if_not_empty(callback);

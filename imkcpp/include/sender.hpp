@@ -13,6 +13,7 @@
 #include "utility.hpp"
 #include "results.hpp"
 #include "flusher.hpp"
+#include "segment_tracker.hpp"
 
 namespace imkcpp {
     template <size_t MTU>
@@ -86,7 +87,7 @@ namespace imkcpp {
         }
 
         /// Flushes data segments from the send queue to the sender buffer.
-        void move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window) {
+        void move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window, const u32 rcv_nxt) {
             while (!this->snd_queue.empty() && this->segment_tracker.get_snd_nxt() < this->segment_tracker.get_snd_una() + cwnd) {
                 Segment& newseg = this->snd_queue.front();
 
@@ -95,7 +96,7 @@ namespace imkcpp {
                 newseg.header.wnd = unused_receive_window;
                 newseg.header.ts = current;
                 newseg.header.sn = this->segment_tracker.get_and_increment_snd_nxt();
-                newseg.header.una = this->segment_tracker.get_rcv_nxt();
+                newseg.header.una = rcv_nxt;
 
                 newseg.metadata.resendts = current;
                 newseg.metadata.rto = this->rto_calculator.get_rto();
@@ -131,9 +132,9 @@ namespace imkcpp {
         }
 
         /// Flushes data segments from the send queue to the output callback.
-        void flush_data_segments(FlushResult& flush_result, const output_callback_t& output, const u32 current, const i32 unused_receive_window) {
+        void flush_data_segments(FlushResult& flush_result, const output_callback_t& output, const u32 current, const i32 unused_receive_window, const u32 rcv_nxt) {
             const u32 cwnd = this->congestion_controller.calculate_congestion_window();
-            this->move_send_queue_to_buffer(cwnd, current, unused_receive_window);
+            this->move_send_queue_to_buffer(cwnd, current, unused_receive_window, rcv_nxt);
 
             bool change = false;
 
@@ -181,7 +182,7 @@ namespace imkcpp {
             const auto send_segment = [&](Segment& segment) -> void {
                 segment.header.ts = current;
                 segment.header.wnd = unused_receive_window;
-                segment.header.una = this->segment_tracker.get_rcv_nxt();
+                segment.header.una = rcv_nxt;
 
                 flush_result.total_bytes_sent += this->flusher.flush_if_does_not_fit(output, segment.data_size());
                 this->flusher.emplace(segment.header, segment.data);

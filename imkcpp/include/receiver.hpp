@@ -6,23 +6,20 @@
 #include "types.hpp"
 #include "errors.hpp"
 #include "segment.hpp"
-#include "receiver_buffer.hpp"
 #include "results.hpp"
-#include "segment_tracker.hpp"
 
 namespace imkcpp {
     // TODO: Benchmark against std::vector instead of std::deque
     class Receiver final {
-        SegmentTracker& segment_tracker;
-        ReceiverBuffer& receiver_buffer;
+        std::deque<Segment> rcv_buf{};
 
         std::deque<Segment> rcv_queue{}; // TODO: Does not need to be Segment as we don't use metadata
+        u32 queue_limit = 0;
+
+        u32 rcv_nxt = 0;
 
     public:
-
-        explicit Receiver(SegmentTracker& segment_tracker, ReceiverBuffer& receiver_buffer) :
-            segment_tracker(segment_tracker),
-            receiver_buffer(receiver_buffer) {}
+        explicit Receiver() = default;
 
         [[nodiscard]] tl::expected<size_t, error> peek_size() const {
             if (this->rcv_queue.empty()) {
@@ -95,24 +92,51 @@ namespace imkcpp {
             return result;
         }
 
-        void move_receive_buffer_to_queue() {
-            const u32 queue_limit = this->receiver_buffer.get_queue_limit();
+        void emplace_segment(const SegmentHeader& header, SegmentData& data) {
+            u32 sn = header.sn;
 
-            while (!this->receiver_buffer.empty()) {
-                Segment& seg = this->receiver_buffer.front();
-                if (seg.header.sn != this->segment_tracker.get_rcv_nxt() || this->rcv_queue.size() >= queue_limit) {
+            const auto rit = std::find_if(this->rcv_buf.rbegin(), this->rcv_buf.rend(), [sn](const Segment& seg) {
+                return seg.header.sn < sn;
+            });
+
+            const auto it = rit.base();
+
+            if (it != this->rcv_buf.end() && it->header.sn == sn) {
+                return;
+            }
+
+            this->rcv_buf.emplace(it, header, data);
+            this->move_receive_buffer_to_queue();
+        }
+
+        void move_receive_buffer_to_queue() {
+            while (!this->rcv_buf.empty()) {
+                Segment& seg = this->rcv_buf.front();
+                if (seg.header.sn != this->get_rcv_nxt() || this->rcv_queue.size() >= this->queue_limit) {
                     break;
                 }
 
                 this->rcv_queue.push_back(std::move(seg));
 
-                this->receiver_buffer.pop_front();
-                this->segment_tracker.increment_rcv_nxt();
+                this->rcv_buf.pop_front();
+                this->rcv_nxt++;
             }
         }
 
         [[nodiscard]] size_t size() const {
             return this->rcv_queue.size();
+        }
+
+        [[nodiscard]] u32 get_rcv_nxt() const {
+            return this->rcv_nxt;
+        }
+
+        [[nodiscard]] bool should_receive(const u32 sn) const {
+            return sn >= this->rcv_nxt;
+        }
+
+        void set_queue_limit(const u32 value) {
+            this->queue_limit = value;
         }
     };
 }
