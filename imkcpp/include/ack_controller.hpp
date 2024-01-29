@@ -80,8 +80,8 @@ namespace imkcpp {
                                segment_tracker(segment_tracker) {
         }
 
-        std::vector<Ack>::iterator begin() { return acklist.begin(); }
-        std::vector<Ack>::iterator end() { return acklist.end(); }
+        [[nodiscard]] std::vector<Ack>::const_iterator begin() { return acklist.begin(); }
+        [[nodiscard]] std::vector<Ack>::const_iterator end() { return acklist.end(); }
 
         void acknowledge_fastack(const FastAckCtx& fastack_ctx) {
             if (!fastack_ctx.is_valid()) {
