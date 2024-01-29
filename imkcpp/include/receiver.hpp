@@ -19,8 +19,6 @@ namespace imkcpp {
         u32 rcv_nxt = 0;
 
     public:
-        explicit Receiver() = default;
-
         [[nodiscard]] tl::expected<size_t, error> peek_size() const {
             if (this->rcv_queue.empty()) {
                 return tl::unexpected(error::queue_empty);
@@ -112,7 +110,7 @@ namespace imkcpp {
         void move_receive_buffer_to_queue() {
             while (!this->rcv_buf.empty()) {
                 Segment& seg = this->rcv_buf.front();
-                if (seg.header.sn != this->get_rcv_nxt() || this->rcv_queue.size() >= this->queue_limit) {
+                if (seg.header.sn != this->rcv_nxt || this->rcv_queue.size() >= this->queue_limit) {
                     break;
                 }
 
