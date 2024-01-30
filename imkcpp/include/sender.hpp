@@ -88,10 +88,13 @@ namespace imkcpp {
 
         /// Flushes data segments from the send queue to the sender buffer.
         void move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window, const u32 rcv_nxt) {
+            const u32 conv = this->shared_ctx.get_conv();
+            const u32 rto = this->rto_calculator.get_rto();
+
             while (!this->snd_queue.empty() && this->segment_tracker.get_snd_nxt() < this->segment_tracker.get_snd_una() + cwnd) {
                 Segment& newseg = this->snd_queue.front();
 
-                newseg.header.conv = this->shared_ctx.get_conv();
+                newseg.header.conv = conv;
                 newseg.header.cmd = commands::IKCP_CMD_PUSH;
                 newseg.header.wnd = unused_receive_window;
                 newseg.header.ts = current;
@@ -99,7 +102,7 @@ namespace imkcpp {
                 newseg.header.una = rcv_nxt;
 
                 newseg.metadata.resendts = current;
-                newseg.metadata.rto = this->rto_calculator.get_rto();
+                newseg.metadata.rto = rto;
                 newseg.metadata.fastack = 0;
                 newseg.metadata.xmit = 0;
 
