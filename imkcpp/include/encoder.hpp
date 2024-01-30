@@ -71,35 +71,7 @@ namespace imkcpp::encoder {
     }
 
     template<typename T>
-    using is_allowed_type = std::disjunction<std::is_same<T, u8>, std::is_same<T, u16>, std::is_same<T, u32>>;
-
-    template<typename T>
-    T hton(T value) {
-        static_assert(is_allowed_type<T>::value, "Type not allowed. Allowed types are u8, u16, u32.");
-
-        if constexpr (std::is_same_v<T, u16>) return htons(value);
-        else if constexpr (std::is_same_v<T, u32>) return htonl(value);
-        else return value;
-    }
-
-    template<typename T>
-    T ntoh(T value) {
-        static_assert(is_allowed_type<T>::value, "Type not allowed. Allowed types are u8, u16, u32.");
-
-        if constexpr (std::is_same_v<T, u16>) return ntohs(value);
-        else if constexpr (std::is_same_v<T, u32>) return ntohl(value);
-        else return value;
-    }
-
-    template<typename T>
-    void encode(std::span<std::byte>& buf, size_t& offset, const T value) {
-        static_assert(is_allowed_type<T>::value, "Type not allowed. Allowed types are u8, u16, u32.");
-        assert(buf.size() >= offset + sizeof(T));
-
-        T networkValue = hton(value);
-        std::memcpy(buf.data() + offset, &networkValue, sizeof(T));
-        offset += sizeof(T);
-    }
+    void encode(std::span<std::byte>& buf, size_t& offset, T value);
 
     template<>
     inline void encode<u8>(std::span<std::byte>& buf, size_t& offset, const u8 value) {
@@ -108,21 +80,43 @@ namespace imkcpp::encoder {
         offset += sizeof(u8);
     }
 
-    template<typename T>
-    void decode(const std::span<const std::byte>& buf, size_t& offset, T& value) {
-        static_assert(is_allowed_type<T>::value, "Type not allowed. Allowed types are u8, u16, u32.");
-        assert(buf.size() >= offset + sizeof(T));
-
-        T networkValue;
-        std::memcpy(&networkValue, buf.data() + offset, sizeof(T));
-        value = ntoh(networkValue);
-        offset += sizeof(T);
+    template<>
+    inline void encode<u16>(std::span<std::byte>& buf, size_t& offset, const u16 value) {
+        const u16 networkValue = htons(value);
+        std::memcpy(buf.data() + offset, &networkValue, sizeof(u16));
+        offset += sizeof(u16);
     }
+
+    template<>
+    inline void encode<u32>(std::span<std::byte>& buf, size_t& offset, const u32 value) {
+        const u32 networkValue = htonl(value);
+        std::memcpy(buf.data() + offset, &networkValue, sizeof(u32));
+        offset += sizeof(u32);
+    }
+
+    template<typename T>
+    void decode(const std::span<const std::byte>& buf, size_t& offset, T& value);
 
     template<>
     inline void decode<u8>(const std::span<const std::byte>& buf, size_t& offset, u8& value) {
         assert(buf.size() >= offset + sizeof(u8));
         std::memcpy(&value, buf.data() + offset, sizeof(u8));
         offset += sizeof(u8);
+    }
+
+    template<>
+    inline void decode<u16>(const std::span<const std::byte>& buf, size_t& offset, u16& value) {
+        assert(buf.size() >= offset + sizeof(u16));
+        std::memcpy(&value, buf.data() + offset, sizeof(u16));
+        value = ntohs(value);
+        offset += sizeof(u16);
+    }
+
+    template<>
+    inline void decode<u32>(const std::span<const std::byte>& buf, size_t& offset, u32& value) {
+        assert(buf.size() >= offset + sizeof(u32));
+        std::memcpy(&value, buf.data() + offset, sizeof(u32));
+        value = ntohl(value);
+        offset += sizeof(u32);
     }
 }
