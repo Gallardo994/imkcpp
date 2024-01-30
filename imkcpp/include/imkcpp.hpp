@@ -23,7 +23,7 @@
 #include "ack_controller.hpp"
 #include "flusher.hpp"
 #include "utility.hpp"
-#include "types/cmd.hpp"
+#include "commands.hpp"
 
 namespace imkcpp {
     /// The main class of the library.

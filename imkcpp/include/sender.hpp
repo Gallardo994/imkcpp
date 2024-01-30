@@ -13,6 +13,7 @@
 #include "results.hpp"
 #include "flusher.hpp"
 #include "segment_tracker.hpp"
+#include "commands.hpp"
 
 namespace imkcpp {
     template <size_t MTU>

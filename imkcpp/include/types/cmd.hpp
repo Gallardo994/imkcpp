@@ -26,17 +26,6 @@ namespace imkcpp {
         UT value = 0;
     };
 
-    namespace commands {
-        constexpr Cmd PUSH{81};
-        constexpr Cmd ACK{82};
-        constexpr Cmd WASK{83};
-        constexpr Cmd WINS{84};
-
-        static constexpr bool is_valid(const Cmd cmd) {
-            return cmd == PUSH || cmd == ACK || cmd == WASK || cmd == WINS;
-        }
-    }
-
     namespace encoder {
         template<>
         constexpr size_t encoded_size<Cmd>() {
