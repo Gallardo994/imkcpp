@@ -13,7 +13,6 @@ namespace imkcpp {
     // TODO: Too many public members, make them private. Also, make the Segment class a friend of the SegmentHeader class.
     // TODO: The logic is heavily reliant on the fact that everything is public. Rework this.
 
-    // TODO: Overhead sizes don't take into account modifications to the types (e.g. Conv is 1 byte, not 4)
     /// SegmentHeader is used to store the header of the segment.
     struct SegmentHeader final {
         /// Conversation ID.
