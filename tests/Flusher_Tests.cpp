@@ -5,7 +5,6 @@ class FlusherTest : public testing::Test {
 protected:
     static constexpr size_t MTU = 1500;
     static constexpr size_t MSS = imkcpp::MTU_TO_MSS<MTU>();
-    static constexpr size_t OVERHEAD = imkcpp::constants::IKCP_OVERHEAD;
 
     imkcpp::Flusher<MTU> flusher;
 
@@ -37,7 +36,7 @@ TEST_F(FlusherTest, IsEmptyInitially) {
 TEST_F(FlusherTest, FlushIfFull) {
     using namespace imkcpp;
 
-    const Segment segment = create_mock_segment(MSS - OVERHEAD - 1);
+    const Segment segment = create_mock_segment(MSS - SegmentHeader::OVERHEAD - 1);
     flusher.emplace(segment.header, segment.data);
     ASSERT_EQ(flusher.flush_if_full(mock_callback), 0);
     ASSERT_EQ(callback_invocations, 0);
@@ -55,7 +54,7 @@ TEST_F(FlusherTest, FlushIfDoesNotFit) {
 
     const Segment segment = create_mock_segment(segment_size);
     flusher.emplace(segment.header, segment.data);
-    ASSERT_EQ(flusher.flush_if_does_not_fit(mock_callback, segment_size + 1), segment_size + OVERHEAD);
+    ASSERT_EQ(flusher.flush_if_does_not_fit(mock_callback, segment_size + 1), segment_size + SegmentHeader::OVERHEAD);
     ASSERT_EQ(callback_invocations, 1);
 
     ASSERT_EQ(flusher.flush_if_does_not_fit(mock_callback, segment_size), 0);
@@ -67,7 +66,7 @@ TEST_F(FlusherTest, FlushIfNotEmpty) {
 
     const Segment segment = create_mock_segment(1);
     flusher.emplace(segment.header, segment.data);
-    ASSERT_EQ(flusher.flush_if_not_empty(mock_callback), OVERHEAD + 1);
+    ASSERT_EQ(flusher.flush_if_not_empty(mock_callback), SegmentHeader::OVERHEAD + 1);
     ASSERT_EQ(callback_invocations, 1);
 
     ASSERT_EQ(flusher.flush_if_not_empty(mock_callback), 0);

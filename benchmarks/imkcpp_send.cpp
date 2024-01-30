@@ -9,7 +9,7 @@ void BM_imkcpp_cycle_unconstrained(benchmark::State& state) {
     for (auto _ : state) {
         state.PauseTiming();
 
-        ImKcpp<constants::IKCP_MTU_DEF> kcp_output(0);
+        ImKcpp<constants::IKCP_MTU_DEF> kcp_output(Conv{0});
 
         kcp_output.set_send_window(2048);
         kcp_output.set_receive_window(2048);
@@ -25,7 +25,7 @@ void BM_imkcpp_cycle_unconstrained(benchmark::State& state) {
 
         kcp_output.update(0, output_callback);
 
-        ImKcpp<constants::IKCP_MTU_DEF> kcp_input(0);
+        ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
         kcp_input.set_send_window(2048);
         kcp_input.set_receive_window(2048);
         kcp_input.update(0, [](std::span<const std::byte>) { });
@@ -77,7 +77,7 @@ void BM_imkcpp_send(benchmark::State& state) {
     for (auto _ : state) {
         state.PauseTiming();
 
-        ImKcpp<constants::IKCP_MTU_DEF> kcp_output(0);
+        ImKcpp<constants::IKCP_MTU_DEF> kcp_output(Conv{0});
 
         kcp_output.set_send_window(2048);
         kcp_output.set_receive_window(2048);
@@ -109,7 +109,7 @@ void BM_imkcpp_input(benchmark::State& state) {
     for (auto _ : state) {
         state.PauseTiming();
 
-        ImKcpp<constants::IKCP_MTU_DEF> kcp_output(0);
+        ImKcpp<constants::IKCP_MTU_DEF> kcp_output(Conv{0});
 
         kcp_output.set_send_window(2048);
         kcp_output.set_receive_window(2048);
@@ -125,7 +125,7 @@ void BM_imkcpp_input(benchmark::State& state) {
 
         kcp_output.update(0, output_callback);
 
-        ImKcpp<constants::IKCP_MTU_DEF> kcp_input(0);
+        ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
         kcp_input.set_send_window(2048);
         kcp_input.set_receive_window(2048);
         kcp_input.update(0, [](std::span<const std::byte>) { });
@@ -165,7 +165,7 @@ void BM_imkcpp_receive(benchmark::State& state) {
     for (auto _ : state) {
         state.PauseTiming();
 
-        ImKcpp<constants::IKCP_MTU_DEF> kcp_output(0);
+        ImKcpp<constants::IKCP_MTU_DEF> kcp_output(Conv{0});
 
         kcp_output.set_send_window(2048);
         kcp_output.set_receive_window(2048);
@@ -181,7 +181,7 @@ void BM_imkcpp_receive(benchmark::State& state) {
 
         kcp_output.update(0, output_callback);
 
-        ImKcpp<constants::IKCP_MTU_DEF> kcp_input(0);
+        ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
         kcp_input.set_send_window(2048);
         kcp_input.set_receive_window(2048);
         kcp_input.update(0, [](std::span<const std::byte>) { });
@@ -217,7 +217,7 @@ void BM_imkcpp_acknowledge(benchmark::State& state) {
     for (auto _ : state) {
         state.PauseTiming();
 
-        ImKcpp<constants::IKCP_MTU_DEF> kcp_output(0);
+        ImKcpp<constants::IKCP_MTU_DEF> kcp_output(Conv{0});
 
         kcp_output.set_send_window(2048);
         kcp_output.set_receive_window(2048);
@@ -233,7 +233,7 @@ void BM_imkcpp_acknowledge(benchmark::State& state) {
 
         kcp_output.update(0, output_callback);
 
-        ImKcpp<constants::IKCP_MTU_DEF> kcp_input(0);
+        ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
         kcp_input.set_send_window(2048);
         kcp_input.set_receive_window(2048);
         kcp_input.update(0, [](std::span<const std::byte>) { });

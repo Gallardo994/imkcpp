@@ -28,7 +28,7 @@ namespace imkcpp {
     /// The main class of the library.
     template <size_t MTU>
     class ImKcpp final {
-        static_assert(MTU > constants::IKCP_OVERHEAD, "MTU is too small");
+        static_assert(MTU > SegmentHeader::OVERHEAD, "MTU is too small");
 
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
 
@@ -65,7 +65,7 @@ namespace imkcpp {
         }
 
     public:
-        explicit ImKcpp(const u32 conv) noexcept {
+        explicit ImKcpp(const Conv conv) noexcept {
             this->shared_ctx.set_conv(conv);
             this->set_receive_window(constants::IKCP_WND_RCV);
             this->set_send_window(constants::IKCP_WND_SND);
@@ -122,7 +122,7 @@ namespace imkcpp {
 
         /// Receives data from the transport layer.
         auto input(const std::span<const std::byte> data) noexcept -> tl::expected<InputResult, error> {
-            if (data.size() < constants::IKCP_OVERHEAD) {
+            if (data.size() < SegmentHeader::OVERHEAD) {
                 return tl::unexpected(error::less_than_header_size);
             }
 
@@ -142,7 +142,7 @@ namespace imkcpp {
             const auto data_size = data.size();
 
             while (true) {
-                if (data_size - offset < constants::IKCP_OVERHEAD) {
+                if (data_size - offset < SegmentHeader::OVERHEAD) {
                     break;
                 }
 
