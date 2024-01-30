@@ -12,7 +12,6 @@ namespace imkcpp::constants {
     constexpr u32 IKCP_WND_RCV = 128;       // must >= max fragment size
     constexpr u32 IKCP_MTU_DEF = 1400;
     constexpr u32 IKCP_INTERVAL = 100;
-    constexpr u32 IKCP_OVERHEAD = 24; // TODO: Overhead does not take into account true field sizes
     constexpr u32 IKCP_DEADLINK = 20;
     constexpr u32 IKCP_THRESH_INIT = 2;
     constexpr u32 IKCP_THRESH_MIN = 2;

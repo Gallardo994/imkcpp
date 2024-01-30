@@ -11,7 +11,7 @@ namespace imkcpp {
     /// Calculates Maximum Segment Size from Maximum Transmission Unit.
     template <size_t MTU>
     constexpr size_t MTU_TO_MSS() {
-        static_assert(MTU >= constants::IKCP_OVERHEAD + 1);
-        return MTU - constants::IKCP_OVERHEAD;
+        static_assert(MTU >= SegmentHeader::OVERHEAD + 1);
+        return MTU - SegmentHeader::OVERHEAD;
     }
 }

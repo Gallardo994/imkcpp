@@ -36,8 +36,10 @@ namespace imkcpp {
         /// Length of the payload.
         u32 len = 0;
 
+        constexpr static size_t OVERHEAD = Conv::UTS + sizeof(cmd) + sizeof(frg) + sizeof(wnd) + sizeof(ts) + sizeof(sn) + sizeof(una) + sizeof(len);
+
         void encode_to(std::span<std::byte> buf, size_t& offset) const {
-            assert(buf.size() >= constants::IKCP_OVERHEAD);
+            assert(buf.size() >= SegmentHeader::OVERHEAD);
 
             encoder::encode<Conv>(buf, offset, this->conv);
             encoder::encode<u8>(buf, offset, this->cmd);
@@ -50,7 +52,7 @@ namespace imkcpp {
         }
 
         void decode_from(const std::span<const std::byte> buf, size_t& offset) {
-            assert(buf.size() >= constants::IKCP_OVERHEAD);
+            assert(buf.size() >= SegmentHeader::OVERHEAD);
 
             encoder::decode<Conv>(buf, offset, this->conv);
             encoder::decode<u8>(buf, offset, this->cmd);
@@ -116,7 +118,7 @@ namespace imkcpp {
         explicit Segment(const SegmentHeader& header, SegmentData& data) : header(header), data(std::move(data)) { }
 
         void encode_to(const std::span<std::byte> buf, size_t& offset) const {
-            assert(buf.size() >= constants::IKCP_OVERHEAD + this->header.len);
+            assert(buf.size() >= SegmentHeader::OVERHEAD + this->header.len);
             assert(this->header.len == this->data.size());
 
             this->header.encode_to(buf, offset);
@@ -124,14 +126,14 @@ namespace imkcpp {
         }
 
         void decode_from(const std::span<const std::byte> buf, size_t& offset) {
-            assert(buf.size() >= constants::IKCP_OVERHEAD + this->header.len);
+            assert(buf.size() >= SegmentHeader::OVERHEAD + this->header.len);
 
             this->header.decode_from(buf, offset);
             this->data.decode_from(buf, offset, this->header.len);
         }
 
         [[nodiscard]] size_t size() const {
-            return constants::IKCP_OVERHEAD + this->data_size();
+            return SegmentHeader::OVERHEAD + this->data_size();
         }
 
         [[nodiscard]] size_t data_size() const {

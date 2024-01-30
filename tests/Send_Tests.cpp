@@ -91,7 +91,7 @@ TEST(Send_Tests, Send_ValidValues) {
         ASSERT_EQ(capture_acks_result.cmd_wins_count, 0);
         ASSERT_EQ(capture_acks_result.timeout_retransmitted_count, 0);
         ASSERT_EQ(capture_acks_result.fast_retransmitted_count, 0);
-        ASSERT_EQ(capture_acks_result.total_bytes_sent, capture_acks_result.cmd_ack_count * constants::IKCP_OVERHEAD);
+        ASSERT_EQ(capture_acks_result.total_bytes_sent, capture_acks_result.cmd_ack_count * SegmentHeader::OVERHEAD);
 
         InputResult acks_input_result{};
         for (auto& captured : captured_acks) {
@@ -107,7 +107,7 @@ TEST(Send_Tests, Send_ValidValues) {
         ASSERT_EQ(acks_input_result.cmd_wask_count, 0);
         ASSERT_EQ(acks_input_result.cmd_wins_count, 0);
         ASSERT_EQ(acks_input_result.dropped_push_count, 0);
-        ASSERT_EQ(acks_input_result.total_bytes_received, acks_input_result.cmd_ack_count * constants::IKCP_OVERHEAD);
+        ASSERT_EQ(acks_input_result.total_bytes_received, acks_input_result.cmd_ack_count * SegmentHeader::OVERHEAD);
 
         kcp_output.update(5000, [](std::span<const std::byte>) {
             FAIL() << "Should not be called because all data should be acknowledged";
@@ -290,7 +290,7 @@ TEST(Send_Tests, Send_FragmentedValidValues) {
 TEST(Send_Tests, Send_SizeValid) {
     using namespace imkcpp;
 
-    constexpr size_t max_segment_size = constants::IKCP_MTU_DEF - constants::IKCP_OVERHEAD;
+    constexpr size_t max_segment_size = constants::IKCP_MTU_DEF - SegmentHeader::OVERHEAD;
     constexpr size_t max_segments_count = 255;
     constexpr size_t max_data_size = max_segment_size * max_segments_count;
     constexpr size_t step = max_segment_size / 2;
@@ -346,12 +346,12 @@ TEST(Send_Tests, Send_ReceivedMalformedData) {
     ImKcpp<constants::IKCP_MTU_DEF> kcp(Conv{0});
 
     {
-        std::vector<std::byte> data(constants::IKCP_OVERHEAD - 1);
+        std::vector<std::byte> data(SegmentHeader::OVERHEAD - 1);
         ASSERT_EQ(kcp.input(data).error(), error::less_than_header_size);
     }
 
     {
-        std::vector<std::byte> data(constants::IKCP_OVERHEAD);
+        std::vector<std::byte> data(SegmentHeader::OVERHEAD);
         SegmentHeader header{};
         header.cmd = commands::IKCP_CMD_PUSH;
         header.len = 128;
