@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
 #include "imkcpp.hpp"
-#include "commands.hpp"
 #include <cstdio>
 #include <numeric>
 #include <random>
@@ -353,7 +352,7 @@ TEST(Send_Tests, Send_ReceivedMalformedData) {
     {
         std::vector<std::byte> data(SegmentHeader::OVERHEAD);
         SegmentHeader header{};
-        header.cmd = commands::IKCP_CMD_PUSH;
+        header.cmd = commands::PUSH;
         header.len = 128;
 
         size_t offset = 0;

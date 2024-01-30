@@ -23,6 +23,7 @@
 #include "ack_controller.hpp"
 #include "flusher.hpp"
 #include "utility.hpp"
+#include "types/cmd.hpp"
 
 namespace imkcpp {
     /// The main class of the library.
@@ -53,7 +54,7 @@ namespace imkcpp {
             SegmentHeader header;
 
             header.conv = this->shared_ctx.get_conv();
-            header.cmd = commands::IKCP_CMD_ACK;
+            header.cmd = commands::ACK;
             header.frg = 0;
             header.wnd = unused_receive_window;
             header.una = this->receiver.get_rcv_nxt();
@@ -163,8 +164,8 @@ namespace imkcpp {
                 this->congestion_controller.set_remote_window(header.wnd);
                 this->ack_controller.una_received(header.una);
 
-                switch (header.cmd) {
-                    case commands::IKCP_CMD_PUSH: {
+                switch (header.cmd.get()) {
+                    case commands::PUSH.get(): {
                         if (!this->congestion_controller.fits_receive_window(this->receiver.get_rcv_nxt(), header.sn)) {
                             drop_push();
                             break;
@@ -182,19 +183,19 @@ namespace imkcpp {
                         }
                         break;
                     }
-                    case commands::IKCP_CMD_ACK: {
+                    case commands::ACK.get(): {
                         this->rto_calculator.update_rto(this->current, header.ts);
                         this->ack_controller.ack_received(header.sn);
                         fastack_ctx.update(header.sn, header.ts);
                         input_result.cmd_ack_count++;
                         break;
                     }
-                    case commands::IKCP_CMD_WASK: {
+                    case commands::WASK.get(): {
                         this->window_prober.set_flag(ProbeFlag::AskTell);
                         input_result.cmd_wask_count++;
                         break;
                     }
-                    case commands::IKCP_CMD_WINS: {
+                    case commands::WINS.get(): {
                         input_result.cmd_wins_count++;
                         break;
                     }
@@ -329,7 +330,7 @@ namespace imkcpp {
                 if (this->window_prober.has_flag(ProbeFlag::AskSend)) {
                     flush_result.total_bytes_sent += this->flusher.flush_if_full(callback);
 
-                    header.cmd = commands::IKCP_CMD_WASK;
+                    header.cmd = commands::WASK;
                     this->flusher.emplace(header);
 
                     flush_result.cmd_wask_count++;
@@ -338,7 +339,7 @@ namespace imkcpp {
                 if (this->window_prober.has_flag(ProbeFlag::AskTell)) {
                     flush_result.total_bytes_sent +=this->flusher.flush_if_full(callback);
 
-                    header.cmd = commands::IKCP_CMD_WINS;
+                    header.cmd = commands::WINS;
                     this->flusher.emplace(header);
 
                     flush_result.cmd_wins_count++;

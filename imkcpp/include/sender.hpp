@@ -6,7 +6,6 @@
 #include "types.hpp"
 #include "errors.hpp"
 #include "segment.hpp"
-#include "commands.hpp"
 #include "congestion_controller.hpp"
 #include "shared_ctx.hpp"
 #include "sender_buffer.hpp"
@@ -95,7 +94,7 @@ namespace imkcpp {
                 Segment& newseg = this->snd_queue.front();
 
                 newseg.header.conv = conv;
-                newseg.header.cmd = commands::IKCP_CMD_PUSH;
+                newseg.header.cmd = commands::PUSH;
                 newseg.header.wnd = unused_receive_window;
                 newseg.header.ts = current;
                 newseg.header.sn = this->segment_tracker.get_and_increment_snd_nxt();

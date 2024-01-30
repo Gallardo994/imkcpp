@@ -3,6 +3,7 @@
 #include "types.hpp"
 #include "encoder.hpp"
 #include "types/conv.hpp"
+#include "types/cmd.hpp"
 #include <vector>
 
 namespace imkcpp {
@@ -16,7 +17,7 @@ namespace imkcpp {
         Conv conv{0};
 
         /// Command type.
-        u8 cmd = 0;
+        Cmd cmd{0};
 
         /// Fragment. Indicates how many next SNs are following this one in the same packet.
         u8 frg = 0;
@@ -46,11 +47,13 @@ namespace imkcpp {
             encoder::encoded_size<decltype(una)>() +
             encoder::encoded_size<decltype(len)>();
 
+        static_assert(OVERHEAD == 24, "SegmentHeader::OVERHEAD is 24 by default. If you really know what you're doing, change this value.");
+
         void encode_to(std::span<std::byte> buf, size_t& offset) const {
             assert(buf.size() >= SegmentHeader::OVERHEAD);
 
             encoder::encode<Conv>(buf, offset, this->conv);
-            encoder::encode<u8>(buf, offset, this->cmd);
+            encoder::encode<Cmd>(buf, offset, this->cmd);
             encoder::encode<u8>(buf, offset, this->frg);
             encoder::encode<u16>(buf, offset, this->wnd);
             encoder::encode<u32>(buf, offset, this->ts);
@@ -63,7 +66,7 @@ namespace imkcpp {
             assert(buf.size() >= SegmentHeader::OVERHEAD);
 
             encoder::decode<Conv>(buf, offset, this->conv);
-            encoder::decode<u8>(buf, offset, this->cmd);
+            encoder::decode<Cmd>(buf, offset, this->cmd);
             encoder::decode<u8>(buf, offset, this->frg);
             encoder::decode<u16>(buf, offset, this->wnd);
             encoder::decode<u32>(buf, offset, this->ts);
