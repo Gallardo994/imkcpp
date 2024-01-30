@@ -5,9 +5,17 @@
 #include "utility.hpp"
 
 namespace imkcpp {
+    enum class ProbeFlag : u32 {
+        AskSend = 0x1,
+        AskTell = 0x2,
+    };
+
     class WindowProber final {
+        constexpr static u32 PROBE_INIT = 7000; // 7 secs to probe window size
+        constexpr static u32 PROBE_LIMIT = 120000; // up to 120 secs to probe window
+
         /// Probe flags
-        u32 probe = 0;
+        u32 probe = 0; // Probe flags
 
         /// Timestamp of the last time we probed the remote window
         u32 ts_probe = 0; // Timestamp of the last time we probed the remote window
@@ -25,32 +33,36 @@ namespace imkcpp {
             }
 
             if (this->probe_wait == 0) {
-                this->probe_wait = constants::IKCP_PROBE_INIT;
+                this->probe_wait = PROBE_INIT;
                 this->ts_probe = current + this->probe_wait;
             } else {
                 if (time_delta(current, this->ts_probe) >= 0) {
-                    if (this->probe_wait < constants::IKCP_PROBE_INIT) {
-                        this->probe_wait = constants::IKCP_PROBE_INIT;
+                    if (this->probe_wait < PROBE_INIT) {
+                        this->probe_wait = PROBE_INIT;
                     }
 
                     this->probe_wait += this->probe_wait / 2;
-                    if (this->probe_wait > constants::IKCP_PROBE_LIMIT) {
-                        this->probe_wait = constants::IKCP_PROBE_LIMIT;
+                    if (this->probe_wait > PROBE_LIMIT) {
+                        this->probe_wait = PROBE_LIMIT;
                     }
 
                     this->ts_probe = current + this->probe_wait;
 
-                    this->set_flag(constants::IKCP_ASK_SEND);
+                    this->set_flag(ProbeFlag::AskSend);
                 }
             }
         }
 
-        void set_flag(const u32 flag) {
-            this->probe |= flag;
+        void set_flag(const ProbeFlag flag) {
+            assert(flag >= ProbeFlag::AskSend && flag <= ProbeFlag::AskTell);
+
+            this->probe |= static_cast<u32>(flag);
         }
 
-        [[nodiscard]] bool has_flag(const u32 flag) const {
-            return (this->probe & flag) != 0;
+        [[nodiscard]] bool has_flag(const ProbeFlag flag) const {
+            assert(flag >= ProbeFlag::AskSend && flag <= ProbeFlag::AskTell);
+
+            return (this->probe & static_cast<u32>(flag)) != 0;
         }
 
         void reset_flags() {

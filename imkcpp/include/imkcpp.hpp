@@ -190,7 +190,7 @@ namespace imkcpp {
                         break;
                     }
                     case commands::IKCP_CMD_WASK: {
-                        this->window_prober.set_flag(constants::IKCP_ASK_TELL);
+                        this->window_prober.set_flag(ProbeFlag::AskTell);
                         input_result.cmd_wask_count++;
                         break;
                     }
@@ -224,7 +224,7 @@ namespace imkcpp {
                 const auto& result_value = result.value();
 
                 if (result_value.recovered) {
-                    this->window_prober.set_flag(constants::IKCP_ASK_TELL);
+                    this->window_prober.set_flag(ProbeFlag::AskTell);
                 }
 
                 return result_value.size;
@@ -326,7 +326,7 @@ namespace imkcpp {
             const auto flush_probes = [&] {
                 this->window_prober.update(current, this->congestion_controller.get_remote_window());
 
-                if (this->window_prober.has_flag(constants::IKCP_ASK_SEND)) {
+                if (this->window_prober.has_flag(ProbeFlag::AskSend)) {
                     flush_result.total_bytes_sent += this->flusher.flush_if_full(callback);
 
                     header.cmd = commands::IKCP_CMD_WASK;
@@ -335,7 +335,7 @@ namespace imkcpp {
                     flush_result.cmd_wask_count++;
                 }
 
-                if (this->window_prober.has_flag(constants::IKCP_ASK_TELL)) {
+                if (this->window_prober.has_flag(ProbeFlag::AskTell)) {
                     flush_result.total_bytes_sent +=this->flusher.flush_if_full(callback);
 
                     header.cmd = commands::IKCP_CMD_WINS;
