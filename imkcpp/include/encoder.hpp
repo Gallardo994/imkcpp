@@ -123,7 +123,7 @@ namespace imkcpp::encoder {
     }
 
     template<typename T>
-    constexpr size_t encoded_size();
+    size_t encoded_size();
 
     template<>
     constexpr size_t encoded_size<u8>() {
