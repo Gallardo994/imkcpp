@@ -1,5 +1,8 @@
 #pragma once
 
+#include <span>
+#include "types.hpp"
+
 namespace imkcpp {
     /// Conversation ID.
     /// UT can be changed to u16 or u8 to save space if needed.
