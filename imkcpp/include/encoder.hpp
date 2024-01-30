@@ -71,17 +71,17 @@ namespace imkcpp::encoder {
     }
 
     template<typename T>
-    void encode(std::span<std::byte>& buf, size_t& offset, T value);
+    void encode(std::span<std::byte>& buf, size_t& offset, const T& value);
 
     template<>
-    inline void encode<u8>(std::span<std::byte>& buf, size_t& offset, const u8 value) {
+    inline void encode<u8>(std::span<std::byte>& buf, size_t& offset, const u8& value) {
         assert(buf.size() >= offset + sizeof(u8));
         std::memcpy(buf.data() + offset, &value, sizeof(u8));
         offset += sizeof(u8);
     }
 
     template<>
-    inline void encode<u16>(std::span<std::byte>& buf, size_t& offset, const u16 value) {
+    inline void encode<u16>(std::span<std::byte>& buf, size_t& offset, const u16& value) {
         assert(buf.size() >= offset + sizeof(u16));
         const u16 networkValue = htons(value);
         std::memcpy(buf.data() + offset, &networkValue, sizeof(u16));
@@ -89,7 +89,7 @@ namespace imkcpp::encoder {
     }
 
     template<>
-    inline void encode<u32>(std::span<std::byte>& buf, size_t& offset, const u32 value) {
+    inline void encode<u32>(std::span<std::byte>& buf, size_t& offset, const u32& value) {
         assert(buf.size() >= offset + sizeof(u32));
         const u32 networkValue = htonl(value);
         std::memcpy(buf.data() + offset, &networkValue, sizeof(u32));

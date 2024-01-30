@@ -47,7 +47,7 @@ namespace imkcpp {
         }
 
         template<>
-        inline void encode<Fragment>(std::span<std::byte>& buf, size_t& offset, const Fragment value) {
+        inline void encode<Fragment>(std::span<std::byte>& buf, size_t& offset, const Fragment& value) {
             encode<Fragment::UT>(buf, offset, value.get());
         }
 

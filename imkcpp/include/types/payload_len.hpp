@@ -35,7 +35,7 @@ namespace imkcpp {
         }
 
         template<>
-        inline void encode<PayloadLen>(std::span<std::byte>& buf, size_t& offset, const PayloadLen value) {
+        inline void encode<PayloadLen>(std::span<std::byte>& buf, size_t& offset, const PayloadLen& value) {
             encode<PayloadLen::UT>(buf, offset, value.get());
         }
 

@@ -35,7 +35,7 @@ namespace imkcpp {
         }
 
         template<>
-        inline void encode<Conv>(std::span<std::byte>& buf, size_t& offset, const Conv value) {
+        inline void encode<Conv>(std::span<std::byte>& buf, size_t& offset, const Conv& value) {
             encode<Conv::UT>(buf, offset, value.get());
         }
 
