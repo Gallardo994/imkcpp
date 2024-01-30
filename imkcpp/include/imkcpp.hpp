@@ -60,7 +60,7 @@ namespace imkcpp {
             header.una = this->receiver.get_rcv_nxt();
             header.sn = 0;
             header.ts = 0;
-            header.len = 0;
+            header.len = PayloadLen(0);
 
             return header;
         }
@@ -136,7 +136,7 @@ namespace imkcpp {
             size_t offset = 0;
 
             const auto drop_push = [&] {
-                offset += header.len;
+                offset += header.len.get();
                 input_result.dropped_push_count++;
             };
 
@@ -175,7 +175,7 @@ namespace imkcpp {
 
                         if (this->receiver.should_receive(header.sn)) {
                             SegmentData segment_data;
-                            segment_data.decode_from(data, offset, header.len);
+                            segment_data.decode_from(data, offset, header.len.get());
 
                             this->receiver.emplace_segment(header, segment_data);
                         } else {

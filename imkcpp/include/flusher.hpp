@@ -70,7 +70,7 @@ namespace imkcpp {
             assert(this->offset + data.size() <= this->buffer.size());
 
             header.encode_to(this->buffer, this->offset);
-            data.encode_to(this->buffer, this->offset, header.len);
+            data.encode_to(this->buffer, this->offset, header.len.get());
         }
     };
 }

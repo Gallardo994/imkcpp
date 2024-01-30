@@ -5,6 +5,8 @@
 #include "types/conv.hpp"
 #include "types/cmd.hpp"
 #include "types/fragment.hpp"
+
+#include "types/payload_len.hpp"
 #include <vector>
 
 namespace imkcpp {
@@ -36,7 +38,7 @@ namespace imkcpp {
         u32 una = 0;
 
         /// Length of the payload.
-        u32 len = 0;
+        PayloadLen len{0};
 
         constexpr static size_t OVERHEAD =
             encoder::encoded_size<decltype(conv)>() +
@@ -60,7 +62,7 @@ namespace imkcpp {
             encoder::encode<u32>(buf, offset, this->ts);
             encoder::encode<u32>(buf, offset, this->sn);
             encoder::encode<u32>(buf, offset, this->una);
-            encoder::encode<u32>(buf, offset, this->len);
+            encoder::encode<PayloadLen>(buf, offset, this->len);
         }
 
         void decode_from(const std::span<const std::byte> buf, size_t& offset) {
@@ -73,7 +75,7 @@ namespace imkcpp {
             encoder::decode<u32>(buf, offset, this->ts);
             encoder::decode<u32>(buf, offset, this->sn);
             encoder::decode<u32>(buf, offset, this->una);
-            encoder::decode<u32>(buf, offset, this->len);
+            encoder::decode<PayloadLen>(buf, offset, this->len);
         }
     };
 
@@ -130,18 +132,18 @@ namespace imkcpp {
         explicit Segment(const SegmentHeader& header, SegmentData& data) : header(header), data(std::move(data)) { }
 
         void encode_to(const std::span<std::byte> buf, size_t& offset) const {
-            assert(buf.size() >= SegmentHeader::OVERHEAD + this->header.len);
-            assert(this->header.len == this->data.size());
+            assert(buf.size() >= SegmentHeader::OVERHEAD + this->header.len.get());
+            assert(this->header.len.get() == this->data.size());
 
             this->header.encode_to(buf, offset);
-            this->data.encode_to(buf, offset, this->header.len);
+            this->data.encode_to(buf, offset, this->header.len.get());
         }
 
         void decode_from(const std::span<const std::byte> buf, size_t& offset) {
-            assert(buf.size() >= SegmentHeader::OVERHEAD + this->header.len);
+            assert(buf.size() >= SegmentHeader::OVERHEAD + this->header.len.get());
 
             this->header.decode_from(buf, offset);
-            this->data.decode_from(buf, offset, this->header.len);
+            this->data.decode_from(buf, offset, this->header.len.get());
         }
 
         [[nodiscard]] size_t size() const {
@@ -149,12 +151,12 @@ namespace imkcpp {
         }
 
         [[nodiscard]] size_t data_size() const {
-            return this->header.len;
+            return this->header.len.get();
         }
 
         void data_assign(const std::span<const std::byte> buf) {
             this->data.assign(buf);
-            this->header.len = buf.size();
+            this->header.len = PayloadLen(buf.size());
         }
     };
 }

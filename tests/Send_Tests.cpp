@@ -353,7 +353,7 @@ TEST(Send_Tests, Send_ReceivedMalformedData) {
         std::vector<std::byte> data(SegmentHeader::OVERHEAD);
         SegmentHeader header{};
         header.cmd = commands::PUSH;
-        header.len = 128;
+        header.len = PayloadLen(128);
 
         size_t offset = 0;
         header.encode_to(data, offset);
