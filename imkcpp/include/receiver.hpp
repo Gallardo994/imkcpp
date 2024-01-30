@@ -30,7 +30,7 @@ namespace imkcpp {
                 return front.data_size();
             }
 
-            if (this->rcv_queue.size() < static_cast<size_t>(front.header.frg) + 1) {
+            if (this->rcv_queue.size() < static_cast<size_t>(front.header.frg.get()) + 1) {
                 return tl::unexpected(error::waiting_for_fragment);
             }
 
@@ -62,7 +62,7 @@ namespace imkcpp {
             size_t offset = 0;
             for (auto it = this->rcv_queue.begin(); it != this->rcv_queue.end();) {
                 Segment& segment = *it;
-                const u8 fragment = segment.header.frg;
+                const Fragment fragment = segment.header.frg;
 
                 const size_t copy_len = std::min(segment.data_size(), buffer.size() - offset);
                 segment.data.encode_to(buffer, offset, copy_len);

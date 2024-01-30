@@ -4,6 +4,7 @@
 #include "encoder.hpp"
 #include "types/conv.hpp"
 #include "types/cmd.hpp"
+#include "types/fragment.hpp"
 #include <vector>
 
 namespace imkcpp {
@@ -20,7 +21,7 @@ namespace imkcpp {
         Cmd cmd{0};
 
         /// Fragment. Indicates how many next SNs are following this one in the same packet.
-        u8 frg = 0;
+        Fragment frg{0};
 
         /// Window size (available space in the receive buffer).
         u16 wnd = 0;
@@ -54,7 +55,7 @@ namespace imkcpp {
 
             encoder::encode<Conv>(buf, offset, this->conv);
             encoder::encode<Cmd>(buf, offset, this->cmd);
-            encoder::encode<u8>(buf, offset, this->frg);
+            encoder::encode<Fragment>(buf, offset, this->frg);
             encoder::encode<u16>(buf, offset, this->wnd);
             encoder::encode<u32>(buf, offset, this->ts);
             encoder::encode<u32>(buf, offset, this->sn);
@@ -67,7 +68,7 @@ namespace imkcpp {
 
             encoder::decode<Conv>(buf, offset, this->conv);
             encoder::decode<Cmd>(buf, offset, this->cmd);
-            encoder::decode<u8>(buf, offset, this->frg);
+            encoder::decode<Fragment>(buf, offset, this->frg);
             encoder::decode<u16>(buf, offset, this->wnd);
             encoder::decode<u32>(buf, offset, this->ts);
             encoder::decode<u32>(buf, offset, this->sn);

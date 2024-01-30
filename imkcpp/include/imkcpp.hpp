@@ -55,7 +55,7 @@ namespace imkcpp {
 
             header.conv = this->shared_ctx.get_conv();
             header.cmd = commands::ACK;
-            header.frg = 0;
+            header.frg = Fragment{0};
             header.wnd = unused_receive_window;
             header.una = this->receiver.get_rcv_nxt();
             header.sn = 0;

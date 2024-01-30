@@ -75,7 +75,7 @@ namespace imkcpp {
 
                 Segment& seg = this->snd_queue.emplace_back();
                 seg.data_assign({buffer.data() + offset, size});
-                seg.header.frg = static_cast<u8>(count - i - 1);
+                seg.header.frg = Fragment(count - i - 1);
 
                 assert(seg.data_size() == size);
 
