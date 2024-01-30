@@ -1,6 +1,10 @@
 <map id="imkcpp::Segment" name="imkcpp::Segment">
-<area shape="rect" id="node1" title=" " alt="" coords="227,95,363,121"/>
-<area shape="rect" id="node2" href="$structimkcpp_1_1SegmentData.html" title="SegmentData is used to store the payload of the segment." alt="" coords="5,5,172,32"/>
-<area shape="rect" id="node3" href="$structimkcpp_1_1SegmentMetadata.html" title="SegmentMetadata is used to track the state of the segment in the send queue for (re)transmission purp..." alt="" coords="196,5,395,32"/>
-<area shape="rect" id="node4" href="$structimkcpp_1_1SegmentHeader.html" title="SegmentHeader is used to store the header of the segment." alt="" coords="419,5,601,32"/>
+<area shape="rect" id="node1" title=" " alt="" coords="227,184,363,211"/>
+<area shape="rect" id="node2" href="$structimkcpp_1_1SegmentData.html" title="SegmentData is used to store the payload of the segment." alt="" coords="5,95,172,121"/>
+<area shape="rect" id="node3" href="$structimkcpp_1_1SegmentMetadata.html" title="SegmentMetadata is used to track the state of the segment in the send queue for (re)transmission purp..." alt="" coords="196,95,395,121"/>
+<area shape="rect" id="node4" href="$structimkcpp_1_1SegmentHeader.html" title="SegmentHeader is used to store the header of the segment." alt="" coords="419,95,601,121"/>
+<area shape="rect" id="node5" href="$classimkcpp_1_1PayloadLen.html" title=" " alt="" coords="206,5,358,32"/>
+<area shape="rect" id="node6" href="$classimkcpp_1_1Cmd.html" title=" " alt="" coords="383,5,491,32"/>
+<area shape="rect" id="node7" href="$classimkcpp_1_1Fragment.html" title=" " alt="" coords="515,5,655,32"/>
+<area shape="rect" id="node8" href="$classimkcpp_1_1Conv.html" title=" " alt="" coords="679,5,789,32"/>
 </map>

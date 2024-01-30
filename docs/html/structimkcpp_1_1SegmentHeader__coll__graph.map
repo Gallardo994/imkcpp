@@ -1,0 +1,7 @@
+<map id="imkcpp::SegmentHeader" name="imkcpp::SegmentHeader">
+<area shape="rect" id="node1" title="SegmentHeader is used to store the header of the segment." alt="" coords="218,95,401,121"/>
+<area shape="rect" id="node2" href="$classimkcpp_1_1PayloadLen.html" title=" " alt="" coords="5,5,157,32"/>
+<area shape="rect" id="node3" href="$classimkcpp_1_1Cmd.html" title=" " alt="" coords="182,5,290,32"/>
+<area shape="rect" id="node4" href="$classimkcpp_1_1Fragment.html" title=" " alt="" coords="314,5,454,32"/>
+<area shape="rect" id="node5" href="$classimkcpp_1_1Conv.html" title=" " alt="" coords="478,5,589,32"/>
+</map>

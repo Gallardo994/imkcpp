@@ -111,123 +111,113 @@ $(function() {
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        }</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    };</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> MTU&gt;</div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classimkcpp_1_1AckController.html">   51</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classimkcpp_1_1AckController.html">AckController</a> final {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keyword">struct </span>Ack {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            u32 sn = 0;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            u32 ts = 0;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            <span class="keyword">explicit</span> Ack() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            <span class="keyword">explicit</span> Ack(<span class="keyword">const</span> u32 sn, <span class="keyword">const</span> u32 ts) : sn(sn), ts(ts) { }</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        };</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <a class="code" href="classimkcpp_1_1Flusher.html">Flusher&lt;MTU&gt;</a>&amp; flusher;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <a class="code" href="classimkcpp_1_1SenderBuffer.html">SenderBuffer</a>&amp; sender_buffer;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <a class="code" href="classimkcpp_1_1SegmentTracker.html">SegmentTracker</a>&amp; segment_tracker;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        std::vector&lt;Ack&gt; acklist{};</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        u32 rmt_una = 0;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        [[nodiscard]] <span class="keywordtype">bool</span> should_acknowledge(<span class="keyword">const</span> u32 sn)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            <span class="keywordflow">if</span> (sn &lt; this-&gt;segment_tracker.get_snd_una() || sn &gt;= this-&gt;segment_tracker.get_snd_nxt()) {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            }</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        }</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="classimkcpp_1_1AckController.html">AckController</a>(<a class="code" href="classimkcpp_1_1Flusher.html">Flusher&lt;MTU&gt;</a>&amp; flusher,</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                               <a class="code" href="classimkcpp_1_1SenderBuffer.html">SenderBuffer</a>&amp; sender_buffer,</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                               <a class="code" href="classimkcpp_1_1SegmentTracker.html">SegmentTracker</a>&amp; segment_tracker) :</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                               flusher(flusher),</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                               sender_buffer(sender_buffer),</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                               segment_tracker(segment_tracker) {</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        }</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keywordtype">void</span> acknowledge_fastack(<span class="keyword">const</span> <a class="code" href="classimkcpp_1_1FastAckCtx.html">FastAckCtx</a>&amp; fastack_ctx) {</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            <span class="keywordflow">if</span> (!fastack_ctx.<a class="code" href="classimkcpp_1_1FastAckCtx.html#ad71f29a4466262fde5b7b3b62dd60256">is_valid</a>()) {</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            }</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            <span class="keyword">const</span> <span class="keyword">auto</span> maxack = fastack_ctx.<a class="code" href="classimkcpp_1_1FastAckCtx.html#add0ed1d3326f196bf4979b7f8d82c6da">get_maxack</a>();</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            <span class="keywordflow">if</span> (!should_acknowledge(maxack)) {</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            }</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            this-&gt;sender_buffer.increment_fastack_before(maxack);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        }</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00102"></a><span class="lineno"><a class="line" href="classimkcpp_1_1AckController.html#a954d6f2ddef12e261eadcf0504dcaaf1">  102</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classimkcpp_1_1AckController.html#a954d6f2ddef12e261eadcf0504dcaaf1">ack_received</a>(<span class="keyword">const</span> u32 current, <span class="keyword">const</span> u32 sn, <span class="keyword">const</span> u32 ts) {</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            <span class="keywordflow">if</span> (this-&gt;should_acknowledge(sn)) {</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                this-&gt;sender_buffer.erase(sn);</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                this-&gt;sender_buffer.shrink();</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            }</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        }</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
-<div class="line"><a name="l00113"></a><span class="lineno"><a class="line" href="classimkcpp_1_1AckController.html#af20dfdd824f921c2f40c4d67f80437df">  113</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classimkcpp_1_1AckController.html#af20dfdd824f921c2f40c4d67f80437df">una_received</a>(<span class="keyword">const</span> u32 una) {</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            rmt_una = std::max(rmt_una, una);</div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="structimkcpp_1_1Ack.html">   50</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structimkcpp_1_1Ack.html">Ack</a> {</div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="structimkcpp_1_1Ack.html#a0339aefddccdc4e5be4ac6478c5de245">   52</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1Ack.html#a0339aefddccdc4e5be4ac6478c5de245">sn</a> = 0;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="structimkcpp_1_1Ack.html#a22a614365322b225536964d62a097ebf">   55</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1Ack.html#a22a614365322b225536964d62a097ebf">ts</a> = 0;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="structimkcpp_1_1Ack.html">Ack</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="structimkcpp_1_1Ack.html">Ack</a>(<span class="keyword">const</span> u32 <a class="code" href="structimkcpp_1_1Ack.html#a0339aefddccdc4e5be4ac6478c5de245">sn</a>, <span class="keyword">const</span> u32 <a class="code" href="structimkcpp_1_1Ack.html#a22a614365322b225536964d62a097ebf">ts</a>) : <a class="code" href="structimkcpp_1_1Ack.html#a0339aefddccdc4e5be4ac6478c5de245">sn</a>(<a class="code" href="structimkcpp_1_1Ack.html#a0339aefddccdc4e5be4ac6478c5de245">sn</a>), <a class="code" href="structimkcpp_1_1Ack.html#a22a614365322b225536964d62a097ebf">ts</a>(<a class="code" href="structimkcpp_1_1Ack.html#a22a614365322b225536964d62a097ebf">ts</a>) { }</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    };</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classimkcpp_1_1AckController.html">   61</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classimkcpp_1_1AckController.html">AckController</a> final {</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <a class="code" href="classimkcpp_1_1SenderBuffer.html">SenderBuffer</a>&amp; sender_buffer;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <a class="code" href="classimkcpp_1_1SegmentTracker.html">SegmentTracker</a>&amp; segment_tracker;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        std::vector&lt;Ack&gt; acklist{};</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        u32 rmt_una = 0;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        [[nodiscard]] <span class="keywordtype">bool</span> should_acknowledge(<span class="keyword">const</span> u32 sn)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            <span class="keywordflow">if</span> (sn &lt; this-&gt;segment_tracker.get_snd_una() || sn &gt;= this-&gt;segment_tracker.get_snd_nxt()) {</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="classimkcpp_1_1AckController.html">AckController</a>(<a class="code" href="classimkcpp_1_1SenderBuffer.html">SenderBuffer</a>&amp; sender_buffer,</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                               <a class="code" href="classimkcpp_1_1SegmentTracker.html">SegmentTracker</a>&amp; segment_tracker) :</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                               sender_buffer(sender_buffer),</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                               segment_tracker(segment_tracker) {</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        }</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        [[nodiscard]] std::vector&lt;Ack&gt;::const_iterator begin() { <span class="keywordflow">return</span> acklist.begin(); }</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        [[nodiscard]] std::vector&lt;Ack&gt;::const_iterator end() { <span class="keywordflow">return</span> acklist.end(); }</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="keywordtype">void</span> acknowledge_fastack(<span class="keyword">const</span> <a class="code" href="classimkcpp_1_1FastAckCtx.html">FastAckCtx</a>&amp; fastack_ctx) {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            <span class="keywordflow">if</span> (!fastack_ctx.<a class="code" href="classimkcpp_1_1FastAckCtx.html#ad71f29a4466262fde5b7b3b62dd60256">is_valid</a>()) {</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            }</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            <span class="keyword">const</span> <span class="keyword">auto</span> maxack = fastack_ctx.<a class="code" href="classimkcpp_1_1FastAckCtx.html#add0ed1d3326f196bf4979b7f8d82c6da">get_maxack</a>();</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            <span class="keywordflow">if</span> (!should_acknowledge(maxack)) {</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;            }</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            this-&gt;sender_buffer.increment_fastack_before(maxack);</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        }</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keywordtype">void</span> update_remote_una() {</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            <span class="keywordflow">if</span> (<span class="keyword">const</span> std::optional&lt;u32&gt; first_sn = this-&gt;sender_buffer.get_first_sequence_number_in_flight(); first_sn.has_value()) {</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                this-&gt;segment_tracker.set_snd_una(first_sn.value());</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                this-&gt;segment_tracker.reset_snd_una();</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            }</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        }</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="classimkcpp_1_1AckController.html#a30d36d3a2ec86ae6a3b7f5f91a3aa251">  109</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classimkcpp_1_1AckController.html#a30d36d3a2ec86ae6a3b7f5f91a3aa251">ack_received</a>(<span class="keyword">const</span> u32 sn) {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            <span class="keywordflow">if</span> (this-&gt;should_acknowledge(sn)) {</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                this-&gt;sender_buffer.erase(sn);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                this-&gt;update_remote_una();</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        }</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;            this-&gt;sender_buffer.erase_before(una);</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            this-&gt;sender_buffer.shrink();</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        }</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="classimkcpp_1_1AckController.html#a8248bf43c2505438432f18a61e1f53c0">  121</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classimkcpp_1_1AckController.html#a8248bf43c2505438432f18a61e1f53c0">schedule_ack</a>(<span class="keyword">const</span> u32 sn, <span class="keyword">const</span> u32 ts) {</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            this-&gt;acklist.emplace_back(sn, ts);</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        }</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="classimkcpp_1_1AckController.html#add05b2e2f553692866c99f884d8cddc5">  126</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classimkcpp_1_1AckController.html#add05b2e2f553692866c99f884d8cddc5">reserve</a>(<span class="keyword">const</span> <span class="keywordtype">size_t</span> size) {</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            this-&gt;acklist.reserve(size);</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        }</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
-<div class="line"><a name="l00131"></a><span class="lineno"><a class="line" href="classimkcpp_1_1AckController.html#affe420b637cc63fc4c103ab0b1138108">  131</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classimkcpp_1_1AckController.html#affe420b637cc63fc4c103ab0b1138108">flush_acks</a>(<a class="code" href="structimkcpp_1_1FlushResult.html">FlushResult</a>&amp; flush_result, <span class="keyword">const</span> output_callback_t&amp; output, <a class="code" href="structimkcpp_1_1Segment.html">Segment</a>&amp; base_segment) {</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            <span class="keywordtype">size_t</span> count = 0;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">const</span> Ack&amp; ack : this-&gt;acklist) {</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;                <span class="keywordflow">if</span> (ack.sn &lt; this-&gt;rmt_una) {</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;                    <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;                }</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;                flush_result.<a class="code" href="structimkcpp_1_1FlushResult.html#a107002545388dbb0f8f1dea8dabfaa7b">total_bytes_sent</a> += this-&gt;flusher.<a class="code" href="classimkcpp_1_1Flusher.html#a5796819623d057e670931603c9cb3463">flush_if_full</a>(output);</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;                base_segment.header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a> = ack.sn;</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;                base_segment.header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">ts</a> = ack.ts;</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                this-&gt;flusher.<a class="code" href="classimkcpp_1_1Flusher.html#a8494a29dfcbac170c9dd059101b888ef">emplace_segment</a>(base_segment);</div>
+<div class="line"><a name="l00120"></a><span class="lineno"><a class="line" href="classimkcpp_1_1AckController.html#aa0bd5ea738e93c40cbbe2e9a3f5d2961">  120</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classimkcpp_1_1AckController.html#aa0bd5ea738e93c40cbbe2e9a3f5d2961">una_received</a>(<span class="keyword">const</span> u32 una) {</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            rmt_una = std::max(rmt_una, una);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            this-&gt;sender_buffer.erase_before(una);</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            this-&gt;update_remote_una();</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        }</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="classimkcpp_1_1AckController.html#ac73d77771f5c68a1892c0d92fe0fef87">  128</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classimkcpp_1_1AckController.html#ac73d77771f5c68a1892c0d92fe0fef87">schedule_ack</a>(<span class="keyword">const</span> u32 sn, <span class="keyword">const</span> u32 ts) {</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            this-&gt;acklist.emplace_back(sn, ts);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        }</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
+<div class="line"><a name="l00133"></a><span class="lineno"><a class="line" href="classimkcpp_1_1AckController.html#a11ce34afccc74b4049956d9e5911a021">  133</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classimkcpp_1_1AckController.html#a11ce34afccc74b4049956d9e5911a021">reserve</a>(<span class="keyword">const</span> <span class="keywordtype">size_t</span> size) {</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            this-&gt;acklist.reserve(size);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        }</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
+<div class="line"><a name="l00138"></a><span class="lineno"><a class="line" href="classimkcpp_1_1AckController.html#a7c0e1bc9f3e4c96448d9950072d667dc">  138</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classimkcpp_1_1AckController.html#a7c0e1bc9f3e4c96448d9950072d667dc">clear</a>() {</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;            this-&gt;acklist.clear();</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        }</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        [[nodiscard]] <span class="keywordtype">bool</span> empty()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;            <span class="keywordflow">return</span> this-&gt;acklist.empty();</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;        }</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;                ++count;</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;            }</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            flush_result.<a class="code" href="structimkcpp_1_1FlushResult.html#aee999c59d97b9d1a8bef21b1da5abcc6">cmd_ack_count</a> += count;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            this-&gt;acklist.clear();</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        }</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    };</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;}</div>
-<div class="ttc" id="aclassimkcpp_1_1AckController_html"><div class="ttname"><a href="classimkcpp_1_1AckController.html">imkcpp::AckController</a></div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:51</div></div>
-<div class="ttc" id="aclassimkcpp_1_1AckController_html_a8248bf43c2505438432f18a61e1f53c0"><div class="ttname"><a href="classimkcpp_1_1AckController.html#a8248bf43c2505438432f18a61e1f53c0">imkcpp::AckController::schedule_ack</a></div><div class="ttdeci">void schedule_ack(const u32 sn, const u32 ts)</div><div class="ttdoc">Adds a segment to the acknowledgement list to be sent later.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:121</div></div>
-<div class="ttc" id="aclassimkcpp_1_1AckController_html_a954d6f2ddef12e261eadcf0504dcaaf1"><div class="ttname"><a href="classimkcpp_1_1AckController.html#a954d6f2ddef12e261eadcf0504dcaaf1">imkcpp::AckController::ack_received</a></div><div class="ttdeci">void ack_received(const u32 current, const u32 sn, const u32 ts)</div><div class="ttdoc">Updates the RTO and removes acknowledged segments from the sender buffer.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:102</div></div>
-<div class="ttc" id="aclassimkcpp_1_1AckController_html_add05b2e2f553692866c99f884d8cddc5"><div class="ttname"><a href="classimkcpp_1_1AckController.html#add05b2e2f553692866c99f884d8cddc5">imkcpp::AckController::reserve</a></div><div class="ttdeci">void reserve(const size_t size)</div><div class="ttdoc">Reserves space in the acknowledgement vector.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:126</div></div>
-<div class="ttc" id="aclassimkcpp_1_1AckController_html_af20dfdd824f921c2f40c4d67f80437df"><div class="ttname"><a href="classimkcpp_1_1AckController.html#af20dfdd824f921c2f40c4d67f80437df">imkcpp::AckController::una_received</a></div><div class="ttdeci">void una_received(const u32 una)</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:113</div></div>
-<div class="ttc" id="aclassimkcpp_1_1AckController_html_affe420b637cc63fc4c103ab0b1138108"><div class="ttname"><a href="classimkcpp_1_1AckController.html#affe420b637cc63fc4c103ab0b1138108">imkcpp::AckController::flush_acks</a></div><div class="ttdeci">void flush_acks(FlushResult &amp;flush_result, const output_callback_t &amp;output, Segment &amp;base_segment)</div><div class="ttdoc">Sends all scheduled acknowledgements and clears the acknowledgement list.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:131</div></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        [[nodiscard]] <span class="keywordtype">size_t</span> size()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;            <span class="keywordflow">return</span> this-&gt;acklist.size();</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        }</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    };</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;}</div>
+<div class="ttc" id="aclassimkcpp_1_1AckController_html"><div class="ttname"><a href="classimkcpp_1_1AckController.html">imkcpp::AckController</a></div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:61</div></div>
+<div class="ttc" id="aclassimkcpp_1_1AckController_html_a11ce34afccc74b4049956d9e5911a021"><div class="ttname"><a href="classimkcpp_1_1AckController.html#a11ce34afccc74b4049956d9e5911a021">imkcpp::AckController::reserve</a></div><div class="ttdeci">void reserve(const size_t size)</div><div class="ttdoc">Reserves space in the acknowledgement vector.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:133</div></div>
+<div class="ttc" id="aclassimkcpp_1_1AckController_html_a30d36d3a2ec86ae6a3b7f5f91a3aa251"><div class="ttname"><a href="classimkcpp_1_1AckController.html#a30d36d3a2ec86ae6a3b7f5f91a3aa251">imkcpp::AckController::ack_received</a></div><div class="ttdeci">void ack_received(const u32 sn)</div><div class="ttdoc">Removes acknowledged segments from the sender buffer.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:109</div></div>
+<div class="ttc" id="aclassimkcpp_1_1AckController_html_a7c0e1bc9f3e4c96448d9950072d667dc"><div class="ttname"><a href="classimkcpp_1_1AckController.html#a7c0e1bc9f3e4c96448d9950072d667dc">imkcpp::AckController::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdoc">Clears the acknowledgement list.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:138</div></div>
+<div class="ttc" id="aclassimkcpp_1_1AckController_html_aa0bd5ea738e93c40cbbe2e9a3f5d2961"><div class="ttname"><a href="classimkcpp_1_1AckController.html#aa0bd5ea738e93c40cbbe2e9a3f5d2961">imkcpp::AckController::una_received</a></div><div class="ttdeci">void una_received(const u32 una)</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:120</div></div>
+<div class="ttc" id="aclassimkcpp_1_1AckController_html_ac73d77771f5c68a1892c0d92fe0fef87"><div class="ttname"><a href="classimkcpp_1_1AckController.html#ac73d77771f5c68a1892c0d92fe0fef87">imkcpp::AckController::schedule_ack</a></div><div class="ttdeci">void schedule_ack(const u32 sn, const u32 ts)</div><div class="ttdoc">Adds a segment to the acknowledgement list to be sent later.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:128</div></div>
 <div class="ttc" id="aclassimkcpp_1_1FastAckCtx_html"><div class="ttname"><a href="classimkcpp_1_1FastAckCtx.html">imkcpp::FastAckCtx</a></div><div class="ttdoc">FastAckCtx is used to track the latest received segment and its timestamp.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:11</div></div>
 <div class="ttc" id="aclassimkcpp_1_1FastAckCtx_html_ad71f29a4466262fde5b7b3b62dd60256"><div class="ttname"><a href="classimkcpp_1_1FastAckCtx.html#ad71f29a4466262fde5b7b3b62dd60256">imkcpp::FastAckCtx::is_valid</a></div><div class="ttdeci">bool is_valid() const</div><div class="ttdoc">Returns true if at least one ack has been received.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:22</div></div>
 <div class="ttc" id="aclassimkcpp_1_1FastAckCtx_html_add0ed1d3326f196bf4979b7f8d82c6da"><div class="ttname"><a href="classimkcpp_1_1FastAckCtx.html#add0ed1d3326f196bf4979b7f8d82c6da">imkcpp::FastAckCtx::get_maxack</a></div><div class="ttdeci">u32 get_maxack() const</div><div class="ttdoc">Returns the latest received segment number.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:40</div></div>
 <div class="ttc" id="aclassimkcpp_1_1FastAckCtx_html_aea0c191dbb74c06d60927ae194253f14"><div class="ttname"><a href="classimkcpp_1_1FastAckCtx.html#aea0c191dbb74c06d60927ae194253f14">imkcpp::FastAckCtx::get_latest_ts</a></div><div class="ttdeci">u32 get_latest_ts() const</div><div class="ttdoc">Returns the timestamp of the latest received segment.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:45</div></div>
 <div class="ttc" id="aclassimkcpp_1_1FastAckCtx_html_aeffc3b1b8d71510f9d4040e50db754ae"><div class="ttname"><a href="classimkcpp_1_1FastAckCtx.html#aeffc3b1b8d71510f9d4040e50db754ae">imkcpp::FastAckCtx::update</a></div><div class="ttdeci">void update(const u32 sn, const u32 ts)</div><div class="ttdoc">Updates the latest received segment number and its timestamp.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:27</div></div>
-<div class="ttc" id="aclassimkcpp_1_1Flusher_html"><div class="ttname"><a href="classimkcpp_1_1Flusher.html">imkcpp::Flusher</a></div><div class="ttdoc">Flusher is used to flush the buffer to the given output if it exceeds Max Segment Size or if it's not...</div><div class="ttdef"><b>Definition:</b> flusher.hpp:12</div></div>
-<div class="ttc" id="aclassimkcpp_1_1Flusher_html_a5796819623d057e670931603c9cb3463"><div class="ttname"><a href="classimkcpp_1_1Flusher.html#a5796819623d057e670931603c9cb3463">imkcpp::Flusher::flush_if_full</a></div><div class="ttdeci">size_t flush_if_full(const output_callback_t &amp;target)</div><div class="ttdoc">Flushes the buffer to the given output if it exceeds Max Segment Size.</div><div class="ttdef"><b>Definition:</b> flusher.hpp:37</div></div>
-<div class="ttc" id="aclassimkcpp_1_1Flusher_html_a8494a29dfcbac170c9dd059101b888ef"><div class="ttname"><a href="classimkcpp_1_1Flusher.html#a8494a29dfcbac170c9dd059101b888ef">imkcpp::Flusher::emplace_segment</a></div><div class="ttdeci">void emplace_segment(const Segment &amp;segment)</div><div class="ttdoc">Emplaces the given segment into the buffer.</div><div class="ttdef"><b>Definition:</b> flusher.hpp:64</div></div>
-<div class="ttc" id="aclassimkcpp_1_1SegmentTracker_html"><div class="ttname"><a href="classimkcpp_1_1SegmentTracker.html">imkcpp::SegmentTracker</a></div><div class="ttdef"><b>Definition:</b> segment_tracker.hpp:7</div></div>
-<div class="ttc" id="aclassimkcpp_1_1SenderBuffer_html"><div class="ttname"><a href="classimkcpp_1_1SenderBuffer.html">imkcpp::SenderBuffer</a></div><div class="ttdef"><b>Definition:</b> sender_buffer.hpp:12</div></div>
-<div class="ttc" id="astructimkcpp_1_1FlushResult_html"><div class="ttname"><a href="structimkcpp_1_1FlushResult.html">imkcpp::FlushResult</a></div><div class="ttdoc">Result of calling flush() or update() method.</div><div class="ttdef"><b>Definition:</b> results.hpp:48</div></div>
-<div class="ttc" id="astructimkcpp_1_1FlushResult_html_a107002545388dbb0f8f1dea8dabfaa7b"><div class="ttname"><a href="structimkcpp_1_1FlushResult.html#a107002545388dbb0f8f1dea8dabfaa7b">imkcpp::FlushResult::total_bytes_sent</a></div><div class="ttdeci">size_t total_bytes_sent</div><div class="ttdoc">Total number of bytes sent.</div><div class="ttdef"><b>Definition:</b> results.hpp:68</div></div>
-<div class="ttc" id="astructimkcpp_1_1FlushResult_html_aee999c59d97b9d1a8bef21b1da5abcc6"><div class="ttname"><a href="structimkcpp_1_1FlushResult.html#aee999c59d97b9d1a8bef21b1da5abcc6">imkcpp::FlushResult::cmd_ack_count</a></div><div class="ttdeci">u32 cmd_ack_count</div><div class="ttdoc">Number of ACK commands sent.</div><div class="ttdef"><b>Definition:</b> results.hpp:50</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_a6546abc6b9bdfbd1b778147526da60ff"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">imkcpp::SegmentHeader::sn</a></div><div class="ttdeci">u32 sn</div><div class="ttdoc">Sequence number.</div><div class="ttdef"><b>Definition:</b> segment.hpp:28</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_abec58d2672fe72e40f8e9237d0c9dc3e"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">imkcpp::SegmentHeader::ts</a></div><div class="ttdeci">u32 ts</div><div class="ttdoc">Timestamp.</div><div class="ttdef"><b>Definition:</b> segment.hpp:25</div></div>
-<div class="ttc" id="astructimkcpp_1_1Segment_html"><div class="ttname"><a href="structimkcpp_1_1Segment.html">imkcpp::Segment</a></div><div class="ttdef"><b>Definition:</b> segment.hpp:107</div></div>
+<div class="ttc" id="aclassimkcpp_1_1SegmentTracker_html"><div class="ttname"><a href="classimkcpp_1_1SegmentTracker.html">imkcpp::SegmentTracker</a></div><div class="ttdef"><b>Definition:</b> segment_tracker.hpp:6</div></div>
+<div class="ttc" id="aclassimkcpp_1_1SenderBuffer_html"><div class="ttname"><a href="classimkcpp_1_1SenderBuffer.html">imkcpp::SenderBuffer</a></div><div class="ttdef"><b>Definition:</b> sender_buffer.hpp:10</div></div>
+<div class="ttc" id="astructimkcpp_1_1Ack_html"><div class="ttname"><a href="structimkcpp_1_1Ack.html">imkcpp::Ack</a></div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:50</div></div>
+<div class="ttc" id="astructimkcpp_1_1Ack_html_a0339aefddccdc4e5be4ac6478c5de245"><div class="ttname"><a href="structimkcpp_1_1Ack.html#a0339aefddccdc4e5be4ac6478c5de245">imkcpp::Ack::sn</a></div><div class="ttdeci">u32 sn</div><div class="ttdoc">Segment number.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:52</div></div>
+<div class="ttc" id="astructimkcpp_1_1Ack_html_a22a614365322b225536964d62a097ebf"><div class="ttname"><a href="structimkcpp_1_1Ack.html#a22a614365322b225536964d62a097ebf">imkcpp::Ack::ts</a></div><div class="ttdeci">u32 ts</div><div class="ttdoc">Timestamp.</div><div class="ttdef"><b>Definition:</b> ack_controller.hpp:55</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

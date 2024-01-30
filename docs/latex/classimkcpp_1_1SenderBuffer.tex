@@ -3,14 +3,20 @@
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_a51152d57517a0d90f2a4f7ed33bfd471}\label{classimkcpp_1_1SenderBuffer_a51152d57517a0d90f2a4f7ed33bfd471}} 
-{\bfseries Sender\+Buffer} (\mbox{\hyperlink{classimkcpp_1_1SharedCtx}{Shared\+Ctx}} \&shared\+\_\+ctx, \mbox{\hyperlink{classimkcpp_1_1SegmentTracker}{Segment\+Tracker}} \&segment\+\_\+tracker)
+\mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_af2cb453bb2d637aea5ae8a1db7f4340a}\label{classimkcpp_1_1SenderBuffer_af2cb453bb2d637aea5ae8a1db7f4340a}} 
+std\+::deque$<$ \mbox{\hyperlink{structimkcpp_1_1Segment}{Segment}} $>$\+::iterator {\bfseries begin} ()
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_aa11aef6172660da6a3a510ff1973ced4}\label{classimkcpp_1_1SenderBuffer_aa11aef6172660da6a3a510ff1973ced4}} 
+std\+::deque$<$ \mbox{\hyperlink{structimkcpp_1_1Segment}{Segment}} $>$\+::iterator {\bfseries end} ()
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_a956555500db04e1f926c4ebe914fa4d8}\label{classimkcpp_1_1SenderBuffer_a956555500db04e1f926c4ebe914fa4d8}} 
 void {\bfseries push\+\_\+segment} (\mbox{\hyperlink{structimkcpp_1_1Segment}{Segment}} \&segment)
 \item 
-\mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_aae4c73d8a6420f15e0dfda7aac1096a4}\label{classimkcpp_1_1SenderBuffer_aae4c73d8a6420f15e0dfda7aac1096a4}} 
-void {\bfseries shrink} ()
+\mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_a2afecfbd292d14688622dcf772fa37c2}\label{classimkcpp_1_1SenderBuffer_a2afecfbd292d14688622dcf772fa37c2}} 
+size\+\_\+t {\bfseries size} () const
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_a5203ecfcd77bee9b489eaf5122bf6f1b}\label{classimkcpp_1_1SenderBuffer_a5203ecfcd77bee9b489eaf5122bf6f1b}} 
+std\+::optional$<$ u32 $>$ {\bfseries get\+\_\+first\+\_\+sequence\+\_\+number\+\_\+in\+\_\+flight} () const
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_a59f38bff6853dddaf4b8323000e972b2}\label{classimkcpp_1_1SenderBuffer_a59f38bff6853dddaf4b8323000e972b2}} 
 void {\bfseries erase} (const u32 sn)
@@ -25,9 +31,6 @@ std\+::optional$<$ u32 $>$ \mbox{\hyperlink{classimkcpp_1_1SenderBuffer_a03e8217
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_a09d14563338afdfaeaad3d170ea606a2}\label{classimkcpp_1_1SenderBuffer_a09d14563338afdfaeaad3d170ea606a2}} 
 bool {\bfseries empty} () const
-\item 
-\mbox{\Hypertarget{classimkcpp_1_1SenderBuffer_a36753d5642a40d9055783eb11e67e164}\label{classimkcpp_1_1SenderBuffer_a36753d5642a40d9055783eb11e67e164}} 
-std\+::deque$<$ \mbox{\hyperlink{structimkcpp_1_1Segment}{Segment}} $>$ \& {\bfseries get} ()
 \end{DoxyCompactItemize}
 
 

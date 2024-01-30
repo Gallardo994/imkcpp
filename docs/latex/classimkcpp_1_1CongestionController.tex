@@ -3,9 +3,6 @@
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classimkcpp_1_1CongestionController_a7eea5f86469d22cef02512504ae56c93}\label{classimkcpp_1_1CongestionController_a7eea5f86469d22cef02512504ae56c93}} 
-{\bfseries Congestion\+Controller} (\mbox{\hyperlink{classimkcpp_1_1Flusher}{Flusher}}$<$ MTU $>$ \&flusher, \mbox{\hyperlink{classimkcpp_1_1SegmentTracker}{Segment\+Tracker}} \&segment\+\_\+tracker)
-\item 
 \mbox{\Hypertarget{classimkcpp_1_1CongestionController_ae2d3f012e9128b27f274377a409ee7ea}\label{classimkcpp_1_1CongestionController_ae2d3f012e9128b27f274377a409ee7ea}} 
 void {\bfseries set\+\_\+congestion\+\_\+window\+\_\+enabled} (const bool state)
 \item 
@@ -15,8 +12,8 @@ void {\bfseries set\+\_\+receive\+\_\+window} (const u32 rcv\+\_\+wnd)
 \mbox{\Hypertarget{classimkcpp_1_1CongestionController_a3f56f211f8f6d25d40db371352da8253}\label{classimkcpp_1_1CongestionController_a3f56f211f8f6d25d40db371352da8253}} 
 u32 {\bfseries get\+\_\+receive\+\_\+window} () const
 \item 
-\mbox{\Hypertarget{classimkcpp_1_1CongestionController_ae3f08fc234fe099e9081860574eb698e}\label{classimkcpp_1_1CongestionController_ae3f08fc234fe099e9081860574eb698e}} 
-bool {\bfseries fits\+\_\+receive\+\_\+window} (const u32 sn) const
+\mbox{\Hypertarget{classimkcpp_1_1CongestionController_ab765fb7824702b434b07649c75708b0d}\label{classimkcpp_1_1CongestionController_ab765fb7824702b434b07649c75708b0d}} 
+bool {\bfseries fits\+\_\+receive\+\_\+window} (const u32 rcv\+\_\+nxt, const u32 sn) const
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1CongestionController_a9769d920c6d2265696e9ad5659b10d4e}\label{classimkcpp_1_1CongestionController_a9769d920c6d2265696e9ad5659b10d4e}} 
 void {\bfseries set\+\_\+remote\+\_\+window} (const u32 rmt\+\_\+wnd)
@@ -29,6 +26,9 @@ void {\bfseries set\+\_\+send\+\_\+window} (const u32 snd\+\_\+wnd)
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1CongestionController_a7602e014ad27ecedb18ca7f0bdd736d5}\label{classimkcpp_1_1CongestionController_a7602e014ad27ecedb18ca7f0bdd736d5}} 
 u32 {\bfseries get\+\_\+send\+\_\+window} () const
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1CongestionController_a7922f693a16167d6c9ef89419ed048f2}\label{classimkcpp_1_1CongestionController_a7922f693a16167d6c9ef89419ed048f2}} 
+u32 {\bfseries get\+\_\+ssthresh} () const
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1CongestionController_a6947e8d50d73ce51d7aeacb89f92b3e4}\label{classimkcpp_1_1CongestionController_a6947e8d50d73ce51d7aeacb89f92b3e4}} 
 void {\bfseries packets\+\_\+resent} (const u32 packets\+\_\+in\+\_\+flight, const u32 resent)
@@ -44,21 +44,6 @@ void {\bfseries ensure\+\_\+at\+\_\+least\+\_\+one\+\_\+packet\+\_\+in\+\_\+flig
 \item 
 \mbox{\Hypertarget{classimkcpp_1_1CongestionController_ac7e32989d31fcc2b17a95559efbd506b}\label{classimkcpp_1_1CongestionController_ac7e32989d31fcc2b17a95559efbd506b}} 
 u32 {\bfseries calculate\+\_\+congestion\+\_\+window} () const
-\item 
-\mbox{\Hypertarget{classimkcpp_1_1CongestionController_a1f9088a533fb939817200cf0f53518ee}\label{classimkcpp_1_1CongestionController_a1f9088a533fb939817200cf0f53518ee}} 
-void {\bfseries update\+\_\+probe\+\_\+request} (const u32 current)
-\item 
-\mbox{\Hypertarget{classimkcpp_1_1CongestionController_ab176b704a6fb9e506176cb9c1e914a1a}\label{classimkcpp_1_1CongestionController_ab176b704a6fb9e506176cb9c1e914a1a}} 
-void {\bfseries set\+\_\+probe\+\_\+flag} (const u32 flag)
-\item 
-\mbox{\Hypertarget{classimkcpp_1_1CongestionController_a2cb91b6f50084bf5e5465dc3d6bb2976}\label{classimkcpp_1_1CongestionController_a2cb91b6f50084bf5e5465dc3d6bb2976}} 
-bool {\bfseries has\+\_\+probe\+\_\+flag} (const u32 flag) const
-\item 
-\mbox{\Hypertarget{classimkcpp_1_1CongestionController_a0512b65eba86b7c3eb49fa898fe1b459}\label{classimkcpp_1_1CongestionController_a0512b65eba86b7c3eb49fa898fe1b459}} 
-void {\bfseries reset\+\_\+probe\+\_\+flags} ()
-\item 
-\mbox{\Hypertarget{classimkcpp_1_1CongestionController_a6357720bc4106aaa673fd089b311e9a7}\label{classimkcpp_1_1CongestionController_a6357720bc4106aaa673fd089b311e9a7}} 
-void {\bfseries flush\+\_\+probes} (\mbox{\hyperlink{structimkcpp_1_1FlushResult}{Flush\+Result}} \&flush\+\_\+result, const output\+\_\+callback\+\_\+t \&output, \mbox{\hyperlink{structimkcpp_1_1Segment}{Segment}} \&base\+\_\+segment)
 \end{DoxyCompactItemize}
 
 

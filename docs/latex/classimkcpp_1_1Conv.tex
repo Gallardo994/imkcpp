@@ -1,0 +1,35 @@
+\hypertarget{classimkcpp_1_1Conv}{}\doxysection{imkcpp\+::Conv Class Reference}
+\label{classimkcpp_1_1Conv}\index{imkcpp::Conv@{imkcpp::Conv}}
+
+
+{\ttfamily \#include $<$conv.\+hpp$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1Conv_ade57877f3180725c014f23ea13ddda52}\label{classimkcpp_1_1Conv_ade57877f3180725c014f23ea13ddda52}} 
+using {\bfseries UT} = u32
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1Conv_aa9d47bc4d46f4da73ea72ca5424d6b13}\label{classimkcpp_1_1Conv_aa9d47bc4d46f4da73ea72ca5424d6b13}} 
+constexpr {\bfseries Conv} (const UT value) noexcept
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1Conv_acd07da03bd07ea6fbb49f2f6152286d6}\label{classimkcpp_1_1Conv_acd07da03bd07ea6fbb49f2f6152286d6}} 
+constexpr UT {\bfseries get} () const noexcept
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1Conv_aacec922b0491ed620160bd92a24cfdc0}\label{classimkcpp_1_1Conv_aacec922b0491ed620160bd92a24cfdc0}} 
+constexpr bool {\bfseries operator==} (const \mbox{\hyperlink{classimkcpp_1_1Conv}{Conv}} \&other) const noexcept
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1Conv_aea037f211a2cbc91a4bfb1399e107102}\label{classimkcpp_1_1Conv_aea037f211a2cbc91a4bfb1399e107102}} 
+constexpr bool {\bfseries operator!=} (const \mbox{\hyperlink{classimkcpp_1_1Conv}{Conv}} \&other) const noexcept
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Conversation ID. Used for splitting channels over the same socket. UT can be changed to u16 or u8 to save space if needed. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+imkcpp/include/types/conv.\+hpp\end{DoxyCompactItemize}

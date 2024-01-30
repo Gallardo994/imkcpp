@@ -68,6 +68,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="structimkcpp_1_1SegmentHeader-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">imkcpp::SegmentHeader Struct Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
@@ -78,6 +79,18 @@ $(function() {
  <a href="structimkcpp_1_1SegmentHeader.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="segment_8hpp_source.html">segment.hpp</a>&gt;</code></p>
+<div class="dynheader">
+Collaboration diagram for imkcpp::SegmentHeader:</div>
+<div class="dyncontent">
+<div class="center"><img src="structimkcpp_1_1SegmentHeader__coll__graph.png" border="0" usemap="#aimkcpp_1_1SegmentHeader_coll__map" alt="Collaboration graph"/></div>
+<map name="aimkcpp_1_1SegmentHeader_coll__map" id="aimkcpp_1_1SegmentHeader_coll__map">
+<area shape="rect" title="SegmentHeader is used to store the header of the segment." alt="" coords="218,95,401,121"/>
+<area shape="rect" href="classimkcpp_1_1PayloadLen.html" title=" " alt="" coords="5,5,157,32"/>
+<area shape="rect" href="classimkcpp_1_1Cmd.html" title=" " alt="" coords="182,5,290,32"/>
+<area shape="rect" href="classimkcpp_1_1Fragment.html" title=" " alt="" coords="314,5,454,32"/>
+<area shape="rect" href="classimkcpp_1_1Conv.html" title=" " alt="" coords="478,5,589,32"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -90,18 +103,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>decode_from</b> (cons
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:af990348ad8cea08df3f33fbdf3e7d1cb"><td class="memItemLeft" align="right" valign="top"><a id="af990348ad8cea08df3f33fbdf3e7d1cb"></a>
-u32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structimkcpp_1_1SegmentHeader.html#af990348ad8cea08df3f33fbdf3e7d1cb">conv</a> = 0</td></tr>
-<tr class="memdesc:af990348ad8cea08df3f33fbdf3e7d1cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Conversation ID. <br /></td></tr>
-<tr class="separator:af990348ad8cea08df3f33fbdf3e7d1cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af535f6c8b13dc29db94c5b8926a39d4c"><td class="memItemLeft" align="right" valign="top"><a id="af535f6c8b13dc29db94c5b8926a39d4c"></a>
-u8&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structimkcpp_1_1SegmentHeader.html#af535f6c8b13dc29db94c5b8926a39d4c">cmd</a> = 0</td></tr>
-<tr class="memdesc:af535f6c8b13dc29db94c5b8926a39d4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Command type. <br /></td></tr>
-<tr class="separator:af535f6c8b13dc29db94c5b8926a39d4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adae83ab066d221bdc0d925c01d6c1737"><td class="memItemLeft" align="right" valign="top"><a id="adae83ab066d221bdc0d925c01d6c1737"></a>
-u8&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structimkcpp_1_1SegmentHeader.html#adae83ab066d221bdc0d925c01d6c1737">frg</a> = 0</td></tr>
-<tr class="memdesc:adae83ab066d221bdc0d925c01d6c1737"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fragment. Indicates how many next SNs are following this one in the same packet. <br /></td></tr>
-<tr class="separator:adae83ab066d221bdc0d925c01d6c1737"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1443efcdce126eaf977b72e48e48e6ef"><td class="memItemLeft" align="right" valign="top"><a id="a1443efcdce126eaf977b72e48e48e6ef"></a>
+<a class="el" href="classimkcpp_1_1Conv.html">Conv</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structimkcpp_1_1SegmentHeader.html#a1443efcdce126eaf977b72e48e48e6ef">conv</a> {0}</td></tr>
+<tr class="memdesc:a1443efcdce126eaf977b72e48e48e6ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Conversation ID. <br /></td></tr>
+<tr class="separator:a1443efcdce126eaf977b72e48e48e6ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae802a35033c40ba25c3be42afc881d33"><td class="memItemLeft" align="right" valign="top"><a id="ae802a35033c40ba25c3be42afc881d33"></a>
+<a class="el" href="classimkcpp_1_1Cmd.html">Cmd</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structimkcpp_1_1SegmentHeader.html#ae802a35033c40ba25c3be42afc881d33">cmd</a> {0}</td></tr>
+<tr class="memdesc:ae802a35033c40ba25c3be42afc881d33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Command type. <br /></td></tr>
+<tr class="separator:ae802a35033c40ba25c3be42afc881d33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ab9c5e2c479f4ac244fc5edcd8a75a5"><td class="memItemLeft" align="right" valign="top"><a id="a8ab9c5e2c479f4ac244fc5edcd8a75a5"></a>
+<a class="el" href="classimkcpp_1_1Fragment.html">Fragment</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structimkcpp_1_1SegmentHeader.html#a8ab9c5e2c479f4ac244fc5edcd8a75a5">frg</a> {0}</td></tr>
+<tr class="memdesc:a8ab9c5e2c479f4ac244fc5edcd8a75a5"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classimkcpp_1_1Fragment.html">Fragment</a>. Indicates how many next SNs are following this one in the same packet. <br /></td></tr>
+<tr class="separator:a8ab9c5e2c479f4ac244fc5edcd8a75a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a092b9b075c703aad8d1c1322cac1e04c"><td class="memItemLeft" align="right" valign="top"><a id="a092b9b075c703aad8d1c1322cac1e04c"></a>
 u16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structimkcpp_1_1SegmentHeader.html#a092b9b075c703aad8d1c1322cac1e04c">wnd</a> = 0</td></tr>
 <tr class="memdesc:a092b9b075c703aad8d1c1322cac1e04c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Window size (available space in the receive buffer). <br /></td></tr>
@@ -118,14 +131,51 @@ u32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 u32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structimkcpp_1_1SegmentHeader.html#a08992ae80206006966482d1cf7fd804d">una</a> = 0</td></tr>
 <tr class="memdesc:a08992ae80206006966482d1cf7fd804d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unacknowledged sequence number. <br /></td></tr>
 <tr class="separator:a08992ae80206006966482d1cf7fd804d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23fb9d7bf64a67638e102c3ff0dc953b"><td class="memItemLeft" align="right" valign="top"><a id="a23fb9d7bf64a67638e102c3ff0dc953b"></a>
-u32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">len</a> = 0</td></tr>
-<tr class="memdesc:a23fb9d7bf64a67638e102c3ff0dc953b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Length of the payload. <br /></td></tr>
-<tr class="separator:a23fb9d7bf64a67638e102c3ff0dc953b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d9b3cd2fa1530c7adad45de5c7f70d1"><td class="memItemLeft" align="right" valign="top"><a id="a6d9b3cd2fa1530c7adad45de5c7f70d1"></a>
+<a class="el" href="classimkcpp_1_1PayloadLen.html">PayloadLen</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structimkcpp_1_1SegmentHeader.html#a6d9b3cd2fa1530c7adad45de5c7f70d1">len</a> {0}</td></tr>
+<tr class="memdesc:a6d9b3cd2fa1530c7adad45de5c7f70d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Length of the payload. <br /></td></tr>
+<tr class="separator:a6d9b3cd2fa1530c7adad45de5c7f70d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:ac5d96a33e79ea91cd137251817729665"><td class="memItemLeft" align="right" valign="top">constexpr static size_t&#160;</td><td class="memItemRight" valign="bottom"><b>OVERHEAD</b></td></tr>
+<tr class="separator:ac5d96a33e79ea91cd137251817729665"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="structimkcpp_1_1SegmentHeader.html" title="SegmentHeader is used to store the header of the segment.">SegmentHeader</a> is used to store the header of the segment. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Data Documentation</h2>
+<a id="ac5d96a33e79ea91cd137251817729665"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5d96a33e79ea91cd137251817729665">&#9670;&nbsp;</a></span>OVERHEAD</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr static size_t imkcpp::SegmentHeader::OVERHEAD</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">            encoder::encoded_size&lt;decltype(conv)&gt;() +</div>
+<div class="line">            encoder::encoded_size&lt;decltype(cmd)&gt;() +</div>
+<div class="line">            encoder::encoded_size&lt;decltype(frg)&gt;() +</div>
+<div class="line">            encoder::encoded_size&lt;decltype(wnd)&gt;() +</div>
+<div class="line">            encoder::encoded_size&lt;decltype(ts)&gt;() +</div>
+<div class="line">            encoder::encoded_size&lt;decltype(sn)&gt;() +</div>
+<div class="line">            encoder::encoded_size&lt;decltype(una)&gt;() +</div>
+<div class="line">            encoder::encoded_size&lt;decltype(len)&gt;()</div>
+</div><!-- fragment -->
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>imkcpp/include/<a class="el" href="segment_8hpp_source.html">segment.hpp</a></li>
 </ul>
 </div><!-- contents -->

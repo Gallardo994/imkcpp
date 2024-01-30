@@ -9,8 +9,8 @@
 \mbox{\Hypertarget{classimkcpp_1_1Sender_af2024f6ca276be3a316315972aac46a4}\label{classimkcpp_1_1Sender_af2024f6ca276be3a316315972aac46a4}} 
 tl\+::expected$<$ size\+\_\+t, error $>$ \mbox{\hyperlink{classimkcpp_1_1Sender_af2024f6ca276be3a316315972aac46a4}{send}} (const std\+::span$<$ const std\+::byte $>$ buffer)
 \begin{DoxyCompactList}\small\item\em Takes the payload, splits it into segments and puts them into the send queue. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{classimkcpp_1_1Sender_ac473d7b7a7a2a4f9ed15cc163e16cc5e}\label{classimkcpp_1_1Sender_ac473d7b7a7a2a4f9ed15cc163e16cc5e}} 
-void \mbox{\hyperlink{classimkcpp_1_1Sender_ac473d7b7a7a2a4f9ed15cc163e16cc5e}{move\+\_\+send\+\_\+queue\+\_\+to\+\_\+buffer}} (const u32 cwnd, const u32 current, const i32 unused\+\_\+receive\+\_\+window)
+\mbox{\Hypertarget{classimkcpp_1_1Sender_acea3be216152b6ca63bb03c8ebf71476}\label{classimkcpp_1_1Sender_acea3be216152b6ca63bb03c8ebf71476}} 
+void \mbox{\hyperlink{classimkcpp_1_1Sender_acea3be216152b6ca63bb03c8ebf71476}{move\+\_\+send\+\_\+queue\+\_\+to\+\_\+buffer}} (const u32 cwnd, const u32 current, const i32 unused\+\_\+receive\+\_\+window, const u32 rcv\+\_\+nxt)
 \begin{DoxyCompactList}\small\item\em Flushes data segments from the send queue to the sender buffer. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classimkcpp_1_1Sender_a400d7ca01a9dac02752fc665d2a05cdd}\label{classimkcpp_1_1Sender_a400d7ca01a9dac02752fc665d2a05cdd}} 
 size\+\_\+t \mbox{\hyperlink{classimkcpp_1_1Sender_a400d7ca01a9dac02752fc665d2a05cdd}{estimate\+\_\+segments\+\_\+count}} (const size\+\_\+t size) const
@@ -27,8 +27,8 @@ void {\bfseries set\+\_\+nodelay} (const u32 value)
 \mbox{\Hypertarget{classimkcpp_1_1Sender_a833f005237749415a9e0b1a6c002481e}\label{classimkcpp_1_1Sender_a833f005237749415a9e0b1a6c002481e}} 
 void {\bfseries set\+\_\+deadlink} (const u32 value)
 \item 
-\mbox{\Hypertarget{classimkcpp_1_1Sender_aa2927e2cc2a6367156cc9a2d12769a4a}\label{classimkcpp_1_1Sender_aa2927e2cc2a6367156cc9a2d12769a4a}} 
-void \mbox{\hyperlink{classimkcpp_1_1Sender_aa2927e2cc2a6367156cc9a2d12769a4a}{flush\+\_\+data\+\_\+segments}} (\mbox{\hyperlink{structimkcpp_1_1FlushResult}{Flush\+Result}} \&flush\+\_\+result, const output\+\_\+callback\+\_\+t \&output, const u32 current, const i32 unused\+\_\+receive\+\_\+window)
+\mbox{\Hypertarget{classimkcpp_1_1Sender_aee2e3a0bb5f9c3219919368a98343f2e}\label{classimkcpp_1_1Sender_aee2e3a0bb5f9c3219919368a98343f2e}} 
+void \mbox{\hyperlink{classimkcpp_1_1Sender_aee2e3a0bb5f9c3219919368a98343f2e}{flush\+\_\+data\+\_\+segments}} (\mbox{\hyperlink{structimkcpp_1_1FlushResult}{Flush\+Result}} \&flush\+\_\+result, const output\+\_\+callback\+\_\+t \&output, const u32 current, const i32 unused\+\_\+receive\+\_\+window, const u32 rcv\+\_\+nxt)
 \begin{DoxyCompactList}\small\item\em Flushes data segments from the send queue to the output callback. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 

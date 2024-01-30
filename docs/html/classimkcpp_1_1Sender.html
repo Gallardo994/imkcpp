@@ -82,10 +82,10 @@ Public Member Functions</h2></td></tr>
 tl::expected&lt; size_t, error &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1Sender.html#af2024f6ca276be3a316315972aac46a4">send</a> (const std::span&lt; const std::byte &gt; buffer)</td></tr>
 <tr class="memdesc:af2024f6ca276be3a316315972aac46a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes the payload, splits it into segments and puts them into the send queue. <br /></td></tr>
 <tr class="separator:af2024f6ca276be3a316315972aac46a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac473d7b7a7a2a4f9ed15cc163e16cc5e"><td class="memItemLeft" align="right" valign="top"><a id="ac473d7b7a7a2a4f9ed15cc163e16cc5e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1Sender.html#ac473d7b7a7a2a4f9ed15cc163e16cc5e">move_send_queue_to_buffer</a> (const u32 cwnd, const u32 current, const i32 unused_receive_window)</td></tr>
-<tr class="memdesc:ac473d7b7a7a2a4f9ed15cc163e16cc5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flushes data segments from the send queue to the sender buffer. <br /></td></tr>
-<tr class="separator:ac473d7b7a7a2a4f9ed15cc163e16cc5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acea3be216152b6ca63bb03c8ebf71476"><td class="memItemLeft" align="right" valign="top"><a id="acea3be216152b6ca63bb03c8ebf71476"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1Sender.html#acea3be216152b6ca63bb03c8ebf71476">move_send_queue_to_buffer</a> (const u32 cwnd, const u32 current, const i32 unused_receive_window, const u32 rcv_nxt)</td></tr>
+<tr class="memdesc:acea3be216152b6ca63bb03c8ebf71476"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flushes data segments from the send queue to the sender buffer. <br /></td></tr>
+<tr class="separator:acea3be216152b6ca63bb03c8ebf71476"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a400d7ca01a9dac02752fc665d2a05cdd"><td class="memItemLeft" align="right" valign="top"><a id="a400d7ca01a9dac02752fc665d2a05cdd"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1Sender.html#a400d7ca01a9dac02752fc665d2a05cdd">estimate_segments_count</a> (const size_t size) const</td></tr>
 <tr class="memdesc:a400d7ca01a9dac02752fc665d2a05cdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given current max segment size, estimates the number of segments needed to fit the payload. <br /></td></tr>
@@ -102,10 +102,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>set_nodelay</b> (cons
 <tr class="memitem:a833f005237749415a9e0b1a6c002481e"><td class="memItemLeft" align="right" valign="top"><a id="a833f005237749415a9e0b1a6c002481e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>set_deadlink</b> (const u32 value)</td></tr>
 <tr class="separator:a833f005237749415a9e0b1a6c002481e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2927e2cc2a6367156cc9a2d12769a4a"><td class="memItemLeft" align="right" valign="top"><a id="aa2927e2cc2a6367156cc9a2d12769a4a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1Sender.html#aa2927e2cc2a6367156cc9a2d12769a4a">flush_data_segments</a> (<a class="el" href="structimkcpp_1_1FlushResult.html">FlushResult</a> &amp;flush_result, const output_callback_t &amp;output, const u32 current, const i32 unused_receive_window)</td></tr>
-<tr class="memdesc:aa2927e2cc2a6367156cc9a2d12769a4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flushes data segments from the send queue to the output callback. <br /></td></tr>
-<tr class="separator:aa2927e2cc2a6367156cc9a2d12769a4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee2e3a0bb5f9c3219919368a98343f2e"><td class="memItemLeft" align="right" valign="top"><a id="aee2e3a0bb5f9c3219919368a98343f2e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimkcpp_1_1Sender.html#aee2e3a0bb5f9c3219919368a98343f2e">flush_data_segments</a> (<a class="el" href="structimkcpp_1_1FlushResult.html">FlushResult</a> &amp;flush_result, const output_callback_t &amp;output, const u32 current, const i32 unused_receive_window, const u32 rcv_nxt)</td></tr>
+<tr class="memdesc:aee2e3a0bb5f9c3219919368a98343f2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flushes data segments from the send queue to the output callback. <br /></td></tr>
+<tr class="separator:aee2e3a0bb5f9c3219919368a98343f2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>imkcpp/include/<a class="el" href="sender_8hpp_source.html">sender.hpp</a></li>

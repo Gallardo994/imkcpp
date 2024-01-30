@@ -73,146 +73,168 @@ $(function() {
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;types.hpp&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;encoder.hpp&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span>imkcpp {</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <span class="comment">// TODO: Too many public members, make them private. Also, make the Segment class a friend of the SegmentHeader class.</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="comment">// TODO: The logic is heavily reliant on the fact that everything is public. Rework this.</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html">   11</a></span>&#160;<span class="comment"></span>    <span class="keyword">struct </span><a class="code" href="structimkcpp_1_1SegmentHeader.html">SegmentHeader</a> final {</div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#af990348ad8cea08df3f33fbdf3e7d1cb">   13</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentHeader.html#af990348ad8cea08df3f33fbdf3e7d1cb">conv</a> = 0;  <span class="comment">// TODO: Does this need to be 4 bytes?</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#af535f6c8b13dc29db94c5b8926a39d4c">   16</a></span>&#160;        u8 <a class="code" href="structimkcpp_1_1SegmentHeader.html#af535f6c8b13dc29db94c5b8926a39d4c">cmd</a> = 0;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#adae83ab066d221bdc0d925c01d6c1737">   19</a></span>&#160;        u8 <a class="code" href="structimkcpp_1_1SegmentHeader.html#adae83ab066d221bdc0d925c01d6c1737">frg</a> = 0;</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;types/conv.hpp&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;types/cmd.hpp&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;types/fragment.hpp&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;types/payload_len.hpp&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">namespace </span>imkcpp {</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="comment">// TODO: Too many public members, make them private. Also, make the Segment class a friend of the SegmentHeader class.</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="comment">// TODO: The logic is heavily reliant on the fact that everything is public. Rework this.</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html">   17</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structimkcpp_1_1SegmentHeader.html">SegmentHeader</a> final {</div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#a1443efcdce126eaf977b72e48e48e6ef">   19</a></span>&#160;        <a class="code" href="classimkcpp_1_1Conv.html">Conv</a> <a class="code" href="structimkcpp_1_1SegmentHeader.html#a1443efcdce126eaf977b72e48e48e6ef">conv</a>{0};</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#a092b9b075c703aad8d1c1322cac1e04c">   22</a></span>&#160;        u16 <a class="code" href="structimkcpp_1_1SegmentHeader.html#a092b9b075c703aad8d1c1322cac1e04c">wnd</a> = 0;</div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#ae802a35033c40ba25c3be42afc881d33">   22</a></span>&#160;        <a class="code" href="classimkcpp_1_1Cmd.html">Cmd</a> <a class="code" href="structimkcpp_1_1SegmentHeader.html#ae802a35033c40ba25c3be42afc881d33">cmd</a>{0};</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">   25</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">ts</a> = 0;</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#a8ab9c5e2c479f4ac244fc5edcd8a75a5">   25</a></span>&#160;        <a class="code" href="classimkcpp_1_1Fragment.html">Fragment</a> <a class="code" href="structimkcpp_1_1SegmentHeader.html#a8ab9c5e2c479f4ac244fc5edcd8a75a5">frg</a>{0};</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">   28</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a> = 0;</div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#a092b9b075c703aad8d1c1322cac1e04c">   28</a></span>&#160;        u16 <a class="code" href="structimkcpp_1_1SegmentHeader.html#a092b9b075c703aad8d1c1322cac1e04c">wnd</a> = 0;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#a08992ae80206006966482d1cf7fd804d">   31</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentHeader.html#a08992ae80206006966482d1cf7fd804d">una</a> = 0;</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">   31</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">ts</a> = 0;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">   34</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">len</a> = 0;</div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">   34</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">sn</a> = 0;</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keywordtype">void</span> encode_to(std::span&lt;std::byte&gt; buf, <span class="keywordtype">size_t</span>&amp; offset)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            assert(buf.size() &gt;= constants::IKCP_OVERHEAD);</div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#a08992ae80206006966482d1cf7fd804d">   37</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentHeader.html#a08992ae80206006966482d1cf7fd804d">una</a> = 0;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            encoder::encode32u(buf, offset, this-&gt;conv);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            encoder::encode8u(buf, offset, this-&gt;cmd);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            encoder::encode8u(buf, offset, this-&gt;frg);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            encoder::encode16u(buf, offset, this-&gt;wnd);</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            encoder::encode32u(buf, offset, this-&gt;ts);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            encoder::encode32u(buf, offset, this-&gt;sn);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            encoder::encode32u(buf, offset, this-&gt;una);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            encoder::encode32u(buf, offset, this-&gt;len);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        }</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keywordtype">void</span> decode_from(<span class="keyword">const</span> std::span&lt;const std::byte&gt; buf, <span class="keywordtype">size_t</span>&amp; offset) {</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            assert(buf.size() &gt;= constants::IKCP_OVERHEAD);</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentHeader.html#a6d9b3cd2fa1530c7adad45de5c7f70d1">   40</a></span>&#160;        <a class="code" href="classimkcpp_1_1PayloadLen.html">PayloadLen</a> <a class="code" href="structimkcpp_1_1SegmentHeader.html#a6d9b3cd2fa1530c7adad45de5c7f70d1">len</a>{0};</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        constexpr <span class="keyword">static</span> <span class="keywordtype">size_t</span> OVERHEAD =</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            encoder::encoded_size&lt;decltype(conv)&gt;() +</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            encoder::encoded_size&lt;decltype(cmd)&gt;() +</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            encoder::encoded_size&lt;decltype(frg)&gt;() +</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            encoder::encoded_size&lt;decltype(wnd)&gt;() +</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            encoder::encoded_size&lt;decltype(ts)&gt;() +</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            encoder::encoded_size&lt;decltype(sn)&gt;() +</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            encoder::encoded_size&lt;decltype(una)&gt;() +</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            encoder::encoded_size&lt;decltype(len)&gt;();</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            encoder::decode32u(buf, offset, this-&gt;conv);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            encoder::decode8u(buf, offset, this-&gt;cmd);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            encoder::decode8u(buf, offset, this-&gt;frg);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            encoder::decode16u(buf, offset, this-&gt;wnd);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            encoder::decode32u(buf, offset, this-&gt;ts);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            encoder::decode32u(buf, offset, this-&gt;sn);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            encoder::decode32u(buf, offset, this-&gt;una);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            encoder::decode32u(buf, offset, this-&gt;len);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        }</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    };</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentMetadata.html">   64</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structimkcpp_1_1SegmentMetadata.html">SegmentMetadata</a> final {</div>
-<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentMetadata.html#a28912d64f16838a6dce126e3d250660c">   66</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentMetadata.html#a28912d64f16838a6dce126e3d250660c">resendts</a> = 0;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentMetadata.html#aa176bf5a24eb912ebe5821a243f0dd5f">   69</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentMetadata.html#aa176bf5a24eb912ebe5821a243f0dd5f">rto</a> = 0;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentMetadata.html#a0520b7bb4b4e22727dc509fe97dfa54c">   72</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentMetadata.html#a0520b7bb4b4e22727dc509fe97dfa54c">fastack</a> = 0;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentMetadata.html#a2de45d639e4a5b22fa34044fa2fe01b7">   75</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentMetadata.html#a2de45d639e4a5b22fa34044fa2fe01b7">xmit</a> = 0;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    };</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentData.html">   79</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structimkcpp_1_1SegmentData.html">SegmentData</a> final {</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        std::vector&lt;std::byte&gt; data{};</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="structimkcpp_1_1SegmentData.html">SegmentData</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="structimkcpp_1_1SegmentData.html">SegmentData</a>(<span class="keyword">const</span> <span class="keywordtype">size_t</span> size) : data(size) { }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keywordtype">void</span> assign(<span class="keyword">const</span> std::span&lt;const std::byte&gt; buf) {</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            this-&gt;data.assign(buf.begin(), buf.end());</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        }</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        static_assert(OVERHEAD == 24, <span class="stringliteral">&quot;SegmentHeader::OVERHEAD is 24 by default. If you really know what you&#39;re doing, change this value.&quot;</span>);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordtype">void</span> encode_to(std::span&lt;std::byte&gt; buf, <span class="keywordtype">size_t</span>&amp; offset)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            assert(buf.size() &gt;= SegmentHeader::OVERHEAD);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            encoder::encode&lt;Conv&gt;(buf, offset, this-&gt;<a class="code" href="structimkcpp_1_1SegmentHeader.html#a1443efcdce126eaf977b72e48e48e6ef">conv</a>);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            encoder::encode&lt;Cmd&gt;(buf, offset, this-&gt;<a class="code" href="structimkcpp_1_1SegmentHeader.html#ae802a35033c40ba25c3be42afc881d33">cmd</a>);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            encoder::encode&lt;Fragment&gt;(buf, offset, this-&gt;<a class="code" href="structimkcpp_1_1SegmentHeader.html#a8ab9c5e2c479f4ac244fc5edcd8a75a5">frg</a>);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            encoder::encode&lt;u16&gt;(buf, offset, this-&gt;wnd);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            encoder::encode&lt;u32&gt;(buf, offset, this-&gt;ts);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            encoder::encode&lt;u32&gt;(buf, offset, this-&gt;sn);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            encoder::encode&lt;u32&gt;(buf, offset, this-&gt;una);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            encoder::encode&lt;PayloadLen&gt;(buf, offset, this-&gt;<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6d9b3cd2fa1530c7adad45de5c7f70d1">len</a>);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        }</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keywordtype">void</span> decode_from(<span class="keyword">const</span> std::span&lt;const std::byte&gt; buf, <span class="keywordtype">size_t</span>&amp; offset) {</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            assert(buf.size() &gt;= SegmentHeader::OVERHEAD);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            encoder::decode&lt;Conv&gt;(buf, offset, this-&gt;<a class="code" href="structimkcpp_1_1SegmentHeader.html#a1443efcdce126eaf977b72e48e48e6ef">conv</a>);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            encoder::decode&lt;Cmd&gt;(buf, offset, this-&gt;<a class="code" href="structimkcpp_1_1SegmentHeader.html#ae802a35033c40ba25c3be42afc881d33">cmd</a>);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            encoder::decode&lt;Fragment&gt;(buf, offset, this-&gt;<a class="code" href="structimkcpp_1_1SegmentHeader.html#a8ab9c5e2c479f4ac244fc5edcd8a75a5">frg</a>);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            encoder::decode&lt;u16&gt;(buf, offset, this-&gt;wnd);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            encoder::decode&lt;u32&gt;(buf, offset, this-&gt;ts);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            encoder::decode&lt;u32&gt;(buf, offset, this-&gt;sn);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            encoder::decode&lt;u32&gt;(buf, offset, this-&gt;una);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            encoder::decode&lt;PayloadLen&gt;(buf, offset, this-&gt;<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6d9b3cd2fa1530c7adad45de5c7f70d1">len</a>);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        }</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    };</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentMetadata.html">   82</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structimkcpp_1_1SegmentMetadata.html">SegmentMetadata</a> final {</div>
+<div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentMetadata.html#a28912d64f16838a6dce126e3d250660c">   84</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentMetadata.html#a28912d64f16838a6dce126e3d250660c">resendts</a> = 0;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentMetadata.html#aa176bf5a24eb912ebe5821a243f0dd5f">   87</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentMetadata.html#aa176bf5a24eb912ebe5821a243f0dd5f">rto</a> = 0;</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        [[nodiscard]] <span class="keywordtype">size_t</span> size()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            <span class="keywordflow">return</span> this-&gt;data.size();</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        }</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordtype">void</span> encode_to(std::span&lt;std::byte&gt; buf, <span class="keywordtype">size_t</span>&amp; offset, <span class="keyword">const</span> <span class="keywordtype">size_t</span> length)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            assert(buf.size() &gt;= this-&gt;data.size());</div>
+<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentMetadata.html#a0520b7bb4b4e22727dc509fe97dfa54c">   90</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentMetadata.html#a0520b7bb4b4e22727dc509fe97dfa54c">fastack</a> = 0;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentMetadata.html#a2de45d639e4a5b22fa34044fa2fe01b7">   93</a></span>&#160;        u32 <a class="code" href="structimkcpp_1_1SegmentMetadata.html#a2de45d639e4a5b22fa34044fa2fe01b7">xmit</a> = 0;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    };</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            std::memcpy(buf.data() + offset, this-&gt;data.data(), length);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            offset += length;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        }</div>
+<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="structimkcpp_1_1SegmentData.html">   97</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structimkcpp_1_1SegmentData.html">SegmentData</a> final {</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        std::vector&lt;std::byte&gt; data{};</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keywordtype">void</span> decode_from(<span class="keyword">const</span> std::span&lt;const std::byte&gt; buf, <span class="keywordtype">size_t</span>&amp; offset, <span class="keyword">const</span> <span class="keywordtype">size_t</span> length) {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            assert(buf.size() &gt;= offset + length);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            this-&gt;assign(buf.subspan(offset, length));</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            offset += length;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        }</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    };</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="structimkcpp_1_1SegmentData.html">SegmentData</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="structimkcpp_1_1SegmentData.html">SegmentData</a>(<span class="keyword">const</span> <span class="keywordtype">size_t</span> size) : data(size) { }</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <span class="keywordtype">void</span> assign(<span class="keyword">const</span> std::span&lt;const std::byte&gt; buf) {</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            this-&gt;data.assign(buf.begin(), buf.end());</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        }</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00107"></a><span class="lineno"><a class="line" href="structimkcpp_1_1Segment.html">  107</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structimkcpp_1_1Segment.html">Segment</a> final {</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <a class="code" href="structimkcpp_1_1SegmentHeader.html">SegmentHeader</a> header{};</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <a class="code" href="structimkcpp_1_1SegmentMetadata.html">SegmentMetadata</a> metadata{};</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        <a class="code" href="structimkcpp_1_1SegmentData.html">SegmentData</a> data{};</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="structimkcpp_1_1Segment.html">Segment</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="structimkcpp_1_1Segment.html">Segment</a>(<span class="keyword">const</span> <a class="code" href="structimkcpp_1_1SegmentHeader.html">SegmentHeader</a>&amp; header, <a class="code" href="structimkcpp_1_1SegmentData.html">SegmentData</a>&amp; data) : header(header), data(std::move(data)) { }</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <span class="keywordtype">void</span> encode_to(<span class="keyword">const</span> std::span&lt;std::byte&gt; buf, <span class="keywordtype">size_t</span>&amp; offset)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;            assert(buf.size() &gt;= constants::IKCP_OVERHEAD + this-&gt;header.len);</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            assert(this-&gt;header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">len</a> == this-&gt;data.size());</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            this-&gt;header.encode_to(buf, offset);</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            this-&gt;data.encode_to(buf, offset, this-&gt;header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">len</a>);</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        }</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="keywordtype">void</span> decode_from(<span class="keyword">const</span> std::span&lt;const std::byte&gt; buf, <span class="keywordtype">size_t</span>&amp; offset) {</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            assert(buf.size() &gt;= constants::IKCP_OVERHEAD + this-&gt;header.len);</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            this-&gt;header.decode_from(buf, offset);</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            this-&gt;data.decode_from(buf, offset, this-&gt;header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">len</a>);</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        }</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        [[nodiscard]] <span class="keywordtype">size_t</span> size()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            <span class="keywordflow">return</span> this-&gt;data.size();</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        }</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keywordtype">void</span> encode_to(std::span&lt;std::byte&gt; buf, <span class="keywordtype">size_t</span>&amp; offset, <span class="keyword">const</span> <span class="keywordtype">size_t</span> length)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            assert(buf.size() &gt;= this-&gt;data.size());</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            std::memcpy(buf.data() + offset, this-&gt;data.data(), length);</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;            offset += length;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        }</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keywordtype">void</span> decode_from(<span class="keyword">const</span> std::span&lt;const std::byte&gt; buf, <span class="keywordtype">size_t</span>&amp; offset, <span class="keyword">const</span> <span class="keywordtype">size_t</span> length) {</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            assert(buf.size() &gt;= offset + length);</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            this-&gt;assign(buf.subspan(offset, length));</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            offset += length;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        }</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    };</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
+<div class="line"><a name="l00125"></a><span class="lineno"><a class="line" href="structimkcpp_1_1Segment.html">  125</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structimkcpp_1_1Segment.html">Segment</a> final {</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        <a class="code" href="structimkcpp_1_1SegmentHeader.html">SegmentHeader</a> header{};</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        <a class="code" href="structimkcpp_1_1SegmentData.html">SegmentData</a> data{};</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <a class="code" href="structimkcpp_1_1SegmentMetadata.html">SegmentMetadata</a> metadata{};</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        [[nodiscard]] <span class="keywordtype">size_t</span> size()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            <span class="keywordflow">return</span> constants::IKCP_OVERHEAD + this-&gt;data_size();</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        }</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        [[nodiscard]] <span class="keywordtype">size_t</span> data_size()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            <span class="keywordflow">return</span> this-&gt;header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">len</a>;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        }</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        <span class="keywordtype">void</span> data_assign(<span class="keyword">const</span> std::span&lt;const std::byte&gt; buf) {</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;            this-&gt;data.assign(buf);</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            this-&gt;header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">len</a> = buf.size();</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        }</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    };</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;}</div>
-<div class="ttc" id="astructimkcpp_1_1SegmentData_html"><div class="ttname"><a href="structimkcpp_1_1SegmentData.html">imkcpp::SegmentData</a></div><div class="ttdoc">SegmentData is used to store the payload of the segment.</div><div class="ttdef"><b>Definition:</b> segment.hpp:79</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html">imkcpp::SegmentHeader</a></div><div class="ttdoc">SegmentHeader is used to store the header of the segment.</div><div class="ttdef"><b>Definition:</b> segment.hpp:11</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_a08992ae80206006966482d1cf7fd804d"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#a08992ae80206006966482d1cf7fd804d">imkcpp::SegmentHeader::una</a></div><div class="ttdeci">u32 una</div><div class="ttdoc">Unacknowledged sequence number.</div><div class="ttdef"><b>Definition:</b> segment.hpp:31</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_a092b9b075c703aad8d1c1322cac1e04c"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#a092b9b075c703aad8d1c1322cac1e04c">imkcpp::SegmentHeader::wnd</a></div><div class="ttdeci">u16 wnd</div><div class="ttdoc">Window size (available space in the receive buffer).</div><div class="ttdef"><b>Definition:</b> segment.hpp:22</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_a23fb9d7bf64a67638e102c3ff0dc953b"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#a23fb9d7bf64a67638e102c3ff0dc953b">imkcpp::SegmentHeader::len</a></div><div class="ttdeci">u32 len</div><div class="ttdoc">Length of the payload.</div><div class="ttdef"><b>Definition:</b> segment.hpp:34</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_a6546abc6b9bdfbd1b778147526da60ff"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">imkcpp::SegmentHeader::sn</a></div><div class="ttdeci">u32 sn</div><div class="ttdoc">Sequence number.</div><div class="ttdef"><b>Definition:</b> segment.hpp:28</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_abec58d2672fe72e40f8e9237d0c9dc3e"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">imkcpp::SegmentHeader::ts</a></div><div class="ttdeci">u32 ts</div><div class="ttdoc">Timestamp.</div><div class="ttdef"><b>Definition:</b> segment.hpp:25</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_adae83ab066d221bdc0d925c01d6c1737"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#adae83ab066d221bdc0d925c01d6c1737">imkcpp::SegmentHeader::frg</a></div><div class="ttdeci">u8 frg</div><div class="ttdoc">Fragment. Indicates how many next SNs are following this one in the same packet.</div><div class="ttdef"><b>Definition:</b> segment.hpp:19</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_af535f6c8b13dc29db94c5b8926a39d4c"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#af535f6c8b13dc29db94c5b8926a39d4c">imkcpp::SegmentHeader::cmd</a></div><div class="ttdeci">u8 cmd</div><div class="ttdoc">Command type.</div><div class="ttdef"><b>Definition:</b> segment.hpp:16</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_af990348ad8cea08df3f33fbdf3e7d1cb"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#af990348ad8cea08df3f33fbdf3e7d1cb">imkcpp::SegmentHeader::conv</a></div><div class="ttdeci">u32 conv</div><div class="ttdoc">Conversation ID.</div><div class="ttdef"><b>Definition:</b> segment.hpp:13</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentMetadata_html"><div class="ttname"><a href="structimkcpp_1_1SegmentMetadata.html">imkcpp::SegmentMetadata</a></div><div class="ttdoc">SegmentMetadata is used to track the state of the segment in the send queue for (re)transmission purp...</div><div class="ttdef"><b>Definition:</b> segment.hpp:64</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentMetadata_html_a0520b7bb4b4e22727dc509fe97dfa54c"><div class="ttname"><a href="structimkcpp_1_1SegmentMetadata.html#a0520b7bb4b4e22727dc509fe97dfa54c">imkcpp::SegmentMetadata::fastack</a></div><div class="ttdeci">u32 fastack</div><div class="ttdoc">Number of times this segment has been acknowledged without any intervening segments being acknowledge...</div><div class="ttdef"><b>Definition:</b> segment.hpp:72</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentMetadata_html_a28912d64f16838a6dce126e3d250660c"><div class="ttname"><a href="structimkcpp_1_1SegmentMetadata.html#a28912d64f16838a6dce126e3d250660c">imkcpp::SegmentMetadata::resendts</a></div><div class="ttdeci">u32 resendts</div><div class="ttdoc">Timestamp for retransmission.</div><div class="ttdef"><b>Definition:</b> segment.hpp:66</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentMetadata_html_a2de45d639e4a5b22fa34044fa2fe01b7"><div class="ttname"><a href="structimkcpp_1_1SegmentMetadata.html#a2de45d639e4a5b22fa34044fa2fe01b7">imkcpp::SegmentMetadata::xmit</a></div><div class="ttdeci">u32 xmit</div><div class="ttdoc">Number of times this segment has been transmitted.</div><div class="ttdef"><b>Definition:</b> segment.hpp:75</div></div>
-<div class="ttc" id="astructimkcpp_1_1SegmentMetadata_html_aa176bf5a24eb912ebe5821a243f0dd5f"><div class="ttname"><a href="structimkcpp_1_1SegmentMetadata.html#aa176bf5a24eb912ebe5821a243f0dd5f">imkcpp::SegmentMetadata::rto</a></div><div class="ttdeci">u32 rto</div><div class="ttdoc">Retransmission timeout.</div><div class="ttdef"><b>Definition:</b> segment.hpp:69</div></div>
-<div class="ttc" id="astructimkcpp_1_1Segment_html"><div class="ttname"><a href="structimkcpp_1_1Segment.html">imkcpp::Segment</a></div><div class="ttdef"><b>Definition:</b> segment.hpp:107</div></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="structimkcpp_1_1Segment.html">Segment</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="structimkcpp_1_1Segment.html">Segment</a>(<span class="keyword">const</span> <a class="code" href="structimkcpp_1_1SegmentHeader.html">SegmentHeader</a>&amp; header, <a class="code" href="structimkcpp_1_1SegmentData.html">SegmentData</a>&amp; data) : header(header), data(std::move(data)) { }</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        <span class="keywordtype">void</span> encode_to(<span class="keyword">const</span> std::span&lt;std::byte&gt; buf, <span class="keywordtype">size_t</span>&amp; offset)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            assert(buf.size() &gt;= SegmentHeader::OVERHEAD + this-&gt;header.len.get());</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            assert(this-&gt;header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6d9b3cd2fa1530c7adad45de5c7f70d1">len</a>.get() == this-&gt;data.size());</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;            this-&gt;header.encode_to(buf, offset);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;            this-&gt;data.encode_to(buf, offset, this-&gt;header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6d9b3cd2fa1530c7adad45de5c7f70d1">len</a>.get());</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        }</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        <span class="keywordtype">void</span> decode_from(<span class="keyword">const</span> std::span&lt;const std::byte&gt; buf, <span class="keywordtype">size_t</span>&amp; offset) {</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            assert(buf.size() &gt;= SegmentHeader::OVERHEAD + this-&gt;header.len.get());</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            this-&gt;header.decode_from(buf, offset);</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;            this-&gt;data.decode_from(buf, offset, this-&gt;header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6d9b3cd2fa1530c7adad45de5c7f70d1">len</a>.get());</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        }</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        [[nodiscard]] <span class="keywordtype">size_t</span> size()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            <span class="keywordflow">return</span> SegmentHeader::OVERHEAD + this-&gt;data_size();</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        }</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        [[nodiscard]] <span class="keywordtype">size_t</span> data_size()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;            <span class="keywordflow">return</span> this-&gt;header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6d9b3cd2fa1530c7adad45de5c7f70d1">len</a>.get();</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        }</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        <span class="keywordtype">void</span> data_assign(<span class="keyword">const</span> std::span&lt;const std::byte&gt; buf) {</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;            this-&gt;data.assign(buf);</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;            this-&gt;header.<a class="code" href="structimkcpp_1_1SegmentHeader.html#a6d9b3cd2fa1530c7adad45de5c7f70d1">len</a> = <a class="code" href="classimkcpp_1_1PayloadLen.html">PayloadLen</a>(buf.size());</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;        }</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    };</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;}</div>
+<div class="ttc" id="aclassimkcpp_1_1Cmd_html"><div class="ttname"><a href="classimkcpp_1_1Cmd.html">imkcpp::Cmd</a></div><div class="ttdef"><b>Definition:</b> cmd.hpp:9</div></div>
+<div class="ttc" id="aclassimkcpp_1_1Conv_html"><div class="ttname"><a href="classimkcpp_1_1Conv.html">imkcpp::Conv</a></div><div class="ttdef"><b>Definition:</b> conv.hpp:9</div></div>
+<div class="ttc" id="aclassimkcpp_1_1Fragment_html"><div class="ttname"><a href="classimkcpp_1_1Fragment.html">imkcpp::Fragment</a></div><div class="ttdef"><b>Definition:</b> fragment.hpp:9</div></div>
+<div class="ttc" id="aclassimkcpp_1_1PayloadLen_html"><div class="ttname"><a href="classimkcpp_1_1PayloadLen.html">imkcpp::PayloadLen</a></div><div class="ttdef"><b>Definition:</b> payload_len.hpp:9</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentData_html"><div class="ttname"><a href="structimkcpp_1_1SegmentData.html">imkcpp::SegmentData</a></div><div class="ttdoc">SegmentData is used to store the payload of the segment.</div><div class="ttdef"><b>Definition:</b> segment.hpp:97</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html">imkcpp::SegmentHeader</a></div><div class="ttdoc">SegmentHeader is used to store the header of the segment.</div><div class="ttdef"><b>Definition:</b> segment.hpp:17</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_a08992ae80206006966482d1cf7fd804d"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#a08992ae80206006966482d1cf7fd804d">imkcpp::SegmentHeader::una</a></div><div class="ttdeci">u32 una</div><div class="ttdoc">Unacknowledged sequence number.</div><div class="ttdef"><b>Definition:</b> segment.hpp:37</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_a092b9b075c703aad8d1c1322cac1e04c"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#a092b9b075c703aad8d1c1322cac1e04c">imkcpp::SegmentHeader::wnd</a></div><div class="ttdeci">u16 wnd</div><div class="ttdoc">Window size (available space in the receive buffer).</div><div class="ttdef"><b>Definition:</b> segment.hpp:28</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_a1443efcdce126eaf977b72e48e48e6ef"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#a1443efcdce126eaf977b72e48e48e6ef">imkcpp::SegmentHeader::conv</a></div><div class="ttdeci">Conv conv</div><div class="ttdoc">Conversation ID.</div><div class="ttdef"><b>Definition:</b> segment.hpp:19</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_a6546abc6b9bdfbd1b778147526da60ff"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#a6546abc6b9bdfbd1b778147526da60ff">imkcpp::SegmentHeader::sn</a></div><div class="ttdeci">u32 sn</div><div class="ttdoc">Sequence number.</div><div class="ttdef"><b>Definition:</b> segment.hpp:34</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_a6d9b3cd2fa1530c7adad45de5c7f70d1"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#a6d9b3cd2fa1530c7adad45de5c7f70d1">imkcpp::SegmentHeader::len</a></div><div class="ttdeci">PayloadLen len</div><div class="ttdoc">Length of the payload.</div><div class="ttdef"><b>Definition:</b> segment.hpp:40</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_a8ab9c5e2c479f4ac244fc5edcd8a75a5"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#a8ab9c5e2c479f4ac244fc5edcd8a75a5">imkcpp::SegmentHeader::frg</a></div><div class="ttdeci">Fragment frg</div><div class="ttdoc">Fragment. Indicates how many next SNs are following this one in the same packet.</div><div class="ttdef"><b>Definition:</b> segment.hpp:25</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_abec58d2672fe72e40f8e9237d0c9dc3e"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#abec58d2672fe72e40f8e9237d0c9dc3e">imkcpp::SegmentHeader::ts</a></div><div class="ttdeci">u32 ts</div><div class="ttdoc">Timestamp.</div><div class="ttdef"><b>Definition:</b> segment.hpp:31</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentHeader_html_ae802a35033c40ba25c3be42afc881d33"><div class="ttname"><a href="structimkcpp_1_1SegmentHeader.html#ae802a35033c40ba25c3be42afc881d33">imkcpp::SegmentHeader::cmd</a></div><div class="ttdeci">Cmd cmd</div><div class="ttdoc">Command type.</div><div class="ttdef"><b>Definition:</b> segment.hpp:22</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentMetadata_html"><div class="ttname"><a href="structimkcpp_1_1SegmentMetadata.html">imkcpp::SegmentMetadata</a></div><div class="ttdoc">SegmentMetadata is used to track the state of the segment in the send queue for (re)transmission purp...</div><div class="ttdef"><b>Definition:</b> segment.hpp:82</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentMetadata_html_a0520b7bb4b4e22727dc509fe97dfa54c"><div class="ttname"><a href="structimkcpp_1_1SegmentMetadata.html#a0520b7bb4b4e22727dc509fe97dfa54c">imkcpp::SegmentMetadata::fastack</a></div><div class="ttdeci">u32 fastack</div><div class="ttdoc">Number of times this segment has been acknowledged without any intervening segments being acknowledge...</div><div class="ttdef"><b>Definition:</b> segment.hpp:90</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentMetadata_html_a28912d64f16838a6dce126e3d250660c"><div class="ttname"><a href="structimkcpp_1_1SegmentMetadata.html#a28912d64f16838a6dce126e3d250660c">imkcpp::SegmentMetadata::resendts</a></div><div class="ttdeci">u32 resendts</div><div class="ttdoc">Timestamp for retransmission.</div><div class="ttdef"><b>Definition:</b> segment.hpp:84</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentMetadata_html_a2de45d639e4a5b22fa34044fa2fe01b7"><div class="ttname"><a href="structimkcpp_1_1SegmentMetadata.html#a2de45d639e4a5b22fa34044fa2fe01b7">imkcpp::SegmentMetadata::xmit</a></div><div class="ttdeci">u32 xmit</div><div class="ttdoc">Number of times this segment has been transmitted.</div><div class="ttdef"><b>Definition:</b> segment.hpp:93</div></div>
+<div class="ttc" id="astructimkcpp_1_1SegmentMetadata_html_aa176bf5a24eb912ebe5821a243f0dd5f"><div class="ttname"><a href="structimkcpp_1_1SegmentMetadata.html#aa176bf5a24eb912ebe5821a243f0dd5f">imkcpp::SegmentMetadata::rto</a></div><div class="ttdeci">u32 rto</div><div class="ttdoc">Retransmission timeout.</div><div class="ttdef"><b>Definition:</b> segment.hpp:87</div></div>
+<div class="ttc" id="astructimkcpp_1_1Segment_html"><div class="ttname"><a href="structimkcpp_1_1Segment.html">imkcpp::Segment</a></div><div class="ttdef"><b>Definition:</b> segment.hpp:125</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>imkcpp: imkcpp::Receiver&lt; MTU &gt; Class Template Reference</title>
+<title>imkcpp: imkcpp::Receiver Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -69,27 +69,36 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classimkcpp_1_1Receiver-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">imkcpp::Receiver&lt; MTU &gt; Class Template Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
+<div class="title">imkcpp::Receiver Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab3520938ed7a82073c941b82f502cded"><td class="memItemLeft" align="right" valign="top"><a id="ab3520938ed7a82073c941b82f502cded"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Receiver</b> (<a class="el" href="classimkcpp_1_1ReceiverBuffer.html">ReceiverBuffer</a>&lt; MTU &gt; &amp;receiver_buffer, <a class="el" href="classimkcpp_1_1CongestionController.html">CongestionController</a>&lt; MTU &gt; &amp;congestion_controller)</td></tr>
-<tr class="separator:ab3520938ed7a82073c941b82f502cded"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a565bfdb7e5f560e85c2c3a981a731d38"><td class="memItemLeft" align="right" valign="top"><a id="a565bfdb7e5f560e85c2c3a981a731d38"></a>
+<tr class="memitem:a3ef1a811f9355032487dd3ca13a162e2"><td class="memItemLeft" align="right" valign="top"><a id="a3ef1a811f9355032487dd3ca13a162e2"></a>
 tl::expected&lt; size_t, error &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>peek_size</b> () const</td></tr>
-<tr class="separator:a565bfdb7e5f560e85c2c3a981a731d38"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24d17db2c057691f20d2211f4314270f"><td class="memItemLeft" align="right" valign="top"><a id="a24d17db2c057691f20d2211f4314270f"></a>
-tl::expected&lt; size_t, error &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>recv</b> (const std::span&lt; std::byte &gt; buffer)</td></tr>
-<tr class="separator:a24d17db2c057691f20d2211f4314270f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a945022c9ea0428c1a3f4f8ac41125883"><td class="memItemLeft" align="right" valign="top"><a id="a945022c9ea0428c1a3f4f8ac41125883"></a>
+<tr class="separator:a3ef1a811f9355032487dd3ca13a162e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac40bb23a1034590502a52cde445b7920"><td class="memItemLeft" align="right" valign="top"><a id="ac40bb23a1034590502a52cde445b7920"></a>
+tl::expected&lt; <a class="el" href="structimkcpp_1_1ReceiveResult.html">ReceiveResult</a>, error &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>recv</b> (const std::span&lt; std::byte &gt; buffer, const u32 rcv_wnd)</td></tr>
+<tr class="separator:ac40bb23a1034590502a52cde445b7920"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38bce43f3721a08e3afb2233e7e8555c"><td class="memItemLeft" align="right" valign="top"><a id="a38bce43f3721a08e3afb2233e7e8555c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>emplace_segment</b> (const <a class="el" href="structimkcpp_1_1SegmentHeader.html">SegmentHeader</a> &amp;header, <a class="el" href="structimkcpp_1_1SegmentData.html">SegmentData</a> &amp;data)</td></tr>
+<tr class="separator:a38bce43f3721a08e3afb2233e7e8555c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46a28467d2b6b919d78f59abf6d2431d"><td class="memItemLeft" align="right" valign="top"><a id="a46a28467d2b6b919d78f59abf6d2431d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>move_receive_buffer_to_queue</b> ()</td></tr>
-<tr class="separator:a945022c9ea0428c1a3f4f8ac41125883"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ae9192014cccf0cf9a2b19fc47a0ae7"><td class="memItemLeft" align="right" valign="top"><a id="a2ae9192014cccf0cf9a2b19fc47a0ae7"></a>
-i32&#160;</td><td class="memItemRight" valign="bottom"><b>get_unused_receive_window</b> () const</td></tr>
-<tr class="separator:a2ae9192014cccf0cf9a2b19fc47a0ae7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a46a28467d2b6b919d78f59abf6d2431d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0b46e97c5262031a975343343510e2d"><td class="memItemLeft" align="right" valign="top"><a id="aa0b46e97c5262031a975343343510e2d"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const</td></tr>
+<tr class="separator:aa0b46e97c5262031a975343343510e2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e349993f66803d1bf94ec734de05080"><td class="memItemLeft" align="right" valign="top"><a id="a6e349993f66803d1bf94ec734de05080"></a>
+u32&#160;</td><td class="memItemRight" valign="bottom"><b>get_rcv_nxt</b> () const</td></tr>
+<tr class="separator:a6e349993f66803d1bf94ec734de05080"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5254f75153572fa49493b005867ae62"><td class="memItemLeft" align="right" valign="top"><a id="ae5254f75153572fa49493b005867ae62"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>should_receive</b> (const u32 sn) const</td></tr>
+<tr class="separator:ae5254f75153572fa49493b005867ae62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24d3c789f988bf1b5b4ac895ac99a3c7"><td class="memItemLeft" align="right" valign="top"><a id="a24d3c789f988bf1b5b4ac895ac99a3c7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>set_queue_limit</b> (const u32 value)</td></tr>
+<tr class="separator:a24d3c789f988bf1b5b4ac895ac99a3c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>imkcpp/include/<a class="el" href="receiver_8hpp_source.html">receiver.hpp</a></li>

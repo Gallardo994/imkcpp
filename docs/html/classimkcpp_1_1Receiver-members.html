@@ -66,17 +66,20 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title">imkcpp::Receiver&lt; MTU &gt; Member List</div>  </div>
+<div class="title">imkcpp::Receiver Member List</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>This is the complete list of members for <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver&lt; MTU &gt;</a>, including all inherited members.</p>
+<p>This is the complete list of members for <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a>, including all inherited members.</p>
 <table class="directory">
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>get_unused_receive_window</b>() const (defined in <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver&lt; MTU &gt;</a>)</td><td class="entry"><a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver&lt; MTU &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>move_receive_buffer_to_queue</b>() (defined in <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver&lt; MTU &gt;</a>)</td><td class="entry"><a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver&lt; MTU &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>peek_size</b>() const (defined in <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver&lt; MTU &gt;</a>)</td><td class="entry"><a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver&lt; MTU &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>Receiver</b>(ReceiverBuffer&lt; MTU &gt; &amp;receiver_buffer, CongestionController&lt; MTU &gt; &amp;congestion_controller) (defined in <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver&lt; MTU &gt;</a>)</td><td class="entry"><a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver&lt; MTU &gt;</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">explicit</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>recv</b>(const std::span&lt; std::byte &gt; buffer) (defined in <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver&lt; MTU &gt;</a>)</td><td class="entry"><a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver&lt; MTU &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>emplace_segment</b>(const SegmentHeader &amp;header, SegmentData &amp;data) (defined in <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a>)</td><td class="entry"><a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>get_rcv_nxt</b>() const (defined in <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a>)</td><td class="entry"><a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>move_receive_buffer_to_queue</b>() (defined in <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a>)</td><td class="entry"><a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>peek_size</b>() const (defined in <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a>)</td><td class="entry"><a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>recv</b>(const std::span&lt; std::byte &gt; buffer, const u32 rcv_wnd) (defined in <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a>)</td><td class="entry"><a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>set_queue_limit</b>(const u32 value) (defined in <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a>)</td><td class="entry"><a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>should_receive</b>(const u32 sn) const (defined in <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a>)</td><td class="entry"><a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>size</b>() const (defined in <a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a>)</td><td class="entry"><a class="el" href="classimkcpp_1_1Receiver.html">imkcpp::Receiver</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -1,22 +1,31 @@
-\hypertarget{classimkcpp_1_1Receiver}{}\doxysection{imkcpp\+::Receiver$<$ MTU $>$ Class Template Reference}
-\label{classimkcpp_1_1Receiver}\index{imkcpp::Receiver$<$ MTU $>$@{imkcpp::Receiver$<$ MTU $>$}}
+\hypertarget{classimkcpp_1_1Receiver}{}\doxysection{imkcpp\+::Receiver Class Reference}
+\label{classimkcpp_1_1Receiver}\index{imkcpp::Receiver@{imkcpp::Receiver}}
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classimkcpp_1_1Receiver_ab3520938ed7a82073c941b82f502cded}\label{classimkcpp_1_1Receiver_ab3520938ed7a82073c941b82f502cded}} 
-{\bfseries Receiver} (\mbox{\hyperlink{classimkcpp_1_1ReceiverBuffer}{Receiver\+Buffer}}$<$ MTU $>$ \&receiver\+\_\+buffer, \mbox{\hyperlink{classimkcpp_1_1CongestionController}{Congestion\+Controller}}$<$ MTU $>$ \&congestion\+\_\+controller)
-\item 
-\mbox{\Hypertarget{classimkcpp_1_1Receiver_a565bfdb7e5f560e85c2c3a981a731d38}\label{classimkcpp_1_1Receiver_a565bfdb7e5f560e85c2c3a981a731d38}} 
+\mbox{\Hypertarget{classimkcpp_1_1Receiver_a3ef1a811f9355032487dd3ca13a162e2}\label{classimkcpp_1_1Receiver_a3ef1a811f9355032487dd3ca13a162e2}} 
 tl\+::expected$<$ size\+\_\+t, error $>$ {\bfseries peek\+\_\+size} () const
 \item 
-\mbox{\Hypertarget{classimkcpp_1_1Receiver_a24d17db2c057691f20d2211f4314270f}\label{classimkcpp_1_1Receiver_a24d17db2c057691f20d2211f4314270f}} 
-tl\+::expected$<$ size\+\_\+t, error $>$ {\bfseries recv} (const std\+::span$<$ std\+::byte $>$ buffer)
+\mbox{\Hypertarget{classimkcpp_1_1Receiver_ac40bb23a1034590502a52cde445b7920}\label{classimkcpp_1_1Receiver_ac40bb23a1034590502a52cde445b7920}} 
+tl\+::expected$<$ \mbox{\hyperlink{structimkcpp_1_1ReceiveResult}{Receive\+Result}}, error $>$ {\bfseries recv} (const std\+::span$<$ std\+::byte $>$ buffer, const u32 rcv\+\_\+wnd)
 \item 
-\mbox{\Hypertarget{classimkcpp_1_1Receiver_a945022c9ea0428c1a3f4f8ac41125883}\label{classimkcpp_1_1Receiver_a945022c9ea0428c1a3f4f8ac41125883}} 
+\mbox{\Hypertarget{classimkcpp_1_1Receiver_a38bce43f3721a08e3afb2233e7e8555c}\label{classimkcpp_1_1Receiver_a38bce43f3721a08e3afb2233e7e8555c}} 
+void {\bfseries emplace\+\_\+segment} (const \mbox{\hyperlink{structimkcpp_1_1SegmentHeader}{Segment\+Header}} \&header, \mbox{\hyperlink{structimkcpp_1_1SegmentData}{Segment\+Data}} \&data)
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1Receiver_a46a28467d2b6b919d78f59abf6d2431d}\label{classimkcpp_1_1Receiver_a46a28467d2b6b919d78f59abf6d2431d}} 
 void {\bfseries move\+\_\+receive\+\_\+buffer\+\_\+to\+\_\+queue} ()
 \item 
-\mbox{\Hypertarget{classimkcpp_1_1Receiver_a2ae9192014cccf0cf9a2b19fc47a0ae7}\label{classimkcpp_1_1Receiver_a2ae9192014cccf0cf9a2b19fc47a0ae7}} 
-i32 {\bfseries get\+\_\+unused\+\_\+receive\+\_\+window} () const
+\mbox{\Hypertarget{classimkcpp_1_1Receiver_aa0b46e97c5262031a975343343510e2d}\label{classimkcpp_1_1Receiver_aa0b46e97c5262031a975343343510e2d}} 
+size\+\_\+t {\bfseries size} () const
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1Receiver_a6e349993f66803d1bf94ec734de05080}\label{classimkcpp_1_1Receiver_a6e349993f66803d1bf94ec734de05080}} 
+u32 {\bfseries get\+\_\+rcv\+\_\+nxt} () const
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1Receiver_ae5254f75153572fa49493b005867ae62}\label{classimkcpp_1_1Receiver_ae5254f75153572fa49493b005867ae62}} 
+bool {\bfseries should\+\_\+receive} (const u32 sn) const
+\item 
+\mbox{\Hypertarget{classimkcpp_1_1Receiver_a24d3c789f988bf1b5b4ac895ac99a3c7}\label{classimkcpp_1_1Receiver_a24d3c789f988bf1b5b4ac895ac99a3c7}} 
+void {\bfseries set\+\_\+queue\+\_\+limit} (const u32 value)
 \end{DoxyCompactItemize}
 
 
