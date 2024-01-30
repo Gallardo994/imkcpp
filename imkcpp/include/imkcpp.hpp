@@ -386,7 +386,7 @@ namespace imkcpp {
             // We use receive window here because it's the most restrictive value.
             return MAX_SEGMENT_SIZE * std::min(
                 static_cast<size_t>(this->congestion_controller.get_receive_window()),
-                static_cast<size_t>(std::numeric_limits<u8>::max()));
+                static_cast<size_t>(std::numeric_limits<Fragment::UT>::max()));
         }
     };
 }
