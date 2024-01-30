@@ -36,7 +36,15 @@ namespace imkcpp {
         /// Length of the payload.
         u32 len = 0;
 
-        constexpr static size_t OVERHEAD = Conv::UTS + sizeof(cmd) + sizeof(frg) + sizeof(wnd) + sizeof(ts) + sizeof(sn) + sizeof(una) + sizeof(len);
+        constexpr static size_t OVERHEAD =
+            encoder::encoded_size<decltype(conv)>() +
+            encoder::encoded_size<decltype(cmd)>() +
+            encoder::encoded_size<decltype(frg)>() +
+            encoder::encoded_size<decltype(wnd)>() +
+            encoder::encoded_size<decltype(ts)>() +
+            encoder::encoded_size<decltype(sn)>() +
+            encoder::encoded_size<decltype(una)>() +
+            encoder::encoded_size<decltype(len)>();
 
         void encode_to(std::span<std::byte> buf, size_t& offset) const {
             assert(buf.size() >= SegmentHeader::OVERHEAD);

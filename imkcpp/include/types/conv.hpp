@@ -9,7 +9,6 @@ namespace imkcpp {
     class Conv final {
     public:
         using UT = u32;
-        constexpr static size_t UTS = sizeof(UT);
 
         constexpr explicit Conv(const UT value) noexcept : value(value) {}
 
@@ -30,6 +29,11 @@ namespace imkcpp {
     };
 
     namespace encoder {
+        template<>
+        constexpr size_t encoded_size<Conv>() {
+            return sizeof(Conv::UT);
+        }
+
         template<>
         inline void encode<Conv>(std::span<std::byte>& buf, size_t& offset, const Conv value) {
             encode<Conv::UT>(buf, offset, value.get());

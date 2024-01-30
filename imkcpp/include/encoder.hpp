@@ -121,4 +121,22 @@ namespace imkcpp::encoder {
         value = ntohl(value);
         offset += sizeof(u32);
     }
+
+    template<typename T>
+    constexpr size_t encoded_size();
+
+    template<>
+    constexpr size_t encoded_size<u8>() {
+        return sizeof(u8);
+    }
+
+    template<>
+    constexpr size_t encoded_size<u16>() {
+        return sizeof(u16);
+    }
+
+    template<>
+    constexpr size_t encoded_size<u32>() {
+        return sizeof(u32);
+    }
 }
