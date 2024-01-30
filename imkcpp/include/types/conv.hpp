@@ -31,7 +31,7 @@ namespace imkcpp {
     namespace encoder {
         template<>
         constexpr size_t encoded_size<Conv>() {
-            return sizeof(Conv::UT);
+            return encoded_size<Conv::UT>();
         }
 
         template<>
