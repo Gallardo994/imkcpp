@@ -25,7 +25,7 @@ TEST(Send_Tests, Send_ValidValues) {
     std::cout << "Running " << tests_count << " Send_ValidValues tests" << std::endl;
 
     for (size_t size = min_data_size; size < max_data_size; size += step) {
-        ImKcpp<constants::IKCP_MTU_DEF> kcp_output(0);
+        ImKcpp<constants::IKCP_MTU_DEF> kcp_output(Conv{0});
         kcp_output.set_send_window(2048);
         kcp_output.set_receive_window(2048);
         kcp_output.set_congestion_window_enabled(false);
@@ -40,7 +40,7 @@ TEST(Send_Tests, Send_ValidValues) {
 
         kcp_output.update(0, output_callback);
 
-        ImKcpp<constants::IKCP_MTU_DEF> kcp_input(0);
+        ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
         kcp_input.set_send_window(2048);
         kcp_input.set_receive_window(2048);
         kcp_input.update(0, [](std::span<const std::byte>) { });
@@ -141,14 +141,14 @@ TEST(Send_Tests, Send_LossyScenario) {
     constexpr size_t max_segment_size = MTU_TO_MSS<constants::IKCP_MTU_DEF>();
     constexpr size_t size = max_segment_size * 120;
 
-    ImKcpp<constants::IKCP_MTU_DEF> kcp_output(0);
+    ImKcpp<constants::IKCP_MTU_DEF> kcp_output(Conv{0});
     kcp_output.set_send_window(2048);
     kcp_output.set_receive_window(2048);
     kcp_output.set_interval(10);
     kcp_output.set_congestion_window_enabled(false);
     kcp_output.update(0, [](std::span<const std::byte>) { });
 
-    ImKcpp<constants::IKCP_MTU_DEF> kcp_input(0);
+    ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
     kcp_input.set_send_window(2048);
     kcp_input.set_receive_window(2048);
     kcp_input.set_interval(10);
@@ -220,13 +220,13 @@ TEST(Send_Tests, Send_SendWindowSmallerThanReceive) {
     constexpr size_t max_segment_size = MTU_TO_MSS<constants::IKCP_MTU_DEF>();
     constexpr size_t size = max_segment_size * 250;
 
-    ImKcpp<constants::IKCP_MTU_DEF> kcp_output(0);
+    ImKcpp<constants::IKCP_MTU_DEF> kcp_output(Conv{0});
     kcp_output.set_send_window(128);
     kcp_output.set_receive_window(256);
     kcp_output.set_interval(10);
     kcp_output.update(0, [](std::span<const std::byte>) { });
 
-    ImKcpp<constants::IKCP_MTU_DEF> kcp_input(0);
+    ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
     kcp_input.set_send_window(128);
     kcp_input.set_receive_window(256);
     kcp_input.set_interval(10);
@@ -276,7 +276,7 @@ TEST(Send_Tests, Send_SendWindowSmallerThanReceive) {
 TEST(Send_Tests, Send_FragmentedValidValues) {
     using namespace imkcpp;
 
-    ImKcpp<constants::IKCP_MTU_DEF> kcp(0);
+    ImKcpp<constants::IKCP_MTU_DEF> kcp(Conv{0});
     kcp.set_send_window(2048);
     kcp.set_receive_window(2048);
 
@@ -298,7 +298,7 @@ TEST(Send_Tests, Send_SizeValid) {
     std::vector<std::byte> buffer(max_data_size + 1);
 
     for (size_t size = 1; size < max_data_size; size += step) {
-        ImKcpp<constants::IKCP_MTU_DEF> kcp(0);
+        ImKcpp<constants::IKCP_MTU_DEF> kcp(Conv{0});
         kcp.set_send_window(255);
         kcp.set_receive_window(255);
 
@@ -309,7 +309,7 @@ TEST(Send_Tests, Send_SizeValid) {
 
     // Exceeds max data size
     {
-        ImKcpp<constants::IKCP_MTU_DEF> kcp(0);
+        ImKcpp<constants::IKCP_MTU_DEF> kcp(Conv{0});
         kcp.set_send_window(255);
         kcp.set_receive_window(255);
 
@@ -321,7 +321,7 @@ TEST(Send_Tests, Send_SizeValid) {
 TEST(Send_Tests, Send_ZeroBytes) {
     using namespace imkcpp;
 
-    ImKcpp<constants::IKCP_MTU_DEF> kcp(0);
+    ImKcpp<constants::IKCP_MTU_DEF> kcp(Conv{0});
 
     std::vector<std::byte> data(0);
     auto result = kcp.send(data);
@@ -331,7 +331,7 @@ TEST(Send_Tests, Send_ZeroBytes) {
 TEST(Send_Tests, Send_ExceedsWindowSize) {
     using namespace imkcpp;
 
-    ImKcpp<constants::IKCP_MTU_DEF> kcp(0);
+    ImKcpp<constants::IKCP_MTU_DEF> kcp(Conv{0});
     kcp.set_send_window(128);
     kcp.set_receive_window(128);
 
@@ -343,7 +343,7 @@ TEST(Send_Tests, Send_ExceedsWindowSize) {
 TEST(Send_Tests, Send_ReceivedMalformedData) {
     using namespace imkcpp;
 
-    ImKcpp<constants::IKCP_MTU_DEF> kcp(0);
+    ImKcpp<constants::IKCP_MTU_DEF> kcp(Conv{0});
 
     {
         std::vector<std::byte> data(constants::IKCP_OVERHEAD - 1);

@@ -9,7 +9,7 @@ namespace imkcpp {
         State state = State::Alive;
 
         /// Conversation ID.
-        u32 conv = 0;
+        Conv conv{0};
 
         /// Interval.
         u32 interval = constants::IKCP_INTERVAL;
@@ -25,11 +25,11 @@ namespace imkcpp {
             this->state = state;
         }
 
-        [[nodiscard]] u32 get_conv() const {
+        [[nodiscard]] Conv get_conv() const {
             return this->conv;
         }
 
-        void set_conv(const u32 conv) {
+        void set_conv(const Conv conv) {
             this->conv = conv;
         }
 

@@ -88,7 +88,7 @@ namespace imkcpp {
 
         /// Flushes data segments from the send queue to the sender buffer.
         void move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window, const u32 rcv_nxt) {
-            const u32 conv = this->shared_ctx.get_conv();
+            const Conv conv = this->shared_ctx.get_conv();
             const u32 rto = this->rto_calculator.get_rto();
 
             while (!this->snd_queue.empty() && this->segment_tracker.get_snd_nxt() < this->segment_tracker.get_snd_una() + cwnd) {

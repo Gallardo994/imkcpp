@@ -2,15 +2,18 @@
 
 #include "types.hpp"
 #include "encoder.hpp"
+#include "types/conv.hpp"
 #include <vector>
 
 namespace imkcpp {
     // TODO: Too many public members, make them private. Also, make the Segment class a friend of the SegmentHeader class.
     // TODO: The logic is heavily reliant on the fact that everything is public. Rework this.
+
+    // TODO: Overhead sizes don't take into account modifications to the types (e.g. Conv is 1 byte, not 4)
     /// SegmentHeader is used to store the header of the segment.
     struct SegmentHeader final {
         /// Conversation ID.
-        u32 conv = 0;  // TODO: Does this need to be 4 bytes?
+        Conv conv{0};
 
         /// Command type.
         u8 cmd = 0;
@@ -36,7 +39,7 @@ namespace imkcpp {
         void encode_to(std::span<std::byte> buf, size_t& offset) const {
             assert(buf.size() >= constants::IKCP_OVERHEAD);
 
-            encoder::encode<u32>(buf, offset, this->conv);
+            encoder::encode<Conv>(buf, offset, this->conv);
             encoder::encode<u8>(buf, offset, this->cmd);
             encoder::encode<u8>(buf, offset, this->frg);
             encoder::encode<u16>(buf, offset, this->wnd);
@@ -49,7 +52,7 @@ namespace imkcpp {
         void decode_from(const std::span<const std::byte> buf, size_t& offset) {
             assert(buf.size() >= constants::IKCP_OVERHEAD);
 
-            encoder::decode<u32>(buf, offset, this->conv);
+            encoder::decode<Conv>(buf, offset, this->conv);
             encoder::decode<u8>(buf, offset, this->cmd);
             encoder::decode<u8>(buf, offset, this->frg);
             encoder::decode<u16>(buf, offset, this->wnd);

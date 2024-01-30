@@ -65,7 +65,7 @@ namespace imkcpp {
         }
 
     public:
-        explicit ImKcpp(const u32 conv) noexcept {
+        explicit ImKcpp(const Conv conv) noexcept {
             this->shared_ctx.set_conv(conv);
             this->set_receive_window(constants::IKCP_WND_RCV);
             this->set_send_window(constants::IKCP_WND_SND);
