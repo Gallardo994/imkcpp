@@ -4,6 +4,8 @@
 #include "types.hpp"
 
 namespace imkcpp {
+    /// Fragment number.
+    /// Determines the order of the fragments.
     class Fragment final {
     public:
         using UT = u8;

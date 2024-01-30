@@ -4,6 +4,8 @@
 #include "types.hpp"
 
 namespace imkcpp {
+    /// Command ID.
+    /// Determines the type of the segment and the action to be taken.
     class Cmd final {
     public:
         using UT = u8;

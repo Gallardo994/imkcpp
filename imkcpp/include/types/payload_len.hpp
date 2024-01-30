@@ -4,6 +4,8 @@
 #include "types.hpp"
 
 namespace imkcpp {
+    /// Payload length.
+    /// Determines the length of the payload.
     class PayloadLen final {
     public:
         using UT = u32;

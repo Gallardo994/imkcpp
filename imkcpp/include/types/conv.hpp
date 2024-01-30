@@ -5,7 +5,7 @@
 
 namespace imkcpp {
     /// Conversation ID.
-    /// UT can be changed to u16 or u8 to save space if needed.
+    /// Used for splitting channels over the same socket. UT can be changed to u16 or u8 to save space if needed.
     class Conv final {
     public:
         using UT = u32;
