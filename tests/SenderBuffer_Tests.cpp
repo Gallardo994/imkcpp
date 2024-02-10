@@ -85,18 +85,20 @@ TEST_F(SenderBufferTest, GetEarliestTransmitDelta) {
 
     SegmentData data1{}, data2{}, data3{};
 
+    const auto now = std::chrono::steady_clock::now();
+
     Segment segment1{ SegmentHeader{ .sn = 2 }, data1 };
-    segment1.metadata.resendts = 100;
+    segment1.metadata.resendts = now + 100ms;
     Segment segment2{ SegmentHeader{ .sn = 3 }, data2 };
-    segment2.metadata.resendts = 200;
+    segment2.metadata.resendts = now + 200ms;
     Segment segment3{ SegmentHeader{ .sn = 4 }, data3 };
-    segment3.metadata.resendts = 300;
+    segment3.metadata.resendts = now + 300ms;
 
     buffer.push_segment(segment1);
     buffer.push_segment(segment2);
     buffer.push_segment(segment3);
 
-    const auto earliest_delta = buffer.get_earliest_transmit_delta(10);
+    const auto earliest_delta = buffer.get_earliest_transmit_delta(now + 10ms);
     ASSERT_TRUE(earliest_delta.has_value());
-    ASSERT_EQ(earliest_delta.value(), 90);
+    ASSERT_EQ(earliest_delta.value(), 90ms);
 }

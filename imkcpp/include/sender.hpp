@@ -87,9 +87,9 @@ namespace imkcpp {
         }
 
         /// Flushes data segments from the send queue to the sender buffer.
-        void move_send_queue_to_buffer(const u32 cwnd, const u32 current, const i32 unused_receive_window, const u32 rcv_nxt) {
+        void move_send_queue_to_buffer(const u32 cwnd, const timepoint_t current, const i32 unused_receive_window, const u32 rcv_nxt) {
             const Conv conv = this->shared_ctx.get_conv();
-            const u32 rto = this->rto_calculator.get_rto();
+            const duration_t rto = this->rto_calculator.get_rto();
 
             while (!this->snd_queue.empty() && this->segment_tracker.get_snd_nxt() < this->segment_tracker.get_snd_una() + cwnd) {
                 Segment& newseg = this->snd_queue.front();
@@ -135,14 +135,14 @@ namespace imkcpp {
         }
 
         /// Flushes data segments from the send queue to the output callback.
-        void flush_data_segments(FlushResult& flush_result, const output_callback_t& output, const u32 current, const i32 unused_receive_window, const u32 rcv_nxt) {
+        void flush_data_segments(FlushResult& flush_result, const output_callback_t& output, const timepoint_t current, const i32 unused_receive_window, const u32 rcv_nxt) {
             const u32 cwnd = this->congestion_controller.calculate_congestion_window();
             this->move_send_queue_to_buffer(cwnd, current, unused_receive_window, rcv_nxt);
 
             bool change = false;
 
             const u32 resent = (this->fastresend > 0) ? this->fastresend : 0xffffffff;
-            const u32 rtomin = (this->nodelay == 0) ? (this->rto_calculator.get_rto() >> 3) : 0;
+            const duration_t rtomin = milliseconds_t((this->nodelay == 0) ? (this->rto_calculator.get_rto().count() >> 3) : 0);
 
             const auto has_never_been_sent = [](const Segment& segment) -> bool {
                 return segment.metadata.xmit == 0;
@@ -155,7 +155,7 @@ namespace imkcpp {
             };
 
             const auto has_timed_out = [&](const Segment& segment) -> bool {
-                return time_delta(current, segment.metadata.resendts) >= 0;
+                return current >= segment.metadata.resendts;
             };
 
             const auto prepare_segment_for_resend = [&](Segment& segment) -> void {
@@ -165,7 +165,7 @@ namespace imkcpp {
                 if (this->nodelay == 0) {
                     segment.metadata.rto += std::max(segment.metadata.rto, this->rto_calculator.get_rto());
                 } else {
-                    const u32 step = this->nodelay < 2? segment.metadata.rto : this->rto_calculator.get_rto();
+                    const duration_t step = this->nodelay < 2 ? segment.metadata.rto : this->rto_calculator.get_rto();
                     segment.metadata.rto += step / 2;
                 }
 

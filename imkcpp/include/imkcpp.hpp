@@ -8,6 +8,7 @@
 #include "third_party/expected.hpp"
 
 #include "types.hpp"
+#include "clock.hpp"
 #include "constants.hpp"
 #include "segment.hpp"
 #include "state.hpp"
@@ -46,8 +47,8 @@ namespace imkcpp {
         Sender<MTU> sender{shared_ctx, congestion_controller, rto_calculator, flusher, sender_buffer, segment_tracker};
 
         bool updated = false; // Whether update() was called at least once
-        u32 current = 0; // Current / last time we updated the state
-        u32 ts_flush = constants::IKCP_INTERVAL; // Time when we will probably flush the data next time
+        timepoint_t current; // Current / last time we updated the state
+        timepoint_t ts_flush = timepoint_t(milliseconds_t(constants::IKCP_INTERVAL)); // Time when we will probably flush the data next time
 
         // Creates a new service header for non-data packets.
         [[nodiscard]] auto create_service_header(const i32 unused_receive_window) const noexcept -> SegmentHeader {
@@ -59,7 +60,7 @@ namespace imkcpp {
             header.wnd = unused_receive_window;
             header.una = this->receiver.get_rcv_nxt();
             header.sn = 0;
-            header.ts = 0;
+            header.ts = timepoint_t{};
             header.len = PayloadLen(0);
 
             return header;
@@ -73,8 +74,8 @@ namespace imkcpp {
         }
 
         /// Sets the internal clock interval in milliseconds. Must be between 10 and 5000.
-        auto set_interval(u32 interval) noexcept -> void {
-            interval = std::clamp(interval, static_cast<u32>(10), static_cast<u32>(5000));
+        auto set_interval(duration_t interval) noexcept -> void {
+            interval = std::clamp<duration_t>(interval, 10ms, 5000ms);
 
             this->shared_ctx.set_interval(interval);
             this->rto_calculator.set_interval(interval);
@@ -240,23 +241,19 @@ namespace imkcpp {
         }
 
         /// Checks when the next update() should be called.
-        auto check(const u32 current) noexcept -> u32 {
+        auto check(const timepoint_t current) noexcept -> timepoint_t {
             if (!this->updated) {
                 return current;
-            }
-
-            if (std::abs(time_delta(current, this->ts_flush)) >= 10000) {
-                this->ts_flush = current;
             }
 
             if (time_delta(current, this->ts_flush) >= 0) {
                 return current;
             }
 
-            const u32 next_flush = static_cast<u32>(std::max(0, time_delta(this->ts_flush, current)));
-            const std::optional<u32> earliest_transmit = this->sender_buffer.get_earliest_transmit_delta(current);
+            const duration_t next_flush = std::max(duration_t{0}, this->ts_flush - current);
+            const std::optional<duration_t> earliest_transmit = this->sender_buffer.get_earliest_transmit_delta(current);
 
-            u32 minimal = 0;
+            duration_t minimal;
 
             if (earliest_transmit.has_value()) {
                 minimal = earliest_transmit.value() < next_flush ? earliest_transmit.value() : next_flush;
@@ -268,7 +265,7 @@ namespace imkcpp {
         }
 
         /// Updates the state and performs flush if necessary.
-        auto update(const u32 current, const output_callback_t& callback) noexcept -> FlushResult {
+        auto update(const timepoint_t current, const output_callback_t& callback) noexcept -> FlushResult {
             this->current = current;
 
             if (!this->updated) {
@@ -276,18 +273,11 @@ namespace imkcpp {
                 this->ts_flush = this->current;
             }
 
-            i32 slap = time_delta(this->current, this->ts_flush);
-
-            if (slap >= 10000 || slap < -10000) {
-                this->ts_flush = this->current;
-                slap = 0;
-            }
-
-            if (slap >= 0) {
-                const auto interval = this->shared_ctx.get_interval();
-
+            if (this->current >= this->ts_flush) {
+                const duration_t interval = this->shared_ctx.get_interval();
                 this->ts_flush += interval;
-                if (time_delta(this->current, this->ts_flush) >= 0) {
+
+                if (this->current >= this->ts_flush) {
                     this->ts_flush = this->current + interval;
                 }
 
@@ -305,7 +295,7 @@ namespace imkcpp {
                 return flush_result;
             }
 
-            const u32 current = this->current;
+            const timepoint_t current = this->current;
             const i32 unused_receive_window = std::max(static_cast<i32>(this->congestion_controller.get_receive_window()) - static_cast<i32>(this->receiver.size()), 0);
 
             SegmentHeader header = this->create_service_header(unused_receive_window);

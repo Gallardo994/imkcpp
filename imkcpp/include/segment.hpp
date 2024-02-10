@@ -1,6 +1,7 @@
 #pragma once
 
 #include "types.hpp"
+#include "clock.hpp"
 #include "encoder.hpp"
 #include "types/conv.hpp"
 #include "types/cmd.hpp"
@@ -28,7 +29,7 @@ namespace imkcpp {
         u16 wnd = 0;
 
         /// Timestamp.
-        u32 ts = 0;
+        timepoint_t ts;
 
         /// Sequence number.
         u32 sn = 0;
@@ -58,7 +59,7 @@ namespace imkcpp {
             encoder::encode<Cmd>(buf, offset, this->cmd);
             encoder::encode<Fragment>(buf, offset, this->frg);
             encoder::encode<u16>(buf, offset, this->wnd);
-            encoder::encode<u32>(buf, offset, this->ts);
+            encoder::encode<timepoint_t>(buf, offset, this->ts);
             encoder::encode<u32>(buf, offset, this->sn);
             encoder::encode<u32>(buf, offset, this->una);
             encoder::encode<PayloadLen>(buf, offset, this->len);
@@ -71,7 +72,7 @@ namespace imkcpp {
             encoder::decode<Cmd>(buf, offset, this->cmd);
             encoder::decode<Fragment>(buf, offset, this->frg);
             encoder::decode<u16>(buf, offset, this->wnd);
-            encoder::decode<u32>(buf, offset, this->ts);
+            encoder::decode<timepoint_t>(buf, offset, this->ts);
             encoder::decode<u32>(buf, offset, this->sn);
             encoder::decode<u32>(buf, offset, this->una);
             encoder::decode<PayloadLen>(buf, offset, this->len);
@@ -81,10 +82,10 @@ namespace imkcpp {
     /// SegmentMetadata is used to track the state of the segment in the send queue for (re)transmission purposes.
     struct SegmentMetadata final {
         /// Timestamp for retransmission.
-        u32 resendts = 0;
+        timepoint_t resendts;
 
         /// Retransmission timeout.
-        u32 rto = 0;
+        duration_t rto{0};
 
         /// Number of times this segment has been acknowledged without any intervening segments being acknowledged.
         u32 fastack = 0;

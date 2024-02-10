@@ -1,8 +1,11 @@
 #pragma once
 
 #include "types.hpp"
+#include "clock.hpp"
 
 namespace imkcpp {
+    using namespace std::chrono_literals;
+
     /// Shared context between the sender and the receiver.
     class SharedCtx final {
         /// Current state of the connection.
@@ -12,7 +15,7 @@ namespace imkcpp {
         Conv conv{0};
 
         /// Interval.
-        u32 interval = constants::IKCP_INTERVAL;
+        duration_t interval = milliseconds_t(constants::IKCP_INTERVAL);
 
     public:
         /// Gets the current state of the connection.
@@ -33,11 +36,11 @@ namespace imkcpp {
             this->conv = conv;
         }
 
-        [[nodiscard]] u32 get_interval() const {
+        [[nodiscard]] duration_t get_interval() const {
             return this->interval;
         }
 
-        void set_interval(const u32 interval) {
+        void set_interval(const duration_t interval) {
             this->interval = interval;
         }
     };

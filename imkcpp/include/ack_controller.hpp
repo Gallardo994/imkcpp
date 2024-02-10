@@ -15,7 +15,7 @@ namespace imkcpp {
         u32 maxack = INVALID;
 
         /// The timestamp of the latest received segment
-        u32 latest_ts = INVALID;
+        timepoint_t latest_ts;
 
     public:
         /// Returns true if at least one ack has been received.
@@ -24,7 +24,7 @@ namespace imkcpp {
         }
 
         /// Updates the latest received segment number and its timestamp.
-        void update(const u32 sn, const u32 ts) {
+        void update(const u32 sn, const timepoint_t ts) {
             if (this->is_valid()) {
                 if (sn > this->maxack) {
                     this->maxack = sn;
@@ -42,7 +42,7 @@ namespace imkcpp {
         }
 
         /// Returns the timestamp of the latest received segment.
-        [[nodiscard]] u32 get_latest_ts() const {
+        [[nodiscard]] timepoint_t get_latest_ts() const {
             return this->latest_ts;
         }
     };
@@ -52,10 +52,10 @@ namespace imkcpp {
         u32 sn = 0;
 
         /// Timestamp
-        u32 ts = 0;
+        timepoint_t ts;
 
         explicit Ack() = default;
-        explicit Ack(const u32 sn, const u32 ts) : sn(sn), ts(ts) { }
+        explicit Ack(const u32 sn, const timepoint_t ts) : sn(sn), ts(ts) { }
     };
 
     class AckController final {
@@ -125,7 +125,7 @@ namespace imkcpp {
         }
 
         /// Adds a segment to the acknowledgement list to be sent later.
-        void schedule_ack(const u32 sn, const u32 ts) {
+        void schedule_ack(const u32 sn, const timepoint_t ts) {
             this->acklist.emplace_back(sn, ts);
         }
 

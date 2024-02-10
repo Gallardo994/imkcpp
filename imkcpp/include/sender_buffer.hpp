@@ -4,6 +4,7 @@
 #include <limits>
 
 #include "types.hpp"
+#include "clock.hpp"
 #include "segment.hpp"
 
 namespace imkcpp {
@@ -70,27 +71,26 @@ namespace imkcpp {
          *Returns nearest delta from current time to the earliest resend time of a segment in the buffer.
          *If there are no segments in the buffer, returns std::nullopt
          */
-        [[nodiscard]] std::optional<u32> get_earliest_transmit_delta(const u32 current) const {
-            if (this->snd_buf.empty()) {
+        [[nodiscard]] std::optional<duration_t> get_earliest_transmit_delta(const timepoint_t current) const {
+            if (snd_buf.empty()) {
                 return std::nullopt;
             }
 
-            constexpr u32 default_value = std::numeric_limits<u32>::max();
-            u32 tm_packet = default_value;
+            auto earliest_delta = std::optional<duration_t>{};
 
-            for (const Segment& seg : this->snd_buf) {
+            for (const auto& seg : snd_buf) {
                 if (seg.metadata.resendts <= current) {
-                    return 0;
+                    return duration_t{0};
                 }
 
-                tm_packet = std::min<u32>(tm_packet, seg.metadata.resendts - current);
+                const auto delta = seg.metadata.resendts - current;
+
+                if (!earliest_delta || delta < earliest_delta.value()) {
+                    earliest_delta = delta;
+                }
             }
 
-            if (tm_packet == default_value) {
-                return std::nullopt;
-            }
-
-            return tm_packet;
+            return earliest_delta;
         }
 
         [[nodiscard]] bool empty() const {

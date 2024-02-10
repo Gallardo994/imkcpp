@@ -19,12 +19,6 @@ namespace imkcpp {
         u32 cwnd = 0; // Congestion Window
         u32 incr = 0; // Increment
 
-        // Probe is a part of flow control but it's deeply intertwined with congestion control so it's here
-
-        u32 probe = 0; // Probe flags
-        u32 ts_probe = 0; // Timestamp of the last time we probed the remote window
-        u32 probe_wait = 0; // How long we should wait before probing again
-
     public:
         void set_congestion_window_enabled(const bool state) {
             this->congestion_window = state;

@@ -14,6 +14,8 @@ TEST(Send_Tests, Send_ValidValues) {
 
     constexpr size_t tests_count = (max_data_size - min_data_size) / step;
 
+    const auto now = std::chrono::steady_clock::now();
+
     struct DurationResult {
         std::chrono::microseconds duration;
         size_t size;
@@ -37,12 +39,12 @@ TEST(Send_Tests, Send_ValidValues) {
             captured_data.emplace_back(data.begin(), data.end());
         };
 
-        kcp_output.update(0, output_callback);
+        kcp_output.update(now, output_callback);
 
         ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
         kcp_input.set_send_window(2048);
         kcp_input.set_receive_window(2048);
-        kcp_input.update(0, [](std::span<const std::byte>) { });
+        kcp_input.update(now, [](std::span<const std::byte>) { });
 
         std::vector<std::byte> send_buffer(size);
         for (u32 j = 0; j < size; ++j) {
@@ -60,7 +62,7 @@ TEST(Send_Tests, Send_ValidValues) {
         ASSERT_TRUE(send_result.has_value()) << err_to_str(send_result.error());
         ASSERT_EQ(send_result.value(), size);
 
-        auto update_result = kcp_output.update(200, output_callback);
+        auto update_result = kcp_output.update(now + 200ms, output_callback);
         ASSERT_EQ(update_result.cmd_ack_count, 0);
         ASSERT_EQ(update_result.cmd_wask_count, 0);
         ASSERT_EQ(update_result.cmd_wins_count, 0);
@@ -81,7 +83,7 @@ TEST(Send_Tests, Send_ValidValues) {
             EXPECT_EQ(send_buffer.at(j), recv_buffer.at(j));
         }
 
-        auto capture_acks_result = kcp_input.update(300, [&captured_acks](std::span<const std::byte> data) {
+        auto capture_acks_result = kcp_input.update(now + 300ms, [&captured_acks](std::span<const std::byte> data) {
             captured_acks.emplace_back(data.begin(), data.end());
         });
 
@@ -108,7 +110,7 @@ TEST(Send_Tests, Send_ValidValues) {
         ASSERT_EQ(acks_input_result.dropped_push_count, 0);
         ASSERT_EQ(acks_input_result.total_bytes_received, acks_input_result.cmd_ack_count * SegmentHeader::OVERHEAD);
 
-        kcp_output.update(5000, [](std::span<const std::byte>) {
+        kcp_output.update(now + 5000ms, [](std::span<const std::byte>) {
             FAIL() << "Should not be called because all data should be acknowledged";
         });
 
@@ -140,19 +142,21 @@ TEST(Send_Tests, Send_LossyScenario) {
     constexpr size_t max_segment_size = MTU_TO_MSS<constants::IKCP_MTU_DEF>();
     constexpr size_t size = max_segment_size * 120;
 
+    const auto now = std::chrono::steady_clock::now();
+
     ImKcpp<constants::IKCP_MTU_DEF> kcp_output(Conv{0});
     kcp_output.set_send_window(2048);
     kcp_output.set_receive_window(2048);
-    kcp_output.set_interval(10);
+    kcp_output.set_interval(10ms);
     kcp_output.set_congestion_window_enabled(false);
-    kcp_output.update(0, [](std::span<const std::byte>) { });
+    kcp_output.update(now, [](std::span<const std::byte>) { });
 
     ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
     kcp_input.set_send_window(2048);
     kcp_input.set_receive_window(2048);
-    kcp_input.set_interval(10);
+    kcp_input.set_interval(10ms);
     kcp_input.set_congestion_window_enabled(false);
-    kcp_input.update(0, [](std::span<const std::byte>) { });
+    kcp_input.update(now, [](std::span<const std::byte>) { });
 
     std::vector<std::byte> send_buffer(size);
     for (u32 j = 0; j < size; ++j) {
@@ -193,10 +197,10 @@ TEST(Send_Tests, Send_LossyScenario) {
     size_t update_idx = 0;
 
     while (kcp_output.get_state() == State::Alive && kcp_input.peek_size() != size) {
-        const auto now = static_cast<u32>(update_idx * 10);
+        const auto now_elapsed = now + milliseconds_t(update_idx * 10);
 
-        kcp_output.update(now, output_to_input);
-        kcp_input.update(now, input_to_output);
+        kcp_output.update(now_elapsed, output_to_input);
+        kcp_input.update(now_elapsed, input_to_output);
 
         ++update_idx;
     }
@@ -219,17 +223,19 @@ TEST(Send_Tests, Send_SendWindowSmallerThanReceive) {
     constexpr size_t max_segment_size = MTU_TO_MSS<constants::IKCP_MTU_DEF>();
     constexpr size_t size = max_segment_size * 250;
 
+    const auto now = std::chrono::steady_clock::now();
+
     ImKcpp<constants::IKCP_MTU_DEF> kcp_output(Conv{0});
     kcp_output.set_send_window(128);
     kcp_output.set_receive_window(256);
-    kcp_output.set_interval(10);
-    kcp_output.update(0, [](std::span<const std::byte>) { });
+    kcp_output.set_interval(10ms);
+    kcp_output.update(now, [](std::span<const std::byte>) { });
 
     ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
     kcp_input.set_send_window(128);
     kcp_input.set_receive_window(256);
-    kcp_input.set_interval(10);
-    kcp_input.update(0, [](std::span<const std::byte>) { });
+    kcp_input.set_interval(10ms);
+    kcp_input.update(now, [](std::span<const std::byte>) { });
 
     std::vector<std::byte> send_buffer(size);
     for (u32 j = 0; j < size; ++j) {
@@ -251,10 +257,10 @@ TEST(Send_Tests, Send_SendWindowSmallerThanReceive) {
     size_t update_idx = 0;
 
     while (kcp_output.get_state() == State::Alive && kcp_input.peek_size() != size) {
-        const auto now = static_cast<u32>(update_idx * 10);
+        const auto now_elapsed = now + milliseconds_t(update_idx * 10);
 
-        kcp_output.update(now, output_to_input);
-        kcp_input.update(now, input_to_output);
+        kcp_output.update(now_elapsed, output_to_input);
+        kcp_input.update(now_elapsed, input_to_output);
 
         ++update_idx;
     }

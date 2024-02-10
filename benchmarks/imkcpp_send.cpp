@@ -6,6 +6,8 @@ void BM_imkcpp_cycle_unconstrained(benchmark::State& state) {
 
     const auto size = state.range(0);
 
+    const auto now = std::chrono::steady_clock::now();
+
     for (auto _ : state) {
         state.PauseTiming();
 
@@ -23,12 +25,12 @@ void BM_imkcpp_cycle_unconstrained(benchmark::State& state) {
             captured_data.emplace_back(data.begin(), data.end());
         };
 
-        kcp_output.update(0, output_callback);
+        kcp_output.update(now, output_callback);
 
         ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
         kcp_input.set_send_window(2048);
         kcp_input.set_receive_window(2048);
-        kcp_input.update(0, [](std::span<const std::byte>) { });
+        kcp_input.update(now, [](std::span<const std::byte>) { });
 
         std::vector<std::byte> send_buffer(size);
         for (u32 j = 0; j < size; ++j) {
@@ -48,7 +50,7 @@ void BM_imkcpp_cycle_unconstrained(benchmark::State& state) {
         state.ResumeTiming();
 
         kcp_output.send(send_buffer);
-        kcp_output.update(200, output_callback);
+        kcp_output.update(now + 200ms, output_callback);
 
         for (auto& captured : captured_data) {
             kcp_input.input(captured);
@@ -59,13 +61,13 @@ void BM_imkcpp_cycle_unconstrained(benchmark::State& state) {
             state.SkipWithError("kcp_input.recv() failed");
         }
 
-        kcp_input.update(300, acks_callback);
+        kcp_input.update(now + 300ms, acks_callback);
 
         for (auto& captured : captured_acks) {
             kcp_output.input(captured);
         }
 
-        kcp_output.update(5000, dummy_callback);
+        kcp_output.update(now + 5000ms, dummy_callback);
     }
 }
 
@@ -73,6 +75,8 @@ void BM_imkcpp_send(benchmark::State& state) {
     using namespace imkcpp;
 
     const auto size = state.range(0);
+
+    const auto now = std::chrono::steady_clock::now();
 
     for (auto _ : state) {
         state.PauseTiming();
@@ -87,7 +91,7 @@ void BM_imkcpp_send(benchmark::State& state) {
 
         };
 
-        kcp_output.update(0, output_callback);
+        kcp_output.update(now, output_callback);
 
         std::vector<std::byte> send_buffer(size);
         for (u32 j = 0; j < size; ++j) {
@@ -97,7 +101,7 @@ void BM_imkcpp_send(benchmark::State& state) {
         state.ResumeTiming();
 
         kcp_output.send(send_buffer);
-        kcp_output.update(200, output_callback);
+        kcp_output.update(now + 200ms, output_callback);
     }
 }
 
@@ -105,6 +109,8 @@ void BM_imkcpp_input(benchmark::State& state) {
     using namespace imkcpp;
 
     const auto size = state.range(0);
+
+    const auto now = std::chrono::steady_clock::now();
 
     for (auto _ : state) {
         state.PauseTiming();
@@ -123,12 +129,12 @@ void BM_imkcpp_input(benchmark::State& state) {
             captured_data.emplace_back(data.begin(), data.end());
         };
 
-        kcp_output.update(0, output_callback);
+        kcp_output.update(now, output_callback);
 
         ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
         kcp_input.set_send_window(2048);
         kcp_input.set_receive_window(2048);
-        kcp_input.update(0, [](std::span<const std::byte>) { });
+        kcp_input.update(now, [](std::span<const std::byte>) { });
 
         std::vector<std::byte> send_buffer(size);
         for (u32 j = 0; j < size; ++j) {
@@ -138,7 +144,7 @@ void BM_imkcpp_input(benchmark::State& state) {
         std::vector<std::byte> recv_buffer(size);
 
         kcp_output.send(send_buffer);
-        kcp_output.update(200, output_callback);
+        kcp_output.update(now + 200ms, output_callback);
 
         state.ResumeTiming();
 
@@ -162,6 +168,8 @@ void BM_imkcpp_receive(benchmark::State& state) {
 
     const auto size = state.range(0);
 
+    const auto now = std::chrono::steady_clock::now();
+
     for (auto _ : state) {
         state.PauseTiming();
 
@@ -179,12 +187,12 @@ void BM_imkcpp_receive(benchmark::State& state) {
             captured_data.emplace_back(data.begin(), data.end());
         };
 
-        kcp_output.update(0, output_callback);
+        kcp_output.update(now, output_callback);
 
         ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
         kcp_input.set_send_window(2048);
         kcp_input.set_receive_window(2048);
-        kcp_input.update(0, [](std::span<const std::byte>) { });
+        kcp_input.update(now, [](std::span<const std::byte>) { });
 
         std::vector<std::byte> send_buffer(size);
         for (u32 j = 0; j < size; ++j) {
@@ -194,7 +202,7 @@ void BM_imkcpp_receive(benchmark::State& state) {
         std::vector<std::byte> recv_buffer(size);
 
         kcp_output.send(send_buffer);
-        kcp_output.update(200, output_callback);
+        kcp_output.update(now + 200ms, output_callback);
 
         for (auto& captured : captured_data) {
             kcp_input.input(captured);
@@ -214,6 +222,8 @@ void BM_imkcpp_acknowledge(benchmark::State& state) {
 
     const auto size = state.range(0);
 
+    const auto now = std::chrono::steady_clock::now();
+
     for (auto _ : state) {
         state.PauseTiming();
 
@@ -231,12 +241,12 @@ void BM_imkcpp_acknowledge(benchmark::State& state) {
             captured_data.emplace_back(data.begin(), data.end());
         };
 
-        kcp_output.update(0, output_callback);
+        kcp_output.update(now, output_callback);
 
         ImKcpp<constants::IKCP_MTU_DEF> kcp_input(Conv{0});
         kcp_input.set_send_window(2048);
         kcp_input.set_receive_window(2048);
-        kcp_input.update(0, [](std::span<const std::byte>) { });
+        kcp_input.update(now, [](std::span<const std::byte>) { });
 
         std::vector<std::byte> send_buffer(size);
         for (u32 j = 0; j < size; ++j) {
@@ -254,7 +264,7 @@ void BM_imkcpp_acknowledge(benchmark::State& state) {
         auto dummy_callback = [](std::span<const std::byte>) { };
 
         kcp_output.send(send_buffer);
-        kcp_output.update(200, output_callback);
+        kcp_output.update(now + 200ms, output_callback);
 
         for (auto& captured : captured_data) {
             kcp_input.input(captured);
@@ -266,13 +276,13 @@ void BM_imkcpp_acknowledge(benchmark::State& state) {
         }
 
         state.ResumeTiming();
-        kcp_input.update(300, acks_callback);
+        kcp_input.update(now + 300ms, acks_callback);
 
         for (auto& captured : captured_acks) {
             kcp_output.input(captured);
         }
 
-        kcp_output.update(5000, dummy_callback);
+        kcp_output.update(now + 5000ms, dummy_callback);
     }
 }
 

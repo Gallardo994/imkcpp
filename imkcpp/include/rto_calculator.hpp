@@ -2,54 +2,53 @@
 
 #include <algorithm>
 #include "types.hpp"
-#include "utility.hpp"
 #include "constants.hpp"
 
 namespace imkcpp {
     /// RtoCalculator is used to calculate retransmission timeout. It's based on RFC 2988.
     class RtoCalculator final {
         /// Interval aka G in RFC 2988
-        u32 interval = 0;
+        duration_t interval = 0ms;
 
         /// Smoothed round trip time aka SRTT in RFC 2988
-        u32 srtt = 0;
+        duration_t srtt = 0ms;
 
         /// Round trip time variation aka RTTVAR in RFC 2988
-        u32 rttvar = 0;
+        duration_t rttvar = 0ms;
 
         /// Retransmission timeout aka RTO in RFC 2988
-        u32 rto = constants::IKCP_RTO_DEF;
+        duration_t rto = milliseconds_t(constants::IKCP_RTO_DEF);
 
         /// Last measured round trip time
-        u32 last_rtt = 0;
+        duration_t last_rtt = 0ms;
 
         /// Minimum retransmission timeout aka RTO_MIN in RFC 2988
-        u32 minrto = constants::IKCP_RTO_MIN;
+        duration_t minrto = milliseconds_t(constants::IKCP_RTO_MIN);
 
         /// Maximum retransmission timeout aka RTO_MAX in RFC 2988
-        u32 maxrto = constants::IKCP_RTO_MAX;
+        duration_t maxrto = milliseconds_t(constants::IKCP_RTO_MAX);
 
     public:
-        void set_interval(const u32 interval) {
+        void set_interval(const duration_t interval) {
             this->interval = interval;
         }
 
-        void update_rto(const u32 current, const u32 ts) {
-            const i32 rtt = time_delta(current, ts);
+        void update_rto(const timepoint_t current, const timepoint_t ts) {
+            const auto rtt = current - ts;
 
-            if (rtt < 0) {
+            if (rtt.count() < 0) {
                 return;
             }
 
             this->last_rtt = rtt;
 
-            if (this->srtt == 0) {
+            if (this->srtt.count() == 0) {
                 // First measurement
                 this->srtt = rtt;
                 this->rttvar = rtt / 2;
             } else {
                 // Consequent measurements
-                const i32 delta = std::abs(rtt - static_cast<i32>(this->srtt));
+                const auto delta = duration_t(abs(rtt.count() - srtt.count()));
 
                 // RTTVAR = (1 - BETA) * RTTVAR + BETA * |SRTT - RTT|
                 // Simplified to: RTTVAR = (BETA_MUL * RTTVAR + delta) / BETA_DIV
@@ -68,21 +67,21 @@ namespace imkcpp {
 
             // RTO = SRTT + max(G, K * RTTVAR)
             constexpr u32 K = 4;
-            const u32 rto = this->srtt + std::max(this->interval, K * this->rttvar);
+            const duration_t rto = this->srtt + std::max(this->interval, K * this->rttvar);
 
             // Limiting to IKCP_RTO_MAX is not mentioned in RFC 2988, but is present in the original C implementation
             this->rto = std::clamp(rto, this->minrto, this->maxrto);
         }
 
-        void set_min_rto(const u32 minrto) {
+        void set_min_rto(const duration_t minrto) {
             this->minrto = minrto;
         }
 
-        [[nodiscard]] u32 get_rto() const {
+        [[nodiscard]] duration_t get_rto() const {
             return this->rto;
         }
 
-        [[nodiscard]] u32 get_last_rtt() const {
+        [[nodiscard]] duration_t get_last_rtt() const {
             return this->last_rtt;
         }
     };

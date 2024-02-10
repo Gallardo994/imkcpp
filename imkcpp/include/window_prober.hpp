@@ -11,32 +11,32 @@ namespace imkcpp {
     };
 
     class WindowProber final {
-        constexpr static u32 PROBE_INIT = 7000; // 7 secs to probe window size
-        constexpr static u32 PROBE_LIMIT = 120000; // up to 120 secs to probe window
+        constexpr static duration_t PROBE_INIT = 7000ms; // 7 secs to probe window size
+        constexpr static duration_t PROBE_LIMIT = 120000ms; // up to 120 secs to probe window
 
         /// Probe flags
         u32 probe = 0; // Probe flags
 
         /// Timestamp of the last time we probed the remote window
-        u32 ts_probe = 0; // Timestamp of the last time we probed the remote window
+        timepoint_t ts_probe; // Timestamp of the last time we probed the remote window
 
         /// How long we should wait before probing again
-        u32 probe_wait = 0; // How long we should wait before probing again
+        duration_t probe_wait{0}; // How long we should wait before probing again
 
     public:
-        void update(const u32 current, const u32 rmt_wnd) {
+        void update(const timepoint_t current, const u32 rmt_wnd) {
             if (rmt_wnd != 0) {
-                this->ts_probe = 0;
-                this->probe_wait = 0;
+                this->ts_probe = timepoint_t();
+                this->probe_wait = duration_t{0};
 
                 return;
             }
 
-            if (this->probe_wait == 0) {
+            if (this->probe_wait == duration_t{0}) {
                 this->probe_wait = PROBE_INIT;
                 this->ts_probe = current + this->probe_wait;
             } else {
-                if (time_delta(current, this->ts_probe) >= 0) {
+                if (current >= this->ts_probe) {
                     if (this->probe_wait < PROBE_INIT) {
                         this->probe_wait = PROBE_INIT;
                     }
