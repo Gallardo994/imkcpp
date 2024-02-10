@@ -264,6 +264,11 @@ namespace imkcpp {
             return current + std::min(this->shared_ctx.get_interval(), minimal);
         }
 
+        /// Checks when the next update() should be called. Uses the current time.
+        auto check() noexcept -> timepoint_t {
+            return this->check(std::chrono::steady_clock::now());
+        }
+
         /// Updates the state and performs flush if necessary.
         auto update(const timepoint_t current, const output_callback_t& callback) noexcept -> FlushResult {
             this->current = current;
@@ -285,6 +290,11 @@ namespace imkcpp {
             }
 
             return {};
+        }
+
+        /// Updates the state and performs flush if necessary. Uses the current time.
+        auto update(const output_callback_t& callback) noexcept -> FlushResult {
+            return this->update(std::chrono::steady_clock::now(), callback);
         }
 
         /// Flushes the data to the output callback.

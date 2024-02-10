@@ -13,9 +13,9 @@ namespace imkcpp {
     using milliseconds_t = std::chrono::milliseconds;
 
     namespace encoder {
-        // TODO: As we use milliseconds and chrono can be fed with :now(),
-        // TODO: this can overflow u32. We should provide a way to use a different
-        // TODO: epoch, or a different time unit.
+        // Base time of 1 January 2024 00:00:00 UTC, so we can encode timepoints as u32
+        constexpr timepoint_t base_time = timepoint_t(std::chrono::milliseconds(1704067200000));
+
         template<>
         constexpr size_t encoded_size<timepoint_t>() {
             return encoded_size<u32>();
@@ -23,7 +23,7 @@ namespace imkcpp {
 
         template<>
         inline void encode<timepoint_t>(std::span<std::byte>& buf, size_t& offset, const timepoint_t& value) {
-            const auto ms = std::chrono::duration_cast<milliseconds_t>(value.time_since_epoch()).count();
+            const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(value - base_time).count();
             encode<u32>(buf, offset, static_cast<u32>(ms));
         }
 
@@ -31,7 +31,7 @@ namespace imkcpp {
         inline void decode<timepoint_t>(const std::span<const std::byte>& buf, size_t& offset, timepoint_t& value) {
             u32 decodedValue;
             decode<u32>(buf, offset, decodedValue);
-            value = timepoint_t(std::chrono::milliseconds(decodedValue));
+            value = base_time + std::chrono::milliseconds(decodedValue);
         }
     }
 }
