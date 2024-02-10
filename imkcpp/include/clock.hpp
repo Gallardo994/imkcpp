@@ -23,6 +23,8 @@ namespace imkcpp {
 
         template<>
         inline void encode<timepoint_t>(std::span<std::byte>& buf, size_t& offset, const timepoint_t& value) {
+            assert(value >= base_time);
+
             const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(value - base_time).count();
             encode<u32>(buf, offset, static_cast<u32>(ms));
         }
