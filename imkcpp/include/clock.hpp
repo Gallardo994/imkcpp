@@ -13,6 +13,9 @@ namespace imkcpp {
     using milliseconds_t = std::chrono::milliseconds;
 
     namespace encoder {
+        // TODO: As we use milliseconds and chrono can be fed with :now(),
+        // TODO: this can overflow u32. We should provide a way to use a different
+        // TODO: epoch, or a different time unit.
         template<>
         constexpr size_t encoded_size<timepoint_t>() {
             return encoded_size<u32>();
