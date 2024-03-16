@@ -1,10 +1,6 @@
 #pragma once
 
-#include <span>
-#include <cstddef>
-#include <cstring>
-#include <cassert>
-#include "types.hpp"
+#include <cstdint>
 
 #ifndef IWORDS_BIG_ENDIAN
     #ifdef _BIG_ENDIAN_
