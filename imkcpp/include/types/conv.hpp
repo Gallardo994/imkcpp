@@ -39,8 +39,5 @@ namespace imkcpp {
 
     private:
         UT value = 0;
-
-        static_assert(serializer::Serializable<Conv>);
-        static_assert(serializer::FixedSize<Conv>);
     };
 }

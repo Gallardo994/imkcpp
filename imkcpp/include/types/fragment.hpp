@@ -51,8 +51,5 @@ namespace imkcpp {
 
     private:
         UT value = 0;
-
-        static_assert(serializer::Serializable<Fragment>);
-        static_assert(serializer::FixedSize<Fragment>);
     };
 }

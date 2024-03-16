@@ -39,20 +39,19 @@ namespace imkcpp {
         /// Length of the payload.
         PayloadLen len{0};
 
-        constexpr static size_t OVERHEAD =
-            serializer::fixed_size<decltype(conv)>() +
-            serializer::fixed_size<decltype(cmd)>() +
-            serializer::fixed_size<decltype(frg)>() +
-            serializer::fixed_size<decltype(wnd)>() +
-            serializer::fixed_size<decltype(ts)>() +
-            serializer::fixed_size<decltype(sn)>() +
-            serializer::fixed_size<decltype(una)>() +
-            serializer::fixed_size<decltype(len)>();
+        constexpr static size_t fixed_size() {
+            return serializer::fixed_size<decltype(conv)>() +
+                   serializer::fixed_size<decltype(cmd)>() +
+                   serializer::fixed_size<decltype(frg)>() +
+                   serializer::fixed_size<decltype(wnd)>() +
+                   serializer::fixed_size<decltype(ts)>() +
+                   serializer::fixed_size<decltype(sn)>() +
+                   serializer::fixed_size<decltype(una)>() +
+                   serializer::fixed_size<decltype(len)>();
+        }
 
-        static_assert(OVERHEAD == 24, "SegmentHeader::OVERHEAD is 24 by default. If you really know what you're doing, change this value.");
-
-        void encode_to(std::span<std::byte> buf, size_t& offset) const {
-            assert(buf.size() >= SegmentHeader::OVERHEAD);
+        void serialize(const std::span<std::byte> buf, size_t& offset) const {
+            assert(buf.size() >= serializer::fixed_size<SegmentHeader>());
 
             serializer::serialize<Conv>(this->conv, buf, offset);
             serializer::serialize<Cmd>(this->cmd, buf, offset);
@@ -64,8 +63,8 @@ namespace imkcpp {
             serializer::serialize<PayloadLen>(this->len, buf, offset);
         }
 
-        void decode_from(const std::span<const std::byte> buf, size_t& offset) {
-            assert(buf.size() >= SegmentHeader::OVERHEAD);
+        void deserialize(const std::span<const std::byte> buf, size_t& offset) {
+            assert(buf.size() >= serializer::fixed_size<SegmentHeader>());
 
             serializer::deserialize<Conv>(this->conv, buf, offset);
             serializer::deserialize<Cmd>(this->cmd, buf, offset);
@@ -131,22 +130,22 @@ namespace imkcpp {
         explicit Segment(const SegmentHeader& header, SegmentData& data) : header(header), data(std::move(data)) { }
 
         void encode_to(const std::span<std::byte> buf, size_t& offset) const {
-            assert(buf.size() >= SegmentHeader::OVERHEAD + this->header.len.get());
+            assert(buf.size() >= serializer::fixed_size<SegmentHeader>() + this->header.len.get());
             assert(this->header.len.get() == this->data.size());
 
-            this->header.encode_to(buf, offset);
+            serializer::serialize<SegmentHeader>(this->header, buf, offset);
             this->data.encode_to(buf, offset, this->header.len.get());
         }
 
         void decode_from(const std::span<const std::byte> buf, size_t& offset) {
-            assert(buf.size() >= SegmentHeader::OVERHEAD + this->header.len.get());
+            assert(buf.size() >= serializer::fixed_size<SegmentHeader>() + this->header.len.get());
 
-            this->header.decode_from(buf, offset);
+            serializer::deserialize<SegmentHeader>(this->header, buf, offset);
             this->data.decode_from(buf, offset, this->header.len.get());
         }
 
         [[nodiscard]] size_t size() const {
-            return SegmentHeader::OVERHEAD + this->data_size();
+            return serializer::fixed_size<SegmentHeader>() + this->data_size();
         }
 
         [[nodiscard]] size_t data_size() const {

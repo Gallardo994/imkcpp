@@ -12,7 +12,7 @@ namespace imkcpp::serializer {
     // Serialization and deserialization for custom types
 
     template<typename T>
-    concept Serializable = requires(T& t, const std::span<std::byte> writeBuf, const std::span<const std::byte>& readBuf, size_t& offset) {
+    concept Serializable = requires(T& t, const std::span<std::byte> writeBuf, const std::span<const std::byte> readBuf, size_t& offset) {
         { t.serialize(writeBuf, offset) } -> std::same_as<void>;
         { t.deserialize(readBuf, offset) } -> std::same_as<void>;
     };
