@@ -122,7 +122,7 @@ namespace imkcpp {
     };
 
     struct Segment final {
-        static_assert(serializer::fixed_size<SegmentHeader>(), "Segment header is 24 bytes by default. Changes this assert if you know what you're doing.");
+        static_assert(serializer::fixed_size<SegmentHeader>() == 24, "Segment header is 24 bytes by default. Changes this assert if you know what you're doing.");
 
         SegmentHeader header{};
         SegmentData data{};
