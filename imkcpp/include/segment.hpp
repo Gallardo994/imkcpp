@@ -1,10 +1,10 @@
 #pragma once
 
 #include "types.hpp"
-#include "encoder.hpp"
 #include "types/conv.hpp"
 #include "types/cmd.hpp"
 #include "types/fragment.hpp"
+#include "serializer.hpp"
 
 #include "types/payload_len.hpp"
 #include <vector>
@@ -40,41 +40,41 @@ namespace imkcpp {
         PayloadLen len{0};
 
         constexpr static size_t OVERHEAD =
-            encoder::encoded_size<decltype(conv)>() +
-            encoder::encoded_size<decltype(cmd)>() +
-            encoder::encoded_size<decltype(frg)>() +
-            encoder::encoded_size<decltype(wnd)>() +
-            encoder::encoded_size<decltype(ts)>() +
-            encoder::encoded_size<decltype(sn)>() +
-            encoder::encoded_size<decltype(una)>() +
-            encoder::encoded_size<decltype(len)>();
+            serializer::fixed_size<decltype(conv)>() +
+            serializer::fixed_size<decltype(cmd)>() +
+            serializer::fixed_size<decltype(frg)>() +
+            serializer::fixed_size<decltype(wnd)>() +
+            serializer::fixed_size<decltype(ts)>() +
+            serializer::fixed_size<decltype(sn)>() +
+            serializer::fixed_size<decltype(una)>() +
+            serializer::fixed_size<decltype(len)>();
 
         static_assert(OVERHEAD == 24, "SegmentHeader::OVERHEAD is 24 by default. If you really know what you're doing, change this value.");
 
         void encode_to(std::span<std::byte> buf, size_t& offset) const {
             assert(buf.size() >= SegmentHeader::OVERHEAD);
 
-            encoder::encode<Conv>(buf, offset, this->conv);
-            encoder::encode<Cmd>(buf, offset, this->cmd);
-            encoder::encode<Fragment>(buf, offset, this->frg);
-            encoder::encode<u16>(buf, offset, this->wnd);
-            encoder::encode<u32>(buf, offset, this->ts);
-            encoder::encode<u32>(buf, offset, this->sn);
-            encoder::encode<u32>(buf, offset, this->una);
-            encoder::encode<PayloadLen>(buf, offset, this->len);
+            serializer::serialize<Conv>(this->conv, buf, offset);
+            serializer::serialize<Cmd>(this->cmd, buf, offset);
+            serializer::serialize<Fragment>(this->frg, buf, offset);
+            serializer::serialize<u16>(this->wnd, buf, offset);
+            serializer::serialize<u32>(this->ts, buf, offset);
+            serializer::serialize<u32>(this->sn, buf, offset);
+            serializer::serialize<u32>(this->una, buf, offset);
+            serializer::serialize<PayloadLen>(this->len, buf, offset);
         }
 
         void decode_from(const std::span<const std::byte> buf, size_t& offset) {
             assert(buf.size() >= SegmentHeader::OVERHEAD);
 
-            encoder::decode<Conv>(buf, offset, this->conv);
-            encoder::decode<Cmd>(buf, offset, this->cmd);
-            encoder::decode<Fragment>(buf, offset, this->frg);
-            encoder::decode<u16>(buf, offset, this->wnd);
-            encoder::decode<u32>(buf, offset, this->ts);
-            encoder::decode<u32>(buf, offset, this->sn);
-            encoder::decode<u32>(buf, offset, this->una);
-            encoder::decode<PayloadLen>(buf, offset, this->len);
+            serializer::deserialize<Conv>(this->conv, buf, offset);
+            serializer::deserialize<Cmd>(this->cmd, buf, offset);
+            serializer::deserialize<Fragment>(this->frg, buf, offset);
+            serializer::deserialize<u16>(this->wnd, buf, offset);
+            serializer::deserialize<u32>(this->ts, buf, offset);
+            serializer::deserialize<u32>(this->sn, buf, offset);
+            serializer::deserialize<u32>(this->una, buf, offset);
+            serializer::deserialize<PayloadLen>(this->len, buf, offset);
         }
     };
 

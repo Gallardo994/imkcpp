@@ -2,6 +2,7 @@
 
 #include <span>
 #include "types.hpp"
+#include "serializer.hpp"
 
 namespace imkcpp {
     /// Command ID.
@@ -24,26 +25,19 @@ namespace imkcpp {
             return !(*this == other);
         }
 
+        void serialize(std::span<std::byte> buf, size_t& offset) const {
+            serializer::serialize<UT>(this->value, buf, offset);
+        }
+
+        void deserialize(const std::span<const std::byte> buf, size_t& offset) {
+            serializer::deserialize<UT>(this->value, buf, offset);
+        }
+
+        [[nodiscard]] constexpr static size_t fixed_size() {
+            return serializer::fixed_size<UT>();
+        }
+
     private:
         UT value = 0;
     };
-
-    namespace encoder {
-        template<>
-        constexpr size_t encoded_size<Cmd>() {
-            return encoded_size<Cmd::UT>();
-        }
-
-        template<>
-        inline void encode<Cmd>(std::span<std::byte>& buf, size_t& offset, const Cmd& value) {
-            encode<Cmd::UT>(buf, offset, value.get());
-        }
-
-        template<>
-        inline void decode<Cmd>(const std::span<const std::byte>& buf, size_t& offset, Cmd& value) {
-            Cmd::UT decodedValue = 0;
-            decode<Cmd::UT>(buf, offset, decodedValue);
-            value = Cmd(decodedValue);
-        }
-    }
 }
