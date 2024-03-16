@@ -68,6 +68,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classimkcpp_1_1Cmd-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">imkcpp::Cmd Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
@@ -96,6 +97,18 @@ constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==<
 <tr class="memitem:ab240695a5101b900349455fcf2b2df14"><td class="memItemLeft" align="right" valign="top"><a id="ab240695a5101b900349455fcf2b2df14"></a>
 constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classimkcpp_1_1Cmd.html">Cmd</a> &amp;other) const noexcept</td></tr>
 <tr class="separator:ab240695a5101b900349455fcf2b2df14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26e955f029aaa32ddf2144a4c630e6d3"><td class="memItemLeft" align="right" valign="top"><a id="a26e955f029aaa32ddf2144a4c630e6d3"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>serialize</b> (const std::span&lt; std::byte &gt; buf, size_t &amp;offset) const</td></tr>
+<tr class="separator:a26e955f029aaa32ddf2144a4c630e6d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdfc365a6c0c5e795d724e8cfbfabcf2"><td class="memItemLeft" align="right" valign="top"><a id="acdfc365a6c0c5e795d724e8cfbfabcf2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>deserialize</b> (const std::span&lt; const std::byte &gt; buf, size_t &amp;offset)</td></tr>
+<tr class="separator:acdfc365a6c0c5e795d724e8cfbfabcf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:aa03137dfb40d824fc6248f43bf87e32a"><td class="memItemLeft" align="right" valign="top"><a id="aa03137dfb40d824fc6248f43bf87e32a"></a>
+constexpr static size_t&#160;</td><td class="memItemRight" valign="bottom"><b>fixed_size</b> ()</td></tr>
+<tr class="separator:aa03137dfb40d824fc6248f43bf87e32a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Command ID. Determines the type of the segment and the action to be taken. </p>

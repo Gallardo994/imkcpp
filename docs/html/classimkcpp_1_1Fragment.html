@@ -68,6 +68,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classimkcpp_1_1Fragment-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">imkcpp::Fragment Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
@@ -105,6 +106,18 @@ constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator&gt
 <tr class="memitem:a829cccc53414df093eccc5065b40057a"><td class="memItemLeft" align="right" valign="top"><a id="a829cccc53414df093eccc5065b40057a"></a>
 constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const UT &amp;other) const noexcept</td></tr>
 <tr class="separator:a829cccc53414df093eccc5065b40057a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af577522498b4a3bbf111ce144bc3e56b"><td class="memItemLeft" align="right" valign="top"><a id="af577522498b4a3bbf111ce144bc3e56b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>serialize</b> (const std::span&lt; std::byte &gt; buf, size_t &amp;offset) const</td></tr>
+<tr class="separator:af577522498b4a3bbf111ce144bc3e56b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86628e424f6ca80b8b40fe5b6be4bfb6"><td class="memItemLeft" align="right" valign="top"><a id="a86628e424f6ca80b8b40fe5b6be4bfb6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>deserialize</b> (const std::span&lt; const std::byte &gt; buf, size_t &amp;offset)</td></tr>
+<tr class="separator:a86628e424f6ca80b8b40fe5b6be4bfb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:ab65f305b0bd3e508709d39201a2579b9"><td class="memItemLeft" align="right" valign="top"><a id="ab65f305b0bd3e508709d39201a2579b9"></a>
+constexpr static size_t&#160;</td><td class="memItemRight" valign="bottom"><b>fixed_size</b> ()</td></tr>
+<tr class="separator:ab65f305b0bd3e508709d39201a2579b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classimkcpp_1_1Fragment.html">Fragment</a> number. Determines the order of the fragments. </p>

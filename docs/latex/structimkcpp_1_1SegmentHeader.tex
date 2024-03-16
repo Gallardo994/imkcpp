@@ -11,8 +11,7 @@
 
 
 
-Collaboration diagram for imkcpp\+::Segment\+Header\+:
-\nopagebreak
+Collaboration diagram for imkcpp\+::Segment\+Header\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -22,11 +21,17 @@ Collaboration diagram for imkcpp\+::Segment\+Header\+:
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{structimkcpp_1_1SegmentHeader_a36574735b531bfa0104ee94d4d735e5d}\label{structimkcpp_1_1SegmentHeader_a36574735b531bfa0104ee94d4d735e5d}} 
-void {\bfseries encode\+\_\+to} (std\+::span$<$ std\+::byte $>$ buf, size\+\_\+t \&offset) const
+\mbox{\Hypertarget{structimkcpp_1_1SegmentHeader_af65ef87d42b0f705c5b745af563ac820}\label{structimkcpp_1_1SegmentHeader_af65ef87d42b0f705c5b745af563ac820}} 
+void {\bfseries serialize} (const std\+::span$<$ std\+::byte $>$ buf, size\+\_\+t \&offset) const
 \item 
-\mbox{\Hypertarget{structimkcpp_1_1SegmentHeader_a3926ddc238670444965768b0f9dc2bee}\label{structimkcpp_1_1SegmentHeader_a3926ddc238670444965768b0f9dc2bee}} 
-void {\bfseries decode\+\_\+from} (const std\+::span$<$ const std\+::byte $>$ buf, size\+\_\+t \&offset)
+\mbox{\Hypertarget{structimkcpp_1_1SegmentHeader_a53747fd05c557e657d083c1c958aa86c}\label{structimkcpp_1_1SegmentHeader_a53747fd05c557e657d083c1c958aa86c}} 
+void {\bfseries deserialize} (const std\+::span$<$ const std\+::byte $>$ buf, size\+\_\+t \&offset)
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structimkcpp_1_1SegmentHeader_a34c105eccfcea3b6c873b7f6009a8c7e}\label{structimkcpp_1_1SegmentHeader_a34c105eccfcea3b6c873b7f6009a8c7e}} 
+constexpr static size\+\_\+t {\bfseries fixed\+\_\+size} ()
 \end{DoxyCompactItemize}
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
@@ -55,37 +60,10 @@ u32 \mbox{\hyperlink{structimkcpp_1_1SegmentHeader_a08992ae80206006966482d1cf7fd
 \mbox{\Hypertarget{structimkcpp_1_1SegmentHeader_a6d9b3cd2fa1530c7adad45de5c7f70d1}\label{structimkcpp_1_1SegmentHeader_a6d9b3cd2fa1530c7adad45de5c7f70d1}} 
 \mbox{\hyperlink{classimkcpp_1_1PayloadLen}{Payload\+Len}} \mbox{\hyperlink{structimkcpp_1_1SegmentHeader_a6d9b3cd2fa1530c7adad45de5c7f70d1}{len}} \{0\}
 \begin{DoxyCompactList}\small\item\em Length of the payload. \end{DoxyCompactList}\end{DoxyCompactItemize}
-\doxysubsection*{Static Public Attributes}
-\begin{DoxyCompactItemize}
-\item 
-constexpr static size\+\_\+t {\bfseries OVERHEAD}
-\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
 \mbox{\hyperlink{structimkcpp_1_1SegmentHeader}{Segment\+Header}} is used to store the header of the segment. 
-
-\doxysubsection{Member Data Documentation}
-\mbox{\Hypertarget{structimkcpp_1_1SegmentHeader_ac5d96a33e79ea91cd137251817729665}\label{structimkcpp_1_1SegmentHeader_ac5d96a33e79ea91cd137251817729665}} 
-\index{imkcpp::SegmentHeader@{imkcpp::SegmentHeader}!OVERHEAD@{OVERHEAD}}
-\index{OVERHEAD@{OVERHEAD}!imkcpp::SegmentHeader@{imkcpp::SegmentHeader}}
-\doxysubsubsection{\texorpdfstring{OVERHEAD}{OVERHEAD}}
-{\footnotesize\ttfamily constexpr static size\+\_\+t imkcpp\+::\+Segment\+Header\+::\+OVERHEAD\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
-
-{\bfseries Initial value\+:}
-\begin{DoxyCode}{0}
-\DoxyCodeLine{=}
-\DoxyCodeLine{            encoder::encoded\_size<decltype(conv)>() +}
-\DoxyCodeLine{            encoder::encoded\_size<decltype(cmd)>() +}
-\DoxyCodeLine{            encoder::encoded\_size<decltype(frg)>() +}
-\DoxyCodeLine{            encoder::encoded\_size<decltype(wnd)>() +}
-\DoxyCodeLine{            encoder::encoded\_size<decltype(ts)>() +}
-\DoxyCodeLine{            encoder::encoded\_size<decltype(sn)>() +}
-\DoxyCodeLine{            encoder::encoded\_size<decltype(una)>() +}
-\DoxyCodeLine{            encoder::encoded\_size<decltype(len)>()}
-
-\end{DoxyCode}
-
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
