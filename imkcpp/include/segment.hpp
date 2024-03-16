@@ -119,6 +119,15 @@ namespace imkcpp {
             this->assign(buf.subspan(offset, length));
             offset += length;
         }
+
+        SegmentData(SegmentData&& other) noexcept {
+            this->data = std::move(other.data);
+        }
+
+        SegmentData& operator=(SegmentData&& other) noexcept {
+            this->data = std::move(other.data);
+            return *this;
+        }
     };
 
     struct Segment final {
@@ -138,6 +147,19 @@ namespace imkcpp {
         void data_assign(const std::span<const std::byte> buf) {
             this->data.assign(buf);
             this->header.len = PayloadLen(buf.size());
+        }
+
+        Segment(Segment&& other) noexcept {
+            this->header = other.header;
+            this->data = std::move(other.data);
+            this->metadata = other.metadata;
+        }
+
+        Segment& operator=(Segment&& other) noexcept {
+            this->header = other.header;
+            this->data = std::move(other.data);
+            this->metadata = other.metadata;
+            return *this;
         }
     };
 }
