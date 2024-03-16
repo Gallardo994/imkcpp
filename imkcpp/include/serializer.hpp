@@ -39,6 +39,18 @@ namespace imkcpp::serializer {
         return T::fixed_size();
     };
 
+    // Dynamic size for custom types
+
+    template<typename T>
+    concept DynamicSize = requires(T& t) {
+        { t.dynamic_size() } -> std::same_as<size_t>;
+    };
+
+    template<DynamicSize T>
+    constexpr size_t dynamic_size(const T& value) {
+        return value.dynamic_size();
+    }
+
     // Serialization and deserialization for non-custom types
 
     template<typename T>
