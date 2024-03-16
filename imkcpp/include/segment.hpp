@@ -92,6 +92,7 @@ namespace imkcpp {
         u32 xmit = 0;
     };
 
+    // TODO: Should be used via serializer functions.
     /// SegmentData is used to store the payload of the segment.
     struct SegmentData final {
         std::vector<std::byte> data{};
@@ -130,6 +131,7 @@ namespace imkcpp {
         }
     };
 
+    // TODO: Should be used via serializer functions.
     struct Segment final {
         static_assert(serializer::fixed_size<SegmentHeader>() == 24, "Segment header is 24 bytes by default. Changes this assert if you know what you're doing.");
 
