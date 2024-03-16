@@ -39,5 +39,8 @@ namespace imkcpp {
 
     private:
         UT value = 0;
+
+        static_assert(serializer::Serializable<PayloadLen>);
+        static_assert(serializer::FixedSize<PayloadLen>);
     };
 }
