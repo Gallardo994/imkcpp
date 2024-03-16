@@ -67,7 +67,7 @@ namespace imkcpp {
 
         /// Emplaces the given segment into the buffer
         void emplace(const SegmentHeader& header, const SegmentData& data) {
-            assert(this->offset + data.size() <= this->buffer.size());
+            assert(this->offset + serializer::dynamic_size(data) <= this->buffer.size());
 
             serializer::serialize(header, this->buffer, this->offset);
             data.encode_to(this->buffer, this->offset, header.len.get());

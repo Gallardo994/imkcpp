@@ -103,7 +103,7 @@ namespace imkcpp {
             this->data.assign(buf.begin(), buf.end());
         }
 
-        [[nodiscard]] size_t size() const {
+        [[nodiscard]] size_t dynamic_size() const {
             return this->data.size();
         }
 
