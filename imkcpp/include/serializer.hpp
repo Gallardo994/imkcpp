@@ -4,8 +4,6 @@
 #include <cstddef>
 #include <concepts>
 #include <type_traits>
-#include "types.hpp"
-#include "endian.hpp"
 
 namespace imkcpp::serializer {
 
@@ -56,55 +54,6 @@ namespace imkcpp::serializer {
     template<typename T>
     struct TraitSerializable;
 
-    template<>
-    struct TraitSerializable<u8> {
-        static void serialize(const u8 value, const std::span<std::byte> buf, size_t& offset) {
-            assert(buf.size() >= offset + sizeof(u8));
-            std::memcpy(buf.data() + offset, &value, sizeof(u8));
-            offset += sizeof(u8);
-        }
-
-        static void deserialize(u8& value, const std::span<const std::byte> buf, size_t& offset) {
-            assert(buf.size() >= offset + sizeof(u8));
-            std::memcpy(&value, buf.data() + offset, sizeof(u8));
-            offset += sizeof(u8);
-        }
-    };
-
-    template<>
-    struct TraitSerializable<u16> {
-        static void serialize(const u16 value, const std::span<std::byte> buf, size_t& offset) {
-            assert(buf.size() >= offset + sizeof(u16));
-            const u16 networkValue = endian::htons(value);
-            std::memcpy(buf.data() + offset, &networkValue, sizeof(u16));
-            offset += sizeof(u16);
-        }
-
-        static void deserialize(u16& value, const std::span<const std::byte> buf, size_t& offset) {
-            assert(buf.size() >= offset + sizeof(u16));
-            std::memcpy(&value, buf.data() + offset, sizeof(u16));
-            value = endian::ntohs(value);
-            offset += sizeof(u16);
-        }
-    };
-
-    template<>
-    struct TraitSerializable<u32> {
-        static void serialize(const u32 value, const std::span<std::byte> buf, size_t& offset) {
-            assert(buf.size() >= offset + sizeof(u32));
-            const u32 networkValue = endian::htonl(value);
-            std::memcpy(buf.data() + offset, &networkValue, sizeof(u32));
-            offset += sizeof(u32);
-        }
-
-        static void deserialize(u32& value, const std::span<const std::byte> buf, size_t& offset) {
-            assert(buf.size() >= offset + sizeof(u32));
-            std::memcpy(&value, buf.data() + offset, sizeof(u32));
-            value = endian::ntohl(value);
-            offset += sizeof(u32);
-        }
-    };
-
     template<typename T>
     concept TraitSerializableConcept = requires(T& t, const std::span<std::byte> writeBuf, const std::span<const std::byte> readBuf, size_t& offset) {
         { TraitSerializable<T>::serialize(t, writeBuf, offset) } -> std::same_as<void>;
@@ -125,21 +74,6 @@ namespace imkcpp::serializer {
 
     template<typename T>
     struct TraitFixedSize;
-
-    template<>
-    struct TraitFixedSize<u8> {
-        static constexpr size_t fixed_size() { return sizeof(u8); }
-    };
-
-    template<>
-    struct TraitFixedSize<u16> {
-        static constexpr size_t fixed_size() { return sizeof(u16); }
-    };
-
-    template<>
-    struct TraitFixedSize<u32> {
-        static constexpr size_t fixed_size() { return sizeof(u32); }
-    };
 
     template<typename T>
     concept TraitFixedSizeConcept = requires {
