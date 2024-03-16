@@ -25,7 +25,7 @@ namespace imkcpp {
             return !(*this == other);
         }
 
-        void serialize(std::span<std::byte> buf, size_t& offset) const {
+        void serialize(const std::span<std::byte> buf, size_t& offset) const {
             serializer::serialize<UT>(this->value, buf, offset);
         }
 
