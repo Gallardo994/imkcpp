@@ -2,6 +2,7 @@
 
 #include <span>
 #include "types.hpp"
+#include "serializer.hpp"
 
 namespace imkcpp {
     /// Payload length.
@@ -24,26 +25,19 @@ namespace imkcpp {
             return this->value < other;
         }
 
+        void serialize(const std::span<std::byte> buf, size_t& offset) const {
+            serializer::serialize<UT>(this->value, buf, offset);
+        }
+
+        void deserialize(const std::span<const std::byte> buf, size_t& offset) {
+            serializer::deserialize<UT>(this->value, buf, offset);
+        }
+
+        [[nodiscard]] constexpr static size_t fixed_size() {
+            return serializer::fixed_size<UT>();
+        }
+
     private:
         UT value = 0;
     };
-
-    namespace encoder {
-        template<>
-        constexpr size_t encoded_size<PayloadLen>() {
-            return encoded_size<PayloadLen::UT>();
-        }
-
-        template<>
-        inline void encode<PayloadLen>(std::span<std::byte>& buf, size_t& offset, const PayloadLen& value) {
-            encode<PayloadLen::UT>(buf, offset, value.get());
-        }
-
-        template<>
-        inline void decode<PayloadLen>(const std::span<const std::byte>& buf, size_t& offset, PayloadLen& value) {
-            PayloadLen::UT decodedValue = 0;
-            decode<PayloadLen::UT>(buf, offset, decodedValue);
-            value = PayloadLen(decodedValue);
-        }
-    }
 }

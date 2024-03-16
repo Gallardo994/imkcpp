@@ -2,6 +2,7 @@
 
 #include <span>
 #include "types.hpp"
+#include "serializer.hpp"
 
 namespace imkcpp {
     /// Fragment number.
@@ -36,26 +37,19 @@ namespace imkcpp {
             return this->value == other;
         }
 
+        void serialize(const std::span<std::byte> buf, size_t& offset) const {
+            serializer::serialize<UT>(this->value, buf, offset);
+        }
+
+        void deserialize(const std::span<const std::byte> buf, size_t& offset) {
+            serializer::deserialize<UT>(this->value, buf, offset);
+        }
+
+        [[nodiscard]] constexpr static size_t fixed_size() {
+            return serializer::fixed_size<UT>();
+        }
+
     private:
         UT value = 0;
     };
-
-    namespace encoder {
-        template<>
-        constexpr size_t encoded_size<Fragment>() {
-            return encoded_size<Fragment::UT>();
-        }
-
-        template<>
-        inline void encode<Fragment>(std::span<std::byte>& buf, size_t& offset, const Fragment& value) {
-            encode<Fragment::UT>(buf, offset, value.get());
-        }
-
-        template<>
-        inline void decode<Fragment>(const std::span<const std::byte>& buf, size_t& offset, Fragment& value) {
-            Fragment::UT decodedValue = 0;
-            decode<Fragment::UT>(buf, offset, decodedValue);
-            value = Fragment(decodedValue);
-        }
-    }
 }

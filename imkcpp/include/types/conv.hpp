@@ -2,6 +2,7 @@
 
 #include <span>
 #include "types.hpp"
+#include "serializer.hpp"
 
 namespace imkcpp {
     /// Conversation ID.
@@ -24,26 +25,19 @@ namespace imkcpp {
             return !(*this == other);
         }
 
+        void serialize(const std::span<std::byte> buf, size_t& offset) const {
+            serializer::serialize<UT>(this->value, buf, offset);
+        }
+
+        void deserialize(const std::span<const std::byte> buf, size_t& offset) {
+            serializer::deserialize<UT>(this->value, buf, offset);
+        }
+
+        [[nodiscard]] constexpr static size_t fixed_size() {
+            return serializer::fixed_size<UT>();
+        }
+
     private:
         UT value = 0;
     };
-
-    namespace encoder {
-        template<>
-        constexpr size_t encoded_size<Conv>() {
-            return encoded_size<Conv::UT>();
-        }
-
-        template<>
-        inline void encode<Conv>(std::span<std::byte>& buf, size_t& offset, const Conv& value) {
-            encode<Conv::UT>(buf, offset, value.get());
-        }
-
-        template<>
-        inline void decode<Conv>(const std::span<const std::byte>& buf, size_t& offset, Conv& value) {
-            Conv::UT decodedValue = 0;
-            decode<Conv::UT>(buf, offset, decodedValue);
-            value = Conv(decodedValue);
-        }
-    }
 }

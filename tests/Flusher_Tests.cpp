@@ -36,7 +36,7 @@ TEST_F(FlusherTest, IsEmptyInitially) {
 TEST_F(FlusherTest, FlushIfFull) {
     using namespace imkcpp;
 
-    const Segment segment = create_mock_segment(MSS - SegmentHeader::OVERHEAD - 1);
+    const Segment segment = create_mock_segment(MSS - serializer::fixed_size<SegmentHeader>() - 1);
     flusher.emplace(segment.header, segment.data);
     ASSERT_EQ(flusher.flush_if_full(mock_callback), 0);
     ASSERT_EQ(callback_invocations, 0);
@@ -54,7 +54,7 @@ TEST_F(FlusherTest, FlushIfDoesNotFit) {
 
     const Segment segment = create_mock_segment(segment_size);
     flusher.emplace(segment.header, segment.data);
-    ASSERT_EQ(flusher.flush_if_does_not_fit(mock_callback, segment_size + 1), segment_size + SegmentHeader::OVERHEAD);
+    ASSERT_EQ(flusher.flush_if_does_not_fit(mock_callback, segment_size + 1), segment_size + serializer::fixed_size<SegmentHeader>());
     ASSERT_EQ(callback_invocations, 1);
 
     ASSERT_EQ(flusher.flush_if_does_not_fit(mock_callback, segment_size), 0);
@@ -66,7 +66,7 @@ TEST_F(FlusherTest, FlushIfNotEmpty) {
 
     const Segment segment = create_mock_segment(1);
     flusher.emplace(segment.header, segment.data);
-    ASSERT_EQ(flusher.flush_if_not_empty(mock_callback), SegmentHeader::OVERHEAD + 1);
+    ASSERT_EQ(flusher.flush_if_not_empty(mock_callback), serializer::fixed_size<SegmentHeader>() + 1);
     ASSERT_EQ(callback_invocations, 1);
 
     ASSERT_EQ(flusher.flush_if_not_empty(mock_callback), 0);

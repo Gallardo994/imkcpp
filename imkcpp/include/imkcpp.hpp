@@ -29,7 +29,7 @@ namespace imkcpp {
     /// The main class of the library.
     template <size_t MTU>
     class ImKcpp final {
-        static_assert(MTU > SegmentHeader::OVERHEAD, "MTU is too small");
+        static_assert(MTU > serializer::fixed_size<SegmentHeader>(), "MTU is too small");
 
         constexpr static size_t MAX_SEGMENT_SIZE = MTU_TO_MSS<MTU>();
 
@@ -123,7 +123,7 @@ namespace imkcpp {
 
         /// Receives data from the transport layer.
         auto input(const std::span<const std::byte> data) noexcept -> tl::expected<InputResult, error> {
-            if (data.size() < SegmentHeader::OVERHEAD) {
+            if (data.size() < serializer::fixed_size<SegmentHeader>()) {
                 return tl::unexpected(error::less_than_header_size);
             }
 
@@ -143,11 +143,11 @@ namespace imkcpp {
             const auto data_size = data.size();
 
             while (true) {
-                if (data_size - offset < SegmentHeader::OVERHEAD) {
+                if (data_size - offset < serializer::fixed_size<SegmentHeader>()) {
                     break;
                 }
 
-                header.decode_from(data, offset);
+                serializer::deserialize(header, data, offset);
 
                 if (header.conv != this->shared_ctx.get_conv()) {
                     return tl::unexpected(error::conv_mismatch);
